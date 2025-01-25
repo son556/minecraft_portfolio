@@ -172,8 +172,15 @@ struct VertexColor {
 	color col;
 };
 
+struct VertexWater {
+	vec3 pos;
+	vec4 col;
+	vec2 uv;
+};
+
 struct CamPos {
 	vec4 view_pos;
 	vec4 light_pos;
 	Mat view;
 };
+

@@ -16,7 +16,7 @@ OIT::OIT(
 	MapUtils* minfo
 ) 
 	: d_graphic(graphic), m_info(minfo), d_buff(nullptr), tp(graphic, minfo),
-	cp(graphic, minfo)
+	cp(graphic, minfo), water(graphic, minfo)
 {
 	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
 	this->d_buff = make_shared<DeferredBuffer>(1);
@@ -110,6 +110,10 @@ void OIT::render(Mat const& cam_view, Mat const& cam_proj)
 
 	// composition render
 	this->cp.render(this->solid_rtv, this->tp.getAccum(), this->tp.getReveal());
+
+	// water render tmp
+	this->water.render_test(cam_view, cam_proj, 
+		this->depth_srv, this->solid_rtv);
 
 	// result render
 	this->setPipe();

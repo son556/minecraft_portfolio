@@ -356,7 +356,7 @@ uint8 MapUtils::findAdjLightBlock(Index2 const& c_idx, int x, int y, int z) cons
 	else if (y < 0)
 		return 0;
 	else if (y > 255)
-		return 0;
+		return 15;
 	return this->light_map[idx];
 }
 

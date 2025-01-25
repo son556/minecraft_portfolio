@@ -278,20 +278,19 @@ namespace Block {
 		float x,
 		float y,
 		float z,
-		int dir,
-		vector<VertexColor>& vertices
+		vector<VertexWater>& vertices
 	) 
 	{
-		vec4 col;
-		col = vec4(0, 0, 1, 0.3);
-		VertexColor vertex;
+		static const vec4 col = vec4(0, 0, 1, 1);
+		VertexWater vertex;
 		x = start_pos.x + x;
 		y = start_pos.y + y;
 		z = start_pos.z - z;
 
-		for (int i = dir * 4; i < dir * 4 + 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			vertex.pos = sample_pos[i] + vec3(x, y, z);
 			vertex.col = col;
+			vertex.uv = vec2(0, 0); // tmp
 			vertices.push_back(vertex);
 		}
 	}

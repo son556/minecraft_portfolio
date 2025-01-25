@@ -74,6 +74,7 @@ using namespace Microsoft::WRL;
 
 #define CHECK(p)	assert(SUCCEEDED(p))
 
+#define WATER_HEIGHT 15
 
 enum BlockType {
 	WATER = -4,

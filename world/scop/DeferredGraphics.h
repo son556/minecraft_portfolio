@@ -17,6 +17,12 @@ public:
 		DeferredBuffer* d_buffer = nullptr,
 		ComPtr<ID3D11DepthStencilView> dsv = nullptr
 	);
+	void renderBegin(int cnt,
+		ID3D11RenderTargetView** rtvs,
+		ComPtr<ID3D11DepthStencilView> dsv,
+		bool reset_render_target,
+		bool reset_depth_stencil_view
+	);
 	void renderEnd();
 	ComPtr<ID3D11Device> getDevice();
 	ComPtr<ID3D11DeviceContext> getContext();

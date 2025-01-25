@@ -32,7 +32,7 @@ void SetCave::makeCave(Index2 const& c_idx, Index2 const& c_pos)
 				if (this->m_info->findBlock(c_idx, j, y, i) == BlockType::WATER)
 					continue;
 				bool flag = false;
-				for (int dir = 0; dir < 4; dir++) {
+				for (int dir = 0; dir < 6; dir++) {
 					if (this->getAdjInfo(c_idx, j, y, i, dir) == BlockType::WATER) {
 						flag = true;
 						break;

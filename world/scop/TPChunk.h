@@ -11,7 +11,6 @@ class TPChunk
 public:
 	TPChunk();
 	~TPChunk();
-	void createTPBuffer(ComPtr<ID3D11Device> const& device);
 	void setTPBuffer(
 		ComPtr<ID3D11DeviceContext> const& context
 	);

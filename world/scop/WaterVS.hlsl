@@ -1,6 +1,6 @@
 struct VS_INPUT
 {
-    float3 pos : POSITIONT;
+    float3 pos : POSITION;
     float4 color : COLOR;
     float2 uv : TEXCOORD;
 };
@@ -9,6 +9,7 @@ struct VS_INPUT
 struct PS_INPUT
 {
     float4 pos : SV_Position;
+    float4 c_pos : CLIP_SPACE;
     float4 color : COLOR;
     float2 uv : TEXCOORD;
 };
@@ -26,6 +27,7 @@ PS_INPUT main( VS_INPUT input )
     output.pos = float4(input.pos, 1);
     output.pos = mul(output.pos, view);
     output.pos = mul(output.pos, proj);
+    output.c_pos = output.pos;
     output.color = input.color;
     output.uv = input.uv;
     return output;

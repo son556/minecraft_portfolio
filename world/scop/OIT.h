@@ -2,6 +2,7 @@
 
 #include "Transparent.h"
 #include "Composite.h"
+#include "Water.h"
 
 class OIT
 {
@@ -23,6 +24,7 @@ private:
 	shared_ptr<DeferredBuffer> d_buff;
 	Transparent tp;
 	Composite cp;
+	Water water;
 
 private:
 	shared_ptr<InputLayout> input_layout;

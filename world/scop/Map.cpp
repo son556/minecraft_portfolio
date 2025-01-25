@@ -109,8 +109,9 @@ void Map::vertexAndIndexGenerator(
 				if (type <= 0)
 					continue;
 				Index3 next(x + move.x, y + move.y, z - move.z); // index
-				type = this->m_info.findBlock(c_idx, next);
-				if (type > )
+				int adj_type = this->m_info.findBlock(c_idx, next);
+				if (adj_type > 0 && adj_type != BlockType::OAK_LEAVES)
+					continue;
 				Block::addFaceQuadPosAndTex(
 					this->m_info.chunks[c_idx.y][c_idx.x]->start_pos,
 					dir,
@@ -141,37 +142,9 @@ void Map::vertexShadowGenerator(
 				if (type <= 0)
 					continue;
 				Index3 next(x + move.x, y + move.y, z - move.z);
-				if (this->m_info.inChunkBoundary(next.x, next.y, next.z)
-					&& this->m_info.findBlock(c_idx, next) > 0)
+				if (this->m_info.findBlock(c_idx, next) > 0)
 					continue;
-				if (adj_idx.flag) {
-					if (next.x == -1 && 
-						this->m_info.findBlock(adj_idx, 15, next.y, next.z) > 0)
-						continue;
-					if (next.x == 16 && 
-						this->m_info.findBlock(adj_idx, 0, next.y, next.z) > 0)
-						continue;
-					if (next.z == -1 && 
-						this->m_info.findBlock(adj_idx, next.x, next.y, 15) > 0)
-						continue;
-					if (next.z == 16 && 
-						this->m_info.findBlock(adj_idx, next.x, next.y, 0) > 0)
-						continue;
-				}
-				if (next.x == -1)
-					shadow_flag = this->m_info.findLight(adj_idx, 15, y, z);
-				else if (next.x == 16)
-					shadow_flag = this->m_info.findLight(adj_idx, 0, y, z);
-				else if (next.z == -1)
-					shadow_flag = this->m_info.findLight(adj_idx, x, y, 15);
-				else if (next.z == 16)
-					shadow_flag = this->m_info.findLight(adj_idx, x, y, 0);
-				else if (next.y == -1)
-					shadow_flag = 0;
-				else if (next.y == 256)
-					shadow_flag = 15;
-				else
-					shadow_flag = this->m_info.findLight(c_idx, next.x, next.y, next.z);
+				shadow_flag = this->m_info.findLight(c_idx, next.x, next.y, next.z);
 				Block::addBlockFacePosAndTex(
 					this->m_info.chunks[c_idx.y][c_idx.x]->start_pos,
 					x, y, z, dir,
@@ -195,12 +168,15 @@ void Map::vertexAndIndexGeneratorTP(Index2 const& c_idx)
 	uint32& v_idx = chunk.tp_chunk.vertices_idx;
 	vector<VertexColor>& vertices = chunk.tp_chunk.vertices;
 	vector<uint32>& indices = chunk.tp_chunk.indices;
+	v_idx = 0;
+	vertices.clear();
+	indices.clear();
 	vec4 col;
 	for (int y = 0; y <= chunk.max_h; y++) {
 		for (int z = 0; z < 16; z++) {
 			for (int x = 0; x < 16; x++) {
 				int type = this->m_info.findBlock(c_idx, x, y, z);
-				if (type < 0) {
+				if (type < 0 && type != BlockType::WATER) {
 					for (int i = 0; i < 6; i++) {
 						Block::addBlockFacePosAndCol(
 							chunk.start_pos, x, y, z, i, type, vertices);
@@ -211,7 +187,29 @@ void Map::vertexAndIndexGeneratorTP(Index2 const& c_idx)
 			}
 		}
 	}
-	chunk.tp_chunk.createTPBuffer(this->d_graphic->getDevice());
+	chunk.tp_chunk.update(this->d_graphic->getDevice());
+}
+
+void Map::vertexAndIndexGeneratorWater(Index2 const& c_idx)
+{
+	Chunk& chunk = *(this->m_info.chunks[c_idx.y][c_idx.x]);
+	vector<VertexWater>& vertices = chunk.w_chunk.vertices;
+	vector<uint32>& indices = chunk.w_chunk.indices;
+	uint32& v_idx = chunk.w_chunk.vertices_idx;
+	chunk.w_chunk.reset();
+	for (int z = 0; z < 16; z++) {
+		for (int x = 0; x < 16; x++) {
+			int type = 
+				this->m_info.findBlock(c_idx, x, WATER_HEIGHT - 1, z);
+			if (type != BlockType::WATER)
+				continue;
+			Block::addBlockFaceWater(chunk.start_pos, x, WATER_HEIGHT - 1,
+				z, vertices);
+			Block::addBlockFaceIndices(v_idx, indices);
+			v_idx += 4;
+		}
+	}
+	chunk.w_chunk.update(this->d_graphic->getDevice());
 }
 
 void Map::setSightChunk(int chunk_cnt)
@@ -266,6 +264,7 @@ void Map::chunksSetVerticesAndIndices(
 			);
 		}
 		this->vertexAndIndexGeneratorTP(c_idx);
+		this->vertexAndIndexGeneratorWater(c_idx);
 		this->m_info.chunks[c_idx.y][c_idx.x]->createGeoBuffer(
 			this->d_graphic->getDevice(),
 			vertices_geo
@@ -278,50 +277,6 @@ void Map::chunksSetVerticesAndIndices(
 		vertices_shadow.clear();
 		vertices_geo.clear();
 		s_indices.clear();
-	}
-}
-
-void Map::chunkSetVerticesAndIndicesShadow(
-	vector<Index2> const& v_idx, int st, int ed)
-{
-	static const Index3 move_arr[6] = {
-		Index3(0, 1, 0),
-		Index3(0, -1, 0),
-		Index3(0, 0, -1),
-		Index3(0, 0, 1),
-		Index3(-1, 0, 0),
-		Index3(1, 0, 0)
-	};
-	vector<VertexShadow> vertices_shadow;
-	vector<uint32> indices;
-	uint32 index;
-	ed = min(ed, v_idx.size());
-	for (int i = st; i < ed; i++) {
-		Index2 const& c_idx = v_idx[i];
-		this->m_info.chunks[c_idx.y][c_idx.x]->vertices_idx = 0;
-		Index2 apos = this->m_info.chunks[c_idx.y][c_idx.x]->chunk_pos;
-		index = 0;
-		for (int dir = 0; dir < 6; dir++) {
-			Index2 pos = apos + Index2(16 * move_arr[dir].x,
-				16 * move_arr[dir].z);
-			Index2 adj_idx = this->m_info.findChunkIndex(pos.x, pos.y);
-			this->vertexShadowGenerator(
-				c_idx,
-				adj_idx,
-				move_arr[dir],
-				dir,
-				vertices_shadow,
-				&indices,
-				&index
-			);
-		}
-		this->m_info.chunks[c_idx.y][c_idx.x]->createShadowBuffer(
-			this->d_graphic->getDevice(),
-			vertices_shadow,
-			indices
-		);
-		vertices_shadow.clear();
-		indices.clear();
 	}
 }
 
@@ -338,13 +293,6 @@ int Map::checkTerrainBoundary(float x, float z) const
 	if (z - r < this->m_info.ev_pos.y)
 		mask |= 1 << 3; // front out
 	return mask;
-}
-
-bool Map::checkLeaves(Index2 const& c_idx, Index3 const& b_idx, int type)
-{
-	if (type == static_cast<int>(BlockType::OAK_LEAVES))
-		return true;
-	return false;
 }
 
 void Map::userPositionCheck(float x, float z)

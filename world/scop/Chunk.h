@@ -2,8 +2,7 @@
 
 
 #include "TPChunk.h"
-
-// 다른 device에서 만들어진 index buffer 사용해도 문제 없는 지 확인
+#include "WaterChunk.h"
 
 struct Chunk
 {
@@ -46,6 +45,7 @@ public:
 	uint32 shadow_idx;
 	bool render_flag;
 	TPChunk tp_chunk; // 반투명 처리
+	WaterChunk w_chunk; // 물 청크
 
 private:
 	shared_ptr<Buffer<VertexGeo>> geo_vbuffer;

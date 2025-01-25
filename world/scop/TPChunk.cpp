@@ -10,22 +10,6 @@ TPChunk::~TPChunk()
 {
 }
 
-void TPChunk::createTPBuffer(ComPtr<ID3D11Device> const& device)
-{
-	this->tp_vbuffer = make_shared<Buffer<VertexColor>>(
-		device,
-		this->vertices.data(),
-		this->vertices.size(),
-		D3D11_BIND_VERTEX_BUFFER
-	);
-	this->tp_ibuffer = make_shared<Buffer<uint32>>(
-		device,
-		this->indices.data(),
-		this->indices.size(),
-		D3D11_BIND_INDEX_BUFFER
-	);
-}
-
 void TPChunk::setTPBuffer(
 	ComPtr<ID3D11DeviceContext> const& context
 )

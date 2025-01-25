@@ -1,6 +1,11 @@
 #define	AA 2
 #define HASHSCALE 0.1031
 
+float4 main() : SV_Target
+{
+    return float4(0, 0, 0, 1);
+}
+
 /*
 // shader input
 uniform vec3      iResolution;           // viewport resolution (in pixels)
@@ -15,10 +20,6 @@ uniform samplerXX iChannel0..3;          // input channel. XX = 2D/Cube
 uniform vec4      iDate;                 // (year, month, day, time in seconds)
 */
 
-float4 main() : SV_Target
-{
-    return float4(0, 0, 0, 1);
-}
 
 /*
 cbuffer Time : register(b0)

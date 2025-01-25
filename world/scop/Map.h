@@ -27,13 +27,7 @@ public:
 		int st,
 		int ed
 	);
-	void chunkSetVerticesAndIndicesShadow( // 그림자만 생성
-		vector<Index2> const& v_idx,
-		int st,
-		int ed
-	);
-	void terrainSetVerticesAndIndices();
-	void vertexAndIndexGenerator(
+	void vertexAndIndexGenerator( // goe render 용
 		Index2 const& c_idx,
 		Index2 const& adj_idx,
 		Index3 const& move,
@@ -42,7 +36,7 @@ public:
 		vector<uint32>* indices = nullptr,
 		uint32* index = nullptr
 	);
-	void vertexShadowGenerator(
+	void vertexShadowGenerator( // shadow 용
 		Index2 const& c_idx,
 		Index2 const& adj_idx,
 		Index3 const& move,
@@ -54,12 +48,13 @@ public:
 	void vertexAndIndexGeneratorTP(
 		Index2 const& c_idx
 	);
+	void vertexAndIndexGeneratorWater(Index2 const& c_idx);
 	void setSightChunk(int chunk_cnt);
 
 private:
+	void terrainSetVerticesAndIndices();
 	void resetChunk(Index2 const& c_idx);
 	int checkTerrainBoundary(float x, float z) const;
-	bool checkLeaves(Index2 const& c_idx, Index3 const& b_idx, int type);
 	void threadFunc(vector<Index2>& vec, int dir);
 
 public:
