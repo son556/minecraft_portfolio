@@ -273,24 +273,38 @@ namespace Block {
 		}
 	}
 
-	inline void addBlockFaceWater( //  todo mesh optimization 공부
+	inline void addBlockFaceWater(
 		vec3 const& start_pos,
-		float x,
-		float y,
-		float z,
+		Index2 const& sv_pos,
+		float view_width,
+		float view_height,
+		vec3 xyz,
 		vector<VertexWater>& vertices
 	) 
 	{
 		static const vec4 col = vec4(0, 0, 1, 1);
+		static const float d = 1.f / 15.f;
+		float w = view_width * 16;
+		float h = view_height * 16;
+		float sx = (start_pos.x - 0.5f - sv_pos.x) / w + xyz.x / 15.f;
+		float sy = (sv_pos.y - start_pos.z - 0.5f) / h + xyz.z / 15.f;
+		vec2 start_uv = vec2(sx, sy);
+
+		vector<vec2> texcoords = {
+			start_uv + vec2(0, d),
+			start_uv,
+			start_uv + vec2(d, 0),
+			start_uv + vec2(d, d)
+		};
 		VertexWater vertex;
-		x = start_pos.x + x;
-		y = start_pos.y + y;
-		z = start_pos.z - z;
+		float x = start_pos.x + xyz.x;
+		float y = start_pos.y + xyz.y;
+		float z = start_pos.z - xyz.z;
 
 		for (int i = 0; i < 4; i++) {
 			vertex.pos = sample_pos[i] + vec3(x, y, z);
 			vertex.col = col;
-			vertex.uv = vec2(0, 0); // tmp
+			vertex.uv = texcoords[i];
 			vertices.push_back(vertex);
 		}
 	}

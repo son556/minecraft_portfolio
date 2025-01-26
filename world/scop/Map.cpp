@@ -203,8 +203,11 @@ void Map::vertexAndIndexGeneratorWater(Index2 const& c_idx)
 				this->m_info.findBlock(c_idx, x, WATER_HEIGHT - 1, z);
 			if (type != BlockType::WATER)
 				continue;
-			Block::addBlockFaceWater(chunk.start_pos, x, WATER_HEIGHT - 1,
-				z, vertices);
+			this->m_info;
+			vec3 xyz(x, WATER_HEIGHT - 1, z);
+			Block::addBlockFaceWater(chunk.start_pos, this->m_info.sv_pos,
+				this->m_info.size_w - 2, this->m_info.size_h - 2,
+				xyz, vertices);
 			Block::addBlockFaceIndices(v_idx, indices);
 			v_idx += 4;
 		}
