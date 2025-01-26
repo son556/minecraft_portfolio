@@ -38,9 +38,6 @@ public:
 	);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 
-public:
-	ComPtr<ID3D11ShaderResourceView> getCSMSRV(int idx);
-
 private:
 	void setPipe();
 	void setCSMPipe();

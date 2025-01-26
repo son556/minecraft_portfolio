@@ -277,6 +277,9 @@
     <Filter Include="소스 파일\World\Map\System\TerrainSystem\Trees">
       <UniqueIdentifier>{563c4ee2-7e39-4144-92d0-ee22cfdf05f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\Reflection">
+      <UniqueIdentifier>{e1480218-aa17-45a8-acf4-89c086c39070}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -829,6 +832,12 @@
     </FxCompile>
     <FxCompile Include="WaterPS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\OIT\Water</Filter>
+    </FxCompile>
+    <FxCompile Include="ReflectionVS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection</Filter>
+    </FxCompile>
+    <FxCompile Include="ReflectionPS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

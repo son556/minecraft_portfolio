@@ -301,9 +301,3 @@ ComPtr<ID3D11ShaderResourceView> ShadowRender::getSRV()
 	return this->d_buffer->getSRV(0);
 }
 
-ComPtr<ID3D11ShaderResourceView> ShadowRender::getCSMSRV(int idx) // test
-{
-	//return this->d_buffer->getSRV(0);
-	return this->csms[idx]->getDBuffer()->getSRV(0);
-	return this->csms[idx]->getSRV();
-}
