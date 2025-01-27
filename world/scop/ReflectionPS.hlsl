@@ -1,46 +1,85 @@
+TextureCube reflection_cube : register(t0);
+Texture2D w_pos : register(t1);
+
+SamplerState sampler0 : register(s0);
+
+cbuffer cam : register(b0)
+{
+    float4 cam_pos;
+}
+
 struct PS_INPUT
 {
     float4 pos : SV_Position;
     float2 uv : TEXCOORD;
 };
 
-Texture2D ambient_color : register(t0);
-Texture2D directional_color : register(t1);
-Texture2D shadow_map : register(t2);
-Texture2D cube_map : register(t3);
-
-SamplerState sampler0
+float collisionPlane(float3 o, float3 d, float3 n)
 {
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = WRAP;
-    AddressV = WRAP;
-};
-
-float3 LinearToneMapping(float3 color)
-{
-    float3 invGamma = float3(1, 1, 1) / 2.2f;
-
-    color = clamp(color, 0., 1.);
-    color = pow(color, invGamma);
-    return color;
+    float d_dot_n = dot(d, n);
+    if (d_dot_n < 0.00000001)
+        return -1;
+    
+    float3 x;
+    if (n.x != 0)
+    {
+        if (n.x == 1)
+            x = cam_pos.xyz - float3(3000, 0, 0);
+        else
+            x = cam_pos.xyz + float3(3000, 0, 0);
+        if (o.y == 0 && o.z == 0)
+            x = float3(x.x, 1, 1);
+        else
+            x = float3(x.x, 0, 0);
+    }
+    else if (n.y != 0)
+    {
+        if (n.y == 1)
+            x = cam_pos.xyz - float3(0, cam_pos.y, 0);
+        else
+            x = float3(0, 6000, 0);
+        if (o.x == 0 && o.z == 0)
+            x = float3(1, x.y, 1);
+        else
+            x = float3(0, x.y, 0);
+    }
+    else
+    {
+        if (n.z == 1)
+            x = cam_pos.xyz - float3(0, 0, 3000);
+        else
+            x = cam_pos.xyz + float3(0, 0, 3000);
+        if (o.x == 0 && o.y == 0)
+            x = float3(1, 1, x.z);
+        else
+            x = float3(0, 0, x.z);
+    }
+    
+    return dot(n, x - o) / d_dot_n;
 }
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-    float3 a_color =
-        ambient_color.Sample(sampler0, input.uv).rgb;
-    a_color = LinearToneMapping(a_color);
-    float4 d_c =
-        directional_color.Sample(sampler0, input.uv);
-    float3 d_color = d_c.rgb;
+    float3 o = w_pos.Sample(sampler0, input.uv).xyz;
+    if (o.x == 0 && o.y == 0 && o.z == 0)
+        discard;
+    float3 a = o - cam_pos.xyz;
+    float3 d = reflect(normalize(a), float3(0, 1, 0));
+    d = normalize(d);
+    //float3 color = reflection_cube.Sample(sampler0, d).rgb;
+    //return float4(color, 1.0f);
     
-    d_color = LinearToneMapping(d_color);
-    float4 color = float4(a_color + d_color, 1);
-    if (color.r == 0 && color.g == 0 && color.b == 0)
-        return float4(LinearToneMapping(
-            cube_map.Sample(sampler0, input.uv).rgb), 1);
+    float t = 1000000;
+    t = min(t, collisionPlane(o, d, float3(1, 0, 0)));
+    t = min(t, collisionPlane(o, d, float3(-1, 0, 0)));
+    t = min(t, collisionPlane(o, d, float3(0, 1, 0)));
+    t = min(t, collisionPlane(o, d, float3(0, -1, 0)));
+    t = min(t, collisionPlane(o, d, float3(0, 0, 1)));
+    t = min(t, collisionPlane(o, d, float3(0, 0, -1)));
+    float3 b = d * t;
     
-    float sp = shadow_map.Sample(sampler0, input.uv).r;    
-    color = float4(a_color.xyz + d_color.xyz * sp, 1);
-    return color;
+    float3 c = a + b;
+    c = normalize(c);
+    float3 color = reflection_cube.Sample(sampler0, d).rgb;
+    return float4(color, 1.0f);
 }

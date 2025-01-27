@@ -196,13 +196,16 @@ GeoRender::~GeoRender()
 void GeoRender::render(
 	Mat const& view, 
 	Mat const& proj,
-	vec3 const& cam_pos
+	vec3 const& cam_pos,
+	D3D11_VIEWPORT* view_port
 )
 {
 	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
 	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
 	this->d_graphic->renderBegin(this->d_buffer.get(), 
 		this->depth_map->getDepthStencilView());
+	if (view_port)
+		context->RSSetViewports(1, view_port);
 	this->setPipe();
 	this->setConstantBuffer(view, proj, cam_pos);
 	for (int i = 0; i < this->m_info->size_h; i++) {
@@ -218,6 +221,11 @@ void GeoRender::render(
 	context->DSSetShader(nullptr, nullptr, 0);
 	if (this->parallax_flag)
 		this->parallaxRender(cam_pos);
+}
+
+void GeoRender::setParallaxFlag(bool flag)
+{
+	this->parallax_flag = flag;
 }
 
 ComPtr<ID3D11ShaderResourceView> GeoRender::getSRV(RTVIndex idx)

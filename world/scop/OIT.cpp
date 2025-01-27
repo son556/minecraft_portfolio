@@ -11,6 +11,8 @@
 #include "Buffer.h"
 #include "SamplerState.h"
 
+#include "TestRender.h"
+
 OIT::OIT(
 	DeferredGraphics *graphic,
 	MapUtils* minfo
@@ -62,6 +64,8 @@ OIT::OIT(
 		indices.size(),
 		D3D11_BIND_INDEX_BUFFER
 	);
+
+	this->test_render = make_shared<TestRender>(d_graphic, m_info);
 }
 
 OIT::~OIT()
@@ -101,19 +105,23 @@ void OIT::setPipe()
 		this->sampler_state->getComPtr().GetAddressOf());
 }
 
-void OIT::render(Mat const& cam_view, Mat const& cam_proj)
+void OIT::render(
+	vec3 const& cam_pos,
+	Mat const& cam_view, 
+	Mat const& cam_proj
+)
 {
 	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
 	
+	// water render tmp
+	this->water.render(cam_pos, cam_view, cam_proj,
+		this->depth_srv, this->solid_rtv);
+
 	// transparent render
 	this->tp.render(cam_view, cam_proj, this->depth_srv);
 
 	// composition render
 	this->cp.render(this->solid_rtv, this->tp.getAccum(), this->tp.getReveal());
-
-	// water render tmp
-	this->water.render_test(cam_view, cam_proj, 
-		this->depth_srv, this->solid_rtv);
 
 	// result render
 	this->setPipe();
@@ -131,6 +139,11 @@ void OIT::render(Mat const& cam_view, Mat const& cam_proj)
 	context->DrawIndexed(
 		this->i_buff->getCount(),
 		0, 0);
+}
+
+void OIT::setReflectionCube(ComPtr<ID3D11ShaderResourceView>& reflection_cube)
+{
+	this->water.setReflectionCube(reflection_cube);
 }
 
 ComPtr<ID3D11ShaderResourceView> OIT::getSRV()

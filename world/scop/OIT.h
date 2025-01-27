@@ -4,6 +4,8 @@
 #include "Composite.h"
 #include "Water.h"
 
+class TestRender;
+
 class OIT
 {
 public:
@@ -15,7 +17,9 @@ public:
 		ComPtr<ID3D11ShaderResourceView> depth_srv
 	);
 	void setPipe();
-	void render(Mat const& cam_view, Mat const& cam_proj);
+	void render(vec3 const& cam_pos, Mat const& cam_view, Mat const& cam_proj);
+	void setReflectionCube(
+		ComPtr<ID3D11ShaderResourceView>& reflection_cube);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 
 private:
@@ -39,5 +43,7 @@ private:
 	ComPtr<ID3D11RenderTargetView> solid_rtv;
 	shared_ptr<Buffer<VertexDefer>> v_buff;
 	shared_ptr<Buffer<uint32>> i_buff;
+
+	shared_ptr<TestRender> test_render;
 };
 

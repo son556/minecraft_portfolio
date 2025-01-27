@@ -280,6 +280,27 @@
     <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\Reflection">
       <UniqueIdentifier>{e1480218-aa17-45a8-acf4-89c086c39070}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\ReflectionCube">
+      <UniqueIdentifier>{5309c267-99c1-4034-8d0b-8755b53bd00e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\Reflection\Cube">
+      <UniqueIdentifier>{e5da4856-8fb0-41d3-9e53-51646291a5b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterReflection">
+      <UniqueIdentifier>{80edb7ee-da58-4954-b392-3aeb6cdf4627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefrection">
+      <UniqueIdentifier>{747ec7eb-eb50-4bbe-a430-65991d329dd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterInit">
+      <UniqueIdentifier>{f7778bd9-d3b1-4b5c-872a-01a21e5badb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\WaterInit">
+      <UniqueIdentifier>{50a56646-c107-4b10-b60d-0d304e29300c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\WaterRefrection">
+      <UniqueIdentifier>{c813763a-bb42-4778-b638-5c0c6adadd17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -483,6 +504,18 @@
     <ClInclude Include="SetCave.h">
       <Filter>소스 파일\World\Map\System\TerrainSystem\SetCave</Filter>
     </ClInclude>
+    <ClInclude Include="ReflectionCube.h">
+      <Filter>소스 파일\World\Map\System\RenderSystem\ReflectionCube</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterReflection.h">
+      <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterReflection</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterInit.h">
+      <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterInit</Filter>
+    </ClInclude>
+    <ClInclude Include="TestRender.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -677,6 +710,18 @@
     <ClCompile Include="SetCave.cpp">
       <Filter>소스 파일\World\Map\System\TerrainSystem\SetCave</Filter>
     </ClCompile>
+    <ClCompile Include="ReflectionCube.cpp">
+      <Filter>소스 파일\World\Map\System\RenderSystem\ReflectionCube</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterReflection.cpp">
+      <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterReflection</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterInit.cpp">
+      <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterInit</Filter>
+    </ClCompile>
+    <ClCompile Include="TestRender.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="scop.rc">
@@ -827,17 +872,29 @@
     <FxCompile Include="refPS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\OIT\Water</Filter>
     </FxCompile>
-    <FxCompile Include="WaterVS.hlsl">
-      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water</Filter>
+    <FxCompile Include="ReflectionCubePS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection\Cube</Filter>
     </FxCompile>
-    <FxCompile Include="WaterPS.hlsl">
-      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water</Filter>
+    <FxCompile Include="ReflectionCubeVS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection\Cube</Filter>
     </FxCompile>
     <FxCompile Include="ReflectionVS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection</Filter>
     </FxCompile>
     <FxCompile Include="ReflectionPS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection</Filter>
+    </FxCompile>
+    <FxCompile Include="WaterInitPS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\WaterInit</Filter>
+    </FxCompile>
+    <FxCompile Include="WaterInitVS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\WaterInit</Filter>
+    </FxCompile>
+    <FxCompile Include="WaterVS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water</Filter>
+    </FxCompile>
+    <FxCompile Include="WaterPS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

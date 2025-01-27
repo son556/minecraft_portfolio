@@ -18,8 +18,10 @@ public:
 	void render(
 		Mat const& view,
 		Mat const& proj,
-		vec3 const& cam_pos
+		vec3 const& cam_pos,
+		D3D11_VIEWPORT* view_port = nullptr
 	);
+	void setParallaxFlag(bool flag);
 	ComPtr<ID3D11ShaderResourceView> getSRV(RTVIndex idx);
 	ComPtr<ID3D11ShaderResourceView> getNPSRV(RTVIndex idx);
 	ComPtr<ID3D11ShaderResourceView> getDepthSRV();

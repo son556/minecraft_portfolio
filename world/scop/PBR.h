@@ -22,7 +22,8 @@ public:
 	void render(
 		vec3 const& light_pos, 
 		vec3 const& cam_pos,
-		ComPtr<ID3D11ShaderResourceView> color_srv
+		ComPtr<ID3D11ShaderResourceView> color_srv,
+		D3D11_VIEWPORT* view_port = nullptr
 	);
 	ComPtr<ID3D11ShaderResourceView> getAmbientLight();
 	ComPtr<ID3D11ShaderResourceView> getDirectLight();

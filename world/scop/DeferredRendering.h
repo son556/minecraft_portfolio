@@ -9,10 +9,12 @@
 #include "CaveShadow.h"
 #include "OIT.h"
 
+
 class DeferredGraphics;
 class MapUtils;
 template <typename T> class Buffer;
 class Wallpaper;
+class ReflectionCube;
 
 class DeferredRendering
 {
@@ -36,12 +38,6 @@ private:
 		Mat const& proj,
 		Mat const& view
 	);
-	void setReflectionPipe();
-	void reflectionRender(
-		Mat const& cam_view,
-		Mat const& cam_proj,
-		vec3 const& cam_pos
-	);
 
 private:
 	shared_ptr<Buffer<VertexDefer>> vbuffer;
@@ -57,6 +53,7 @@ private:
 	PBR pbr;
 	CaveShadow cave_shadow;
 	OIT oit;
+	shared_ptr<ReflectionCube> reflection_cube;
 	shared_ptr<Wallpaper> cube_map;
 	D3D11_VIEWPORT view_port;
 
@@ -72,11 +69,5 @@ private:
 	shared_ptr<VertexShader> fin_vs;
 	shared_ptr<PixelShader> fin_ps;
 	shared_ptr<InputLayout> fin_ia;
-
-private: // reflection
-	shared_ptr<DeferredBuffer> reflection_buff;
-	shared_ptr<VertexShader> reflection_vs;
-	shared_ptr<PixelShader> reflection_ps;
-	shared_ptr<InputLayout> reflection_ia;
 };
 

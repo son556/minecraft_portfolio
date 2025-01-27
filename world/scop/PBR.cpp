@@ -108,12 +108,15 @@ void PBR::setRTV()
 void PBR::render(
 	vec3 const& light_pos, 
 	vec3 const& cam_pos,
-	ComPtr<ID3D11ShaderResourceView> color_srv
+	ComPtr<ID3D11ShaderResourceView> color_srv,
+	D3D11_VIEWPORT* view_port
 )
 {
 	this->setCBuffer(light_pos, cam_pos);
 	this->setPipe();
 	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	if (view_port)
+		context->RSSetViewports(1, view_port);
 	context->PSSetShaderResources(0, 1, color_srv.GetAddressOf());
 	context->DrawIndexed(this->ibuffer->getCount(), 0, 0);
 }
