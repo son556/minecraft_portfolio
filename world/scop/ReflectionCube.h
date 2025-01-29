@@ -55,7 +55,7 @@ private:
 	ComPtr<ID3D11DepthStencilView> dsv;
 	ComPtr<ID3D11ShaderResourceView> srv;
 	float clear_color[4] = { 0.f, 0.f, 0.f, 1.f };
-	D3D11_VIEWPORT view_port = { 0, };
+	D3D11_VIEWPORT view_port;
 	Mat cam_views[6];
 	Mat cam_proj;
 };
