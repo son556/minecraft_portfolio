@@ -5,31 +5,30 @@
 #include "DeferredBuffer.h"
 #include "ConstantBuffer.h"
 #include "MapUtils.h"
+#include "TestCam.h"
 
 CascadeShadow::CascadeShadow(
-	DeferredGraphics* d_graphic, 
-	UINT width, 
+	UINT width,
 	UINT height,
 	MapUtils* m_info
 )
 {
 	this->width = width;
 	this->height = height;
-	this->d_graphic = d_graphic;
 	this->m_info = m_info;
 	this->depth_buffer = make_shared<DepthMap>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		width, height);
 	this->depth_buffer->setViewPort(width, height);
 	MVP mvp;
 	this->cbuffer = make_shared<ConstantBuffer>(
-		this->d_graphic->getDevice(),
-		this->d_graphic->getContext(),
+		d_graphic->getDevice(),
+		d_graphic->getContext(),
 		mvp
 	);
 	this->d_buffer = make_shared<DeferredBuffer>(1);
 	this->d_buffer->setRTVsAndSRVs(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		width,
 		height
 	);
@@ -46,8 +45,8 @@ ComPtr<ID3D11DepthStencilView> CascadeShadow::getDSV()
 }
 
 void CascadeShadow::setFrustumVertices(
-	vec3 const& coord, 
-	int vertex_idx, 
+	vec3 const& coord,
+	int vertex_idx,
 	int frustum_idx)
 {
 	this->frustum_vertices[frustum_idx][vertex_idx][0] = coord.x;
@@ -57,15 +56,12 @@ void CascadeShadow::setFrustumVertices(
 
 
 
-void CascadeShadow::updateCBuffer(
-	Mat const& cam_view,
-	Mat const& cam_proj
-)
+void CascadeShadow::updateCBuffer(CamType type)
 {
 	float x = 0;
 	float y = 0;
 	float z = 0;
-	Mat inv_view = cam_view.Invert();
+	Mat inv_view = cam->getMVP(type).view.Invert();
 	vector<vec4> coord;
 	coord.resize(8);
 	vec4 mid = vec4(0, 0, 0, 0);
@@ -130,5 +126,3 @@ shared_ptr<DeferredBuffer> CascadeShadow::getDBuffer()
 {
 	return this->d_buffer;
 }
-
-

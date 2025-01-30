@@ -11,18 +11,14 @@
 #include "Sun.h"
 #include "Moon.h"
 #include "Buffer.h"
+#include "TestCam.h"
 
-SunMoon::SunMoon(
-	DeferredGraphics* dgraphic,
-	UINT width,
-	UINT height
-)
+SunMoon::SunMoon(UINT width, UINT height)
 {
-	this->d_graphic = dgraphic;
-	this->sun = make_shared<Sun>(dgraphic, 30);
-	this->moon = make_shared<Moon>(dgraphic, 30);
+	this->sun = make_shared<Sun>(30);
+	this->moon = make_shared<Moon>(30);
 	this->d_buffer = make_shared<DeferredBuffer>(1);
-	ComPtr<ID3D11Device> device = dgraphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buffer->setRTVsAndSRVs(device, width, height);
 	this->vertex_shader = make_shared<VertexShader>(
 		device,
@@ -47,25 +43,29 @@ SunMoon::SunMoon(
 		D3D11_FILL_SOLID,
 		D3D11_CULL_BACK
 	);
+	MVP tmp;
+	this->constant_buff = make_shared<ConstantBuffer>(
+		d_graphic->getDevice(),
+		d_graphic->getContext(),
+		tmp
+	);
 }
 
-void SunMoon::render(
-	vec3 const& cam_pos,
-	Mat const& cam_view,
-	Mat const& cam_proj
-)
+void SunMoon::render(CamType type)
 {
 	ComPtr<ID3D11Device> device;
-	device = this->d_graphic->getDevice();
+	device = d_graphic->getDevice();
 	ComPtr<ID3D11DeviceContext> context;
-	context = this->d_graphic->getContext();
+	context = d_graphic->getContext();
 	static float d = 15;
 	float dt = XMConvertToRadians(d);
+	
 	//d += 0.04;
-	MVP mvp;
+	MVP mvp = cam->getMVP(type);
+	vec3 cam_pos = cam->getPos();
 	vec3 move_pos = vec3(cam_pos.x + 299, 0, cam_pos.z);
 	mvp.model = SimpleMath::Matrix::CreateTranslation(move_pos) * 
-		SimpleMath::Matrix::CreateRotationZ(dt);
+		SimpleMath::Matrix::CreateRotationZ(dt) * mvp.model;
 	XMFLOAT4 s_pos = XMFLOAT4(0, 0, 0, 1);
 	XMVECTOR sun_pos_vec = XMLoadFloat4(&s_pos);
 	sun_pos_vec = XMVector4Transform(sun_pos_vec, mvp.model);
@@ -73,18 +73,14 @@ void SunMoon::render(
 	this->sun_pos = vec3(s_pos.x, s_pos.y, s_pos.z);
 
 	mvp.model = mvp.model.Transpose();
-	mvp.view = cam_view.Transpose();
-	mvp.proj = cam_proj.Transpose();
-	ConstantBuffer cbuffer(
-		device,
-		context,
-		mvp
-	);
+	mvp.view = mvp.view.Transpose();
+	mvp.proj = mvp.proj.Transpose();
+	this->constant_buff->update(mvp);
 	this->setPipe();
 	context->VSSetConstantBuffers(0, 1,
-		cbuffer.getComPtr().GetAddressOf());
+		this->constant_buff->getComPtr().GetAddressOf());
+	d_graphic->renderBegin(this->d_buffer.get());
 
-	this->d_graphic->renderBegin(this->d_buffer.get());
 	// sun
 	uint32 offset = this->sun->getVertexBuffer()->getOffset();
 	uint32 stride = this->sun->getVertexBuffer()->getStride();
@@ -104,7 +100,7 @@ void SunMoon::render(
 	XMStoreFloat4(&m_pos, moon_pos_vec);
 	this->moon_pos = vec3(m_pos.x, m_pos.y, m_pos.z);
 	mvp.model = mvp.model.Transpose();
-	cbuffer.update(mvp);
+	this->constant_buff->update(mvp);
 
 	offset = this->moon->getVertexBffer()->getOffset();
 	stride = this->moon->getVertexBffer()->getStride();
@@ -123,7 +119,7 @@ ComPtr<ID3D11ShaderResourceView> SunMoon::getSRV()
 void SunMoon::setPipe()
 {
 	ComPtr<ID3D11DeviceContext> context;
-	context = this->d_graphic->getContext();
+	context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	);

@@ -3,9 +3,9 @@
 #include "DeferredGraphics.h"
 #include "Buffer.h"
 
-Moon::Moon(DeferredGraphics* dgraphic, UINT radius)
+Moon::Moon(UINT radius)
 {
-	ComPtr<ID3D11Device> device = dgraphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	vector<vec3>positions;
 	vector<uint32> indices;
 	vector<VertexColor> vertices;

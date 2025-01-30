@@ -13,16 +13,20 @@ class SamplerState;
 class Transparent
 {
 public:
-	Transparent(DeferredGraphics* d_graphic, MapUtils* minfo);
-	~Transparent();
+	Transparent(MapUtils* minfo);
+	~Transparent() = default;
 	void setPipe();
 	void render(
-		Mat const& cam_view, 
-		Mat const& cam_proj,
+		CamType type,
 		ComPtr<ID3D11ShaderResourceView> depth_srv
 	);
 	ComPtr<ID3D11ShaderResourceView> getAccum();
 	ComPtr<ID3D11ShaderResourceView> getReveal();
+
+private:
+	Transparent() = delete;
+	Transparent(Transparent const&) = delete;
+	Transparent& operator=(Transparent const&) = delete;
 
 private:
 	ComPtr<ID3D11BlendState> blend_state;
@@ -33,14 +37,12 @@ private:
 	float clear_reveal[4] = { 1.f, 1.f, 1.f, 1.f };
 
 private:
-	DeferredGraphics* d_graphic;
 	MapUtils* m_info;
 	shared_ptr<DeferredBuffer> d_buffer;
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<VertexShader> vertex_shader;
 	shared_ptr<RasterizerState> rasterizer_state;
 	shared_ptr<PixelShader> pixel_shader;
-	shared_ptr<ConstantBuffer> constant_buffer;
 	shared_ptr<SamplerState> sampler_state;
 };
 

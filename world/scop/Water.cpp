@@ -14,11 +14,11 @@
 
 #include "TestRender.h"
 
-Water::Water(DeferredGraphics* d_graphic, MapUtils* m_info)
-	: d_graphic(d_graphic), m_info(m_info), 
-	water_init(d_graphic, m_info), water_reflection(d_graphic, m_info)
+Water::Water(MapUtils* m_info)
+	: m_info(m_info), water_init(m_info), 
+	water_reflection(m_info)
 {
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buff = make_shared<DeferredBuffer>(2);
 	this->d_buff->setRTVsAndSRVs(
 		device,
@@ -65,12 +65,12 @@ Water::Water(DeferredGraphics* d_graphic, MapUtils* m_info)
 	);
 	this->sampler_state = make_shared<SamplerState>(device);
 
-	this->rt = make_shared<TestRender>(d_graphic, m_info);
+	this->rt = make_shared<TestRender>(m_info);
 }
 
 void Water::setPipe()
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	uint32 stride = this->v_buff->getStride();
 	uint32 offset = this->v_buff->getOffset();
@@ -90,26 +90,27 @@ void Water::setPipe()
 }
 
 void Water::render(
-	vec3 const& cam_pos,
-	Mat const& cam_view, 
-	Mat const& cam_proj, 
+	CamType type,
 	ComPtr<ID3D11ShaderResourceView> depth_srv, 
 	ComPtr<ID3D11RenderTargetView>& rtv
 )
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	
 	// 물위치가 있는 곳을 그림
-	this->water_init.render(cam_view, cam_proj, depth_srv);
+	this->water_init.render(type, depth_srv);
 
 	// 물 표면 반사를 그림
-	this->water_reflection.render(cam_pos, this->reflection_cube,
+	this->water_reflection.render(this->reflection_cube,
 		this->water_init.getSRV(WaterRTVType::POSITION));
 	
 	// 물 굴절 그림
-
+	{ // 반사 행렬 증명 부록 c.4.3(평면 정의), c.4.10(반사행렬 증명)
+		SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, 0, 0), vec3(0, 1, 0));
+		Mat reflectionRow = Mat::CreateReflection(plane);
+	}
 	// 물 굴절 + 반사
-	this->d_graphic->renderBegin(1, rtv.GetAddressOf(), nullptr, false, true);
+	d_graphic->renderBegin(1, rtv.GetAddressOf(), nullptr, false, true);
 	this->setPipe();
 	context->PSSetShaderResources(0, 1,
 		this->water_reflection.getSRV().GetAddressOf());

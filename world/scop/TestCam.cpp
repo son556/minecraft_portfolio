@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "TestCam.h"
 #include <algorithm>
+#include "ConstantBuffer.h"
+#include "DeferredGraphics.h"
 
 TestCam::TestCam(
 	float width, 
@@ -23,6 +25,21 @@ TestCam::TestCam(
 	);
 	this->cam_near = cam_near;
 	this->cam_far = cam_far;
+	this->constant_buffer = make_shared<ConstantBuffer>(
+		d_graphic->getDevice(),
+		d_graphic->getContext(),
+		this->mvp
+	);
+	this->constant_reflection_buffer = make_shared<ConstantBuffer>(
+		d_graphic->getDevice(),
+		d_graphic->getContext(),
+		this->mvp
+	);
+	this->constant_tmp_buffer = make_shared<ConstantBuffer>(
+		d_graphic->getDevice(),
+		d_graphic->getContext(),
+		this->mvp
+	);
 }
 
 TestCam::~TestCam()
@@ -135,6 +152,21 @@ void TestCam::update()
 	move_dir = XMVector3Normalize(move_dir) * 0.03f;
 	this->pos += move_dir;
 	this->mvp.view = XMMatrixLookToLH(this->pos, this->dir, vec3(0, 1, 0));
+	
+	SimpleMath::Plane p = SimpleMath::Plane(vec3(0, 0, 0), vec3(0, 1, 0));
+	Mat reflection_xz_plane_matrix = Mat::CreateReflection(p);
+	this->reflection_mvp.model = reflection_xz_plane_matrix;
+	this->reflection_mvp.view = this->mvp.view;
+	this->reflection_mvp.proj = this->mvp.proj;
+
+
+	MVP tmvp;
+	tmvp.view = this->mvp.view.Transpose();
+	tmvp.proj = this->mvp.proj.Transpose();
+	this->constant_buffer->update(tmvp);
+
+	tmvp.model = this->reflection_mvp.model.Transpose();
+	this->constant_reflection_buffer->update(tmvp);
 }
 
 void TestCam::setNear(float cam_near)
@@ -194,6 +226,38 @@ void TestCam::setHeight(float h)
 {
 	this->w_height = h;
 }
+
+void TestCam::setTmpMVP(Mat const& model, Mat const& view, Mat const& proj)
+{
+	this->tmp_mvp.model = model;
+	this->tmp_mvp.view = view;
+	this->tmp_mvp.proj = proj;
+}
+
+void TestCam::tmpBufferUpdate(MVP const& mvp)
+{
+	this->constant_tmp_buffer->update(mvp);
+}
+
+MVP TestCam::getMVP(CamType type)
+{
+	if (type == CamType::NORMAL)
+		return this->mvp;
+	else if (type == CamType::TEMP)
+		return this->tmp_mvp;
+	return this->reflection_mvp;
+}
+
+
+shared_ptr<ConstantBuffer>& TestCam::getConstantBuffer(CamType type)
+{
+	if (type == CamType::NORMAL)
+		return this->constant_buffer;
+	else if (type == CamType::TEMP)
+		return this->constant_tmp_buffer;
+	return this->constant_reflection_buffer;
+}
+
 
 MVP TestCam::getViewProj()
 {

@@ -11,11 +11,11 @@
 #include "Chunk.h"
 #include "ConstantBuffer.h"
 #include "SamplerState.h"
+#include "TestCam.h"
 
-WaterInit::WaterInit(DeferredGraphics* d_graphic, MapUtils* m_info)
-	: d_graphic(d_graphic), m_info(m_info)
+WaterInit::WaterInit(MapUtils* m_info) : m_info(m_info)
 {
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buff = make_shared<DeferredBuffer>(2);
 	this->d_buff->setRTVsAndSRVs(
 		device,
@@ -45,18 +45,12 @@ WaterInit::WaterInit(DeferredGraphics* d_graphic, MapUtils* m_info)
 		D3D11_FILL_SOLID,
 		D3D11_CULL_NONE
 	);
-	MVP mvp;
-	this->constnat_buffer = make_shared<ConstantBuffer>(
-		device,
-		this->d_graphic->getContext(),
-		mvp
-	);
 	this->sampler_state = make_shared<SamplerState>(device);
 }
 
 void WaterInit::setPipe()
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	context->IASetInputLayout(this->input_layout->getComPtr().Get());
 	context->VSSetShader(
@@ -70,21 +64,15 @@ void WaterInit::setPipe()
 }
 
 void WaterInit::render(
-	Mat const& cam_view, 
-	Mat const& cam_proj, 
+	CamType type, 
 	ComPtr<ID3D11ShaderResourceView> const& depth_srv
 )
 {
-	MVP mvp;
-	mvp.view = cam_view.Transpose();
-	mvp.proj = cam_proj.Transpose();
-	this->constnat_buffer->update(mvp);
-
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
-	this->d_graphic->renderBegin(this->d_buff.get());
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
+	d_graphic->renderBegin(this->d_buff.get());
 	this->setPipe();
 	context->VSSetConstantBuffers(0, 1,
-		this->constnat_buffer->getComPtr().GetAddressOf());
+		cam->getConstantBuffer(type)->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(0, 1, depth_srv.GetAddressOf());
 	for (int i = 0; i < this->m_info->size_h; i++) {
 		for (int j = 0; j < this->m_info->size_w; j++) {

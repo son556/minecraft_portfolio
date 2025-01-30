@@ -11,11 +11,13 @@
 #include "Buffer.h"
 #include "SamplerState.h"
 #include "Block.h"
+#include "DeferredGraphics.h"
+#include "TestCam.h"
 
-TestRender::TestRender(DeferredGraphics* d_graphic, MapUtils* m_info)
-	: d_graphic(d_graphic), m_info(m_info)
+TestRender::TestRender(MapUtils* m_info)
+	: m_info(m_info)
 {
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	vector<VertexDefer> vertices;
 	vector<uint32> indices;
 	Block::makeBox(1, vertices, indices);
@@ -59,7 +61,7 @@ TestRender::TestRender(DeferredGraphics* d_graphic, MapUtils* m_info)
 
 void TestRender::setPipe()
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	);
@@ -90,10 +92,10 @@ void TestRender::setPipe()
 
 void TestRender::render(ComPtr<ID3D11ShaderResourceView> srv)
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
-	this->d_graphic->renderBegin();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
+	d_graphic->renderBegin();
 	this->setPipe();
 	context->PSSetShaderResources(0, 1, srv.GetAddressOf());
 	context->DrawIndexed(this->i_buff->getCount(), 0, 0);
-	this->d_graphic->renderEnd();
+	d_graphic->renderEnd();
 }

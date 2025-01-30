@@ -29,6 +29,11 @@ public:
 	ComPtr<ID3D11DepthStencilView> getDSV();
 
 private:
+	DeferredGraphics() = delete;
+	DeferredGraphics(DeferredGraphics const&) = delete;
+	DeferredGraphics& operator=(DeferredGraphics const&) = delete;
+
+private:
 	void createSwapChainAndDevice();
 	void createRTV();
 	void createDepthStencilView();

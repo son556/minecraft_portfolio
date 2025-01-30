@@ -9,6 +9,7 @@
 #include "Buffer.h"
 #include "ConstantBuffer.h"
 #include "DeferredBuffer.h"
+#include "TestCam.h"
 
 struct SsaoBlurBuffer
 {
@@ -22,12 +23,8 @@ struct SsaoBlurBuffer
 	Mat view;
 };
 
-SsaoBlur::SsaoBlur(
-	DeferredGraphics* d_graphic, 
-	UINT width, UINT height
-)
+SsaoBlur::SsaoBlur(UINT width, UINT height)
 {
-	this->d_graphic = d_graphic;
 	this->width = width;
 	this->height = height;
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
@@ -114,30 +111,25 @@ SsaoBlur::SsaoBlur(
 	SsaoBlurBuffer sb;
 	this->cbuffer = make_shared<ConstantBuffer>(
 		device,
-		this->d_graphic->getContext(),
+		d_graphic->getContext(),
 		sb
 	);
 }
 
-void SsaoBlur::render(
-	int wh_flag, 
-	Mat const& proj,
-	Mat const& view,
-	float num
-)
+void SsaoBlur::render(int wh_flag, CamType type, float num)
 {
 	this->setPipe();
-	this->d_graphic->setViewPort(this->view_port);
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	d_graphic->setViewPort(this->view_port);
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	SsaoBlurBuffer sb;
 	sb.texel_width = num / (this->width);
 	sb.texel_height = num / (this->height);
 	sb.width = this->width;
 	sb.height = this->height;
 	sb.wh_flag = wh_flag;
-	sb.proj = proj.Transpose();
-	sb.view = view.Transpose();
+	sb.proj = cam->getMVP(type).proj.Transpose();
+	sb.view = cam->getMVP(type).view.Transpose();
 	this->cbuffer->update(sb);
 	context->PSSetConstantBuffers(0, 1,
 		this->cbuffer->getComPtr().GetAddressOf());
@@ -171,7 +163,7 @@ shared_ptr<DeferredBuffer> const& SsaoBlur::getHeightDBuffer()
 void SsaoBlur::setPipe()
 {
 	ComPtr<ID3D11DeviceContext> context =
-		this->d_graphic->getContext();
+		d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	);

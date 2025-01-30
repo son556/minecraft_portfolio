@@ -15,17 +15,18 @@ class ConstantBuffer;
 class SsaoBlur
 {
 public:
-	SsaoBlur(DeferredGraphics* d_graphic, UINT width, UINT height);
-	void render(
-		int wh_flag, 
-		Mat const& proj,
-		Mat const& view,
-		float num
-	);
+	SsaoBlur(UINT width, UINT height);
+	~SsaoBlur() = default;
+	void render(int wh_flag, CamType type, float num);
 	ComPtr<ID3D11ShaderResourceView> getWidthSRV();
 	ComPtr<ID3D11ShaderResourceView> getHeightSRV();
 	shared_ptr<DeferredBuffer> const& getWidthDBuffer();
 	shared_ptr<DeferredBuffer> const& getHeightDBuffer();
+
+private:
+	SsaoBlur() = delete;
+	SsaoBlur(SsaoBlur const&) = delete;
+	SsaoBlur& operator=(SsaoBlur const&) = delete;
 
 private:
 	void setPipe();
@@ -36,7 +37,6 @@ private:
 	shared_ptr<ConstantBuffer> cbuffer;
 
 private:
-	DeferredGraphics* d_graphic;
 	UINT width;
 	UINT height;
 	D3D11_VIEWPORT view_port = { 0, };

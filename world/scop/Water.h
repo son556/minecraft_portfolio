@@ -8,12 +8,10 @@ class TestRender;
 class Water
 {
 public:
-	Water(DeferredGraphics* d_graphic, MapUtils* m_info);
+	Water(MapUtils* m_info);
 	void setPipe();
 	void render(
-		vec3 const& cam_pos,
-		Mat const& cam_view,
-		Mat const& cam_proj,
+		CamType type,
 		ComPtr<ID3D11ShaderResourceView> depth_srv,
 		ComPtr<ID3D11RenderTargetView>& rtv
 	);
@@ -27,7 +25,6 @@ private:
 	Water& operator=(Water const&) = delete;
 
 private:
-	DeferredGraphics* d_graphic;
 	MapUtils* m_info;
 	WaterInit water_init;
 	WaterReflection water_reflection;

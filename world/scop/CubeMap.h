@@ -10,22 +10,26 @@ class InputLayout;
 class RasterizerState;
 class DeferredBuffer;
 class Texture;
+class ConstantBuffer;
 template<typename T> class Buffer;
 
 class CubeMap
 {
 public:
-	CubeMap(DeferredGraphics* dgraphic,
-		UINT width, UINT height);
-	void render(Mat const& cam_view, Mat const& cam_proj,
-		vec3 const& cam_pos);
+	CubeMap(UINT width, UINT height);
+	void render(CamType type);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
+	~CubeMap() = default;
+
+private:
+	CubeMap() = delete;
+	CubeMap(CubeMap const&) = delete;
+	CubeMap& operator=(CubeMap const&) = delete;
 
 private:
 	void setPipe();
 
 private:
-	DeferredGraphics* d_graphic;
 	UINT width;
 	UINT height;
 	shared_ptr<Buffer<uint32>> ibuffer;
@@ -38,6 +42,7 @@ private:
 	shared_ptr<PixelShader> pixel_shader;
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<RasterizerState> rasterizer_state;
+	shared_ptr<ConstantBuffer> constant_buffer;
 
 private:
 	shared_ptr<Texture> cube_tex;

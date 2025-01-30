@@ -27,6 +27,7 @@ PS_INPUT main( VS_INPUT input )
     PS_INPUT output;
     output.pos = float4(input.pos, 1);
     output.w_pos = output.pos;
+    output.pos = mul(output.pos, world);
     output.pos = mul(output.pos, view);
     output.pos = mul(output.pos, proj);
     output.c_pos = output.pos;

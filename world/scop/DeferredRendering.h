@@ -19,25 +19,15 @@ class ReflectionCube;
 class DeferredRendering
 {
 public:
-	DeferredRendering(
-		MapUtils* minfo,
-		DeferredGraphics* defer_graphic
-	);
+	DeferredRendering(MapUtils* minfo);
 	~DeferredRendering();
-	void Render(
-		Mat const& cam_view,
-		Mat const& cam_proj,
-		vec3 const& cam_pos
-	);
+	void Render();
 	
 private:
 	void setPipe();
 	void setFinPipe();
 	void setPBRShaderResources();
-	void ssaoBlur(int cnt, 
-		Mat const& proj,
-		Mat const& view
-	);
+	void ssaoBlur(int cnt, CamType type);
 
 private:
 	shared_ptr<Buffer<VertexDefer>> vbuffer;
@@ -45,7 +35,6 @@ private:
 
 private:
 	MapUtils* m_info = nullptr;
-	DeferredGraphics* d_graphic;
 	ShadowRender s_render;
 	GeoRender g_render;
 	SsaoRender ssao_render;

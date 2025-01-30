@@ -21,10 +21,9 @@ struct PS_Constant
 	int dummy2;
 };
 
-PBR::PBR(DeferredGraphics* grpahic, UINT width, UINT height)
+PBR::PBR(UINT width, UINT height)
 {
-	this->d_graphic = grpahic;
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buffer = make_shared<DeferredBuffer>(2);
 	this->d_buffer->setRTVsAndSRVs(device, width, height);
 	vector<VertexDefer> vertices;
@@ -93,16 +92,12 @@ PBR::PBR(DeferredGraphics* grpahic, UINT width, UINT height)
 	);
 	PS_Constant buffer;
 	this->cbuffer = make_shared<ConstantBuffer>(
-		device, this->d_graphic->getContext(), buffer);
-}
-
-PBR::~PBR()
-{
+		device, d_graphic->getContext(), buffer);
 }
 
 void PBR::setRTV()
 {
-	this->d_graphic->renderBegin(this->d_buffer.get());
+	d_graphic->renderBegin(this->d_buffer.get());
 }
 
 void PBR::render(
@@ -114,7 +109,7 @@ void PBR::render(
 {
 	this->setCBuffer(light_pos, cam_pos);
 	this->setPipe();
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	if (view_port)
 		context->RSSetViewports(1, view_port);
 	context->PSSetShaderResources(0, 1, color_srv.GetAddressOf());
@@ -133,7 +128,7 @@ ComPtr<ID3D11ShaderResourceView> PBR::getDirectLight()
 
 void PBR::setPipe()
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	context->IASetInputLayout(
@@ -173,6 +168,6 @@ void PBR::setCBuffer(vec3 const& light_pos, vec3 const& cam_pos)
 	buffer.cam_pos = cam_pos;
 	buffer.light_pos = light_pos;
 	this->cbuffer->update(buffer);
-	this->d_graphic->getContext()->PSSetConstantBuffers(0, 1,
+	d_graphic->getContext()->PSSetConstantBuffers(0, 1,
 		this->cbuffer->getComPtr().GetAddressOf());
 }

@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "Terrain.h"
 #include "Chunk.h"
-#include "DeferredGraphics.h"
 #include "Graphics.h"
 #include "Block.h"
+#include "TestCam.h"
+#include "DeferredGraphics.h"
 
 Terrain::Terrain(
 	int size_w,
@@ -15,8 +16,6 @@ Terrain::Terrain(
 	int thread_cnt
 )
 {
-	this->deff_graphic = 
-		make_shared<DeferredGraphics>(hwnd, width, height);
 	this->m_manager = make_shared<Map>(
 		size_w,
 		size_h,
@@ -26,22 +25,15 @@ Terrain::Terrain(
 		width,
 		height
 	);
-	this->m_manager->setDeffGraphic(this->deff_graphic);
 }
 
 Terrain::~Terrain()
 {
 }
 
-void Terrain::Render
-(
-	Mat const& cam_view,
-	Mat const& cam_proj,
-	vec3 const& cam_pos
-)
+void Terrain::Render()
 {
-	this->m_manager->r_system.Render(cam_view, 
-		cam_proj, cam_pos);
+	this->m_manager->r_system.Render();
 }
 
 void Terrain::putBlock(
@@ -113,7 +105,7 @@ void Terrain::putBlock(
 					Block::addBlockFaceIndices(idx, indices);
 					idx += 4;
 				}
-				chunk.tp_chunk.update(this->deff_graphic->getDevice());
+				chunk.tp_chunk.update(d_graphic->getDevice());
 				return;
 			}
 			
@@ -173,7 +165,7 @@ void Terrain::deleteBlock(vec3 const& ray_pos, vec3 const& ray_dir)
 			chunk.tp_block_cnt -= 1;
 			chunk.tp_chunk.reset();
 			this->m_manager->vertexAndIndexGeneratorTP(widx.c_idx);
-			chunk.tp_chunk.update(this->deff_graphic->getDevice());
+			chunk.tp_chunk.update(d_graphic->getDevice());
 			return;
 		}
 		this->m_manager->l_system.chunkSetLight(widx.c_idx);

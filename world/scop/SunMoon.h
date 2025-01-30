@@ -8,22 +8,21 @@ class RasterizerState;
 class PixelShader;
 class Sun;
 class Moon;
+class ConstantBuffer;
 
 class SunMoon
 {
 public:
-	SunMoon(
-		DeferredGraphics* dgraphic, 
-		UINT width,
-		UINT height
-	);
-	void render(
-		vec3 const& cam_pos, 
-		Mat const& cam_view,
-		Mat const& cam_proj
-	);
+	SunMoon(UINT width, UINT height);
+	void render(CamType type);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	vec3 getLightPos();
+	~SunMoon() = default;
+
+private:
+	SunMoon() = delete;
+	SunMoon(SunMoon const&) = delete;
+	SunMoon& operator=(SunMoon const&) = delete;
 
 private:
 	void setPipe();
@@ -34,11 +33,11 @@ private:
 	vec3 sun_pos;
 	vec3 moon_pos;
 private:
-	DeferredGraphics* d_graphic;
 	shared_ptr<DeferredBuffer> d_buffer;
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<VertexShader> vertex_shader;
 	shared_ptr<RasterizerState> rasterizer_state;
 	shared_ptr<PixelShader> pixel_shader;
+	shared_ptr<ConstantBuffer> constant_buff;
 };
 

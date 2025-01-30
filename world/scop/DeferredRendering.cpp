@@ -14,6 +14,7 @@
 #include "ConstantBuffer.h"
 #include "DeferredBuffer.h"
 #include "ReflectionCube.h"
+#include "TestCam.h"
 
 
 struct cbuffer_pbr
@@ -26,24 +27,18 @@ struct cbuffer_pbr
 	int dummy;
 };
 
-DeferredRendering::DeferredRendering(
-	MapUtils* minfo,
-	DeferredGraphics* defer_graphic
-)
-	: m_info(minfo), s_render(minfo, defer_graphic), 
-	g_render(minfo, defer_graphic), ssao_render(defer_graphic, 
-		minfo->width, minfo->height), 
-	ssao_blur(defer_graphic, minfo->width, minfo->height),
-	pbr(defer_graphic, minfo->width, minfo->height),
-	cave_shadow(defer_graphic, m_info), oit(defer_graphic, minfo)
+DeferredRendering::DeferredRendering(MapUtils* minfo)
+	: m_info(minfo), s_render(minfo), 
+	g_render(minfo), ssao_render(minfo->width, minfo->height), 
+	ssao_blur(minfo->width, minfo->height),
+	pbr(minfo->width, minfo->height),
+	cave_shadow(m_info), oit(minfo)
 {
-	this->d_graphic = defer_graphic;
-	this->cube_map = make_shared<Wallpaper>(this->d_graphic,
+	this->cube_map = make_shared<Wallpaper>(
 		this->m_info->width, this->m_info->height);
 	this->reflection_cube = make_shared<ReflectionCube>(
-		this->d_graphic, this->m_info, 
-		&(this->g_render), this->cube_map.get(), &(this->pbr));
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+		this->m_info, &(this->g_render), this->cube_map.get(), &(this->pbr));
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buffer = make_shared<DeferredBuffer>(1);
 	this->d_buffer->setRTVsAndSRVs(device, 
 		this->m_info->width, this->m_info->height);
@@ -118,16 +113,12 @@ DeferredRendering::~DeferredRendering()
 {
 }
 
-void DeferredRendering::ssaoBlur(
-	int cnt, 
-	Mat const& proj,
-	Mat const& view
-)
+void DeferredRendering::ssaoBlur(int cnt, CamType type)
 {
 	ComPtr<ID3D11DeviceContext> context;
-	context = this->d_graphic->getContext();
+	context = d_graphic->getContext();
 	//// ssao blur width start
-	this->d_graphic->renderBegin(
+	d_graphic->renderBegin(
 		this->ssao_blur.getWidthDBuffer().get());
 	context->PSSetShaderResources(0, 1,
 		this->g_render.getSRV(RTVIndex::w_normal).GetAddressOf());
@@ -135,10 +126,10 @@ void DeferredRendering::ssaoBlur(
 		this->g_render.getDepthSRV().GetAddressOf());
 	context->PSSetShaderResources(2, 1,
 		this->ssao_render.getSRV().GetAddressOf());
-	this->ssao_blur.render(0, proj, view, 1.0f);
+	this->ssao_blur.render(0, type, 1.0f);
 
 	//// ssao blur height start
-	this->d_graphic->renderBegin(
+	d_graphic->renderBegin(
 		this->ssao_blur.getHeightDBuffer().get());
 	context->PSSetShaderResources(0, 1,
 		this->g_render.getSRV(RTVIndex::w_normal).GetAddressOf());
@@ -146,11 +137,11 @@ void DeferredRendering::ssaoBlur(
 		this->g_render.getDepthSRV().GetAddressOf());
 	context->PSSetShaderResources(2, 1,
 		this->ssao_blur.getWidthSRV().GetAddressOf());
-	this->ssao_blur.render(1, proj, view, 1.0f);
+	this->ssao_blur.render(1, type, 1.0f);
 
 	for (int i = 1; i < cnt; i++) {
 		// ssao blur width start
-		this->d_graphic->renderBegin(
+		d_graphic->renderBegin(
 			this->ssao_blur.getWidthDBuffer().get());
 		context->PSSetShaderResources(0, 1,
 			this->g_render.getSRV(RTVIndex::w_normal).GetAddressOf());
@@ -158,10 +149,10 @@ void DeferredRendering::ssaoBlur(
 			this->g_render.getDepthSRV().GetAddressOf());
 		context->PSSetShaderResources(2, 1,
 			this->ssao_blur.getHeightSRV().GetAddressOf());
-		this->ssao_blur.render(0, proj, view, 1.0f);
+		this->ssao_blur.render(0, type, 1.0f);
 
 		// ssao blur height start
-		this->d_graphic->renderBegin(
+		d_graphic->renderBegin(
 			this->ssao_blur.getHeightDBuffer().get());
 		context->PSSetShaderResources(0, 1,
 			this->g_render.getSRV(RTVIndex::w_normal).GetAddressOf());
@@ -169,25 +160,22 @@ void DeferredRendering::ssaoBlur(
 			this->g_render.getDepthSRV().GetAddressOf());
 		context->PSSetShaderResources(2, 1,
 			this->ssao_blur.getWidthSRV().GetAddressOf());
-		this->ssao_blur.render(1, proj, view, 1.0f);
+		this->ssao_blur.render(1, type, 1.0f);
 	}
 }
 
-void DeferredRendering::Render(
-	Mat const& cam_view, 
-	Mat const& cam_proj, 
-	vec3 const& cam_pos
-)
+void DeferredRendering::Render()
 {
 	ComPtr<ID3D11DeviceContext> context;
-	context = this->d_graphic->getContext();
+	context = d_graphic->getContext();
+	vec3 cam_pos = cam->getPos();
 
 	// reflection cube
-	this->reflection_cube->render(cam_pos);
+	this->reflection_cube->render(CamType::NORMAL);
 	this->oit.setReflectionCube(this->reflection_cube->getSRV());
 
 	// cube map start
-	this->cube_map->render(cam_pos, cam_view, cam_proj);
+	this->cube_map->render(CamType::NORMAL);
 	this->m_info->directional_light_pos = 
 		this->cube_map->getDirectionalLightPos();
 	this->m_info->light_dir = XMVector3Normalize(cam_pos - 
@@ -195,7 +183,7 @@ void DeferredRendering::Render(
 	
 	// geo render
 	 this->g_render.setParallaxFlag(true);
-	this->g_render.render(cam_view, cam_proj, cam_pos);
+	this->g_render.render(CamType::NORMAL);
 
 	// pbr render
 	this->pbr.setRTV();
@@ -204,16 +192,16 @@ void DeferredRendering::Render(
 	this->pbr.render(lp, cam_pos, this->g_render.getSRV(RTVIndex::color));
 
 	// shadow map render
-	this->s_render.renderCSM(cam_view, cam_proj);
+	this->s_render.renderCSM(CamType::NORMAL);
 	context->PSSetShaderResources(9, 1,
 		this->g_render.getSRV(RTVIndex::w_position).GetAddressOf());
 	context->PSSetShaderResources(10, 1,
 		this->g_render.getSRV(RTVIndex::ssao_normal).GetAddressOf());
-	this->s_render.render(cam_view, cam_proj);
-	this->cave_shadow.render(cam_view, cam_proj);
+	this->s_render.render(CamType::NORMAL);
+	this->cave_shadow.render(CamType::NORMAL);
 
 	// ssao start
-	this->d_graphic->renderBegin(
+	d_graphic->renderBegin(
 		this->ssao_render.getDBuffer().get());
 	context->PSSetShaderResources(0, 1,
 		this->g_render.getSRV(RTVIndex::ssao_normal).GetAddressOf()
@@ -226,14 +214,14 @@ void DeferredRendering::Render(
 		1,
 		this->g_render.getDepthSRV().GetAddressOf()
 	);
-	this->ssao_render.render(cam_view,cam_proj);
+	this->ssao_render.render(CamType::NORMAL);
 	
 	// ssao blur start
-	this->ssaoBlur(8, cam_proj, cam_view);
+	this->ssaoBlur(8, CamType::NORMAL);
 
 	// solid obj render result
-	this->d_graphic->renderBegin(this->d_buffer.get());
-	this->d_graphic->setViewPort(this->view_port);
+	d_graphic->renderBegin(this->d_buffer.get());
+	d_graphic->setViewPort(this->view_port);
 	this->setPipe();
 	context->PSSetShaderResources(0, 1,
 		this->pbr.getAmbientLight().GetAddressOf());
@@ -255,10 +243,10 @@ void DeferredRendering::Render(
 	// oit render
 	this->oit.setRTVandSRV(this->d_buffer->getRTV(0),
 		this->d_buffer->getSRV(0), this->g_render.getDepthSRV());
-	this->oit.render(cam_pos, cam_view, cam_proj);
+	this->oit.render(CamType::NORMAL);
 
 	// result
-	this->d_graphic->renderBegin();
+	d_graphic->renderBegin();
 	this->setFinPipe();
 	context->PSSetShaderResources(0, 1,
 		this->oit.getSRV().GetAddressOf());
@@ -266,13 +254,13 @@ void DeferredRendering::Render(
 		this->ibuffer->getCount(),
 		0, 0);
 
-	this->d_graphic->renderEnd();
+	d_graphic->renderEnd();
 }
 
 void DeferredRendering::setPipe()
 {
 	ComPtr<ID3D11DeviceContext> context;
-	context = this->d_graphic->getContext();
+	context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	context->IASetInputLayout(this->input_layout->getComPtr().Get());
@@ -304,7 +292,7 @@ void DeferredRendering::setPipe()
 void DeferredRendering::setFinPipe()
 {
 	ComPtr<ID3D11DeviceContext> context;
-	context = this->d_graphic->getContext();
+	context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	context->IASetInputLayout(this->fin_ia->getComPtr().Get());
@@ -333,7 +321,7 @@ void DeferredRendering::setFinPipe()
 
 void DeferredRendering::setPBRShaderResources()
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->PSSetShaderResources(1, 1,
 		this->g_render.getSRV(RTVIndex::w_normal).GetAddressOf());
 	context->PSSetShaderResources(2, 1,

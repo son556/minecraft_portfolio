@@ -10,21 +10,26 @@ class InputLayout;
 template<typename T> class Buffer;
 class SamplerState;
 class RasterizerState;
+class ConstantBuffer;
 
 class Filter
 {
 public:
 	Filter(
-		DeferredGraphics* dgraphic,
 		UINT width,
 		UINT height,
 		wstring const& vs_path,
 		wstring const& ps_path
 	);
-	~Filter();
+	~Filter() = default;
 	void render();
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	void setStartSRV(ComPtr<ID3D11ShaderResourceView> srv);
+
+private:
+	Filter() = delete;
+	Filter(Filter const&) = delete;
+	Filter& operator=(Filter const&) = delete;
 
 private:
 	void setPipe();
@@ -32,7 +37,6 @@ private:
 	shared_ptr<Buffer<uint32>> ibuffer;
 
 private:
-	DeferredGraphics* d_graphic = nullptr;
 	shared_ptr<DeferredBuffer> d_buffer;
 	D3D11_VIEWPORT view_port = { 0, };
 	shared_ptr<InputLayout> input_layout;
@@ -43,5 +47,6 @@ private:
 
 private:
 	ComPtr<ID3D11ShaderResourceView> in_srv;
+	shared_ptr<ConstantBuffer> constant_buffer;
 };
 

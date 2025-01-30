@@ -25,20 +25,22 @@ template<typename T> class Buffer;
 class ParallaxMapping
 {
 public:
-	ParallaxMapping(DeferredGraphics* graphic, UINT width, UINT height);
-	ParallaxMapping(ParallaxMapping const&) = delete;
-	ParallaxMapping& operator=(ParallaxMapping const&) = delete;
-	~ParallaxMapping();
+	ParallaxMapping(UINT width, UINT height);
+	~ParallaxMapping() = default;
 	void setRTV();
-	void render(vec3 const& cam_pos);
+	void render();
 	ComPtr<ID3D11ShaderResourceView> getSRV(RTVIndex idx);
 	ComPtr<ID3D11RenderTargetView> getRTV(RTVIndex idx);
+
+private:
+	ParallaxMapping() = delete;
+	ParallaxMapping(ParallaxMapping const&) = delete;
+	ParallaxMapping& operator=(ParallaxMapping const&) = delete;
 
 private:
 	void setPipe();
 	
 private:
-	DeferredGraphics* d_graphic;
 	shared_ptr<DeferredBuffer> d_buffer;
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<VertexShader> vertex_shader;

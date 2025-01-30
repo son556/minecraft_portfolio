@@ -12,14 +12,10 @@
 #include "Block.h"
 #include "SamplerState.h"
 
-Composite::Composite(
-	DeferredGraphics* dgraphic, 
-	MapUtils* minfo
-)
+Composite::Composite(MapUtils* minfo)
 {
-	this->d_graphic = dgraphic;
 	this->m_info = minfo;
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	vector<VertexDefer> vertices;
 	vector<uint32> indices;
 	Block::makeBox(1, vertices, indices);
@@ -79,13 +75,9 @@ Composite::Composite(
 		this->blend_state.GetAddressOf());
 }
 
-Composite::~Composite()
-{
-}
-
 void Composite::setPipe()
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	);
@@ -116,7 +108,7 @@ void Composite::render(
 	ComPtr<ID3D11ShaderResourceView> reveal
 )
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	this->setPipe();
 	UINT stride = this->v_buffer->getStride();
 	UINT offset = this->v_buffer->getOffset();

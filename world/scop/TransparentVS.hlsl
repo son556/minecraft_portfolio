@@ -24,6 +24,7 @@ PS_INPUT main( VS_INPUT input )
 {
     PS_INPUT output;
     output.pos = float4(input.pos, 1);
+    output.pos = mul(output.pos, model);
     output.pos = mul(output.pos, view);
     output.view_pos = output.pos;
     output.pos = mul(output.pos, proj);

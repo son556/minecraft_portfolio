@@ -23,20 +23,16 @@ struct FrusumSplit {
 class ShadowRender
 {
 public:
-	ShadowRender(
-		MapUtils* minfo,
-		DeferredGraphics* dgraphic
-	);
-	~ShadowRender();
-	void renderCSM(
-		Mat const& cam_view,
-		Mat const& cam_proj
-	);
-	void render(
-		Mat const& cam_view,
-		Mat const& cam_proj
-	);
+	ShadowRender(MapUtils* minfo);
+	~ShadowRender() = default;
+	void renderCSM(CamType type);
+	void render(CamType type);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
+
+private:
+	ShadowRender() = delete;
+	ShadowRender(ShadowRender const&) = delete;
+	ShadowRender& operator=(ShadowRender) = delete;
 
 private:
 	void setPipe();
@@ -45,7 +41,6 @@ private:
 
 private:
 	MapUtils* m_info;
-	DeferredGraphics* d_graphic;
 	shared_ptr<DeferredBuffer> d_buffer;
 	shared_ptr<RasterizerState> rasterizer_state;
 	shared_ptr<VertexShader> vertex_shader;

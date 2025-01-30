@@ -12,18 +12,13 @@
 #include "SamplerState.h"
 #include "Buffer.h"
 
-Wallpaper::Wallpaper(
-	DeferredGraphics* graphic, 
-	UINT width, 
-	UINT height
-)
+Wallpaper::Wallpaper(UINT width, UINT height)
 {
-	this->d_graphic = graphic;
 	this->width = width;
 	this->height = height;
-	this->sun_moon = make_shared<ResultSM>(graphic, width, height);
-	this->cube_map = make_shared<CubeMap>(graphic, width, height);
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	this->sun_moon = make_shared<ResultSM>(width, height);
+	this->cube_map = make_shared<CubeMap>(width, height);
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buffer = make_shared<DeferredBuffer>(1);
 	this->d_buffer->setRTVsAndSRVs(device, width, height);
 	
@@ -68,18 +63,14 @@ Wallpaper::Wallpaper(
 	this->sampler_state = make_shared<SamplerState>(device);
 }
 
-void Wallpaper::render(
-	vec3 const& cam_pos,
-	Mat const& cam_view, 
-	Mat const& cam_proj
-)
+void Wallpaper::render(CamType type)
 {
 	ComPtr<ID3D11DeviceContext> context =
-		this->d_graphic->getContext();
-	this->sun_moon->render(cam_pos, cam_view, cam_proj);
-	this->cube_map->render(cam_view, cam_proj, cam_pos);
+		d_graphic->getContext();
+	this->sun_moon->render(type);
+	this->cube_map->render(type);
 	this->setPipe();
-	this->d_graphic->renderBegin(this->d_buffer.get());
+	d_graphic->renderBegin(this->d_buffer.get());
 	context->PSSetShaderResources(0, 1,
 		this->sun_moon->getSRV().GetAddressOf());
 	context->PSSetShaderResources(1, 1,
@@ -90,7 +81,7 @@ void Wallpaper::render(
 void Wallpaper::setPipe()
 {
 	ComPtr<ID3D11DeviceContext> context =
-		this->d_graphic->getContext();
+		d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	context->IASetInputLayout(this->input_layout->getComPtr().Get());

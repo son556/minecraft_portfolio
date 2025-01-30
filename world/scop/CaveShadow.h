@@ -12,17 +12,21 @@ class ConstantBuffer;
 class CaveShadow
 {
 public:
-	CaveShadow(DeferredGraphics* d_graphic, MapUtils* m_info);
-	void render(Mat const& cam_view, Mat const& cam_proj);
+	CaveShadow(MapUtils* m_info);
+	~CaveShadow() = default;
+	void render(CamType type);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
+
+private:
+	CaveShadow() = delete;
+	CaveShadow(CaveShadow const&) = delete;
+	CaveShadow& operator=(CaveShadow const&) = delete;
 
 private:
 	void setPipe();
 
 private:
-	DeferredGraphics* d_graphic;
 	shared_ptr<DeferredBuffer> d_buffer;
-	shared_ptr<ConstantBuffer> c_buff;
 	MapUtils* m_info;
 
 private:

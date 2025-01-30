@@ -16,51 +16,48 @@
 #include "CascadeShadow.h"
 #include "Block.h"
 #include "Buffer.h"
+#include "TestCam.h"
 
-ShadowRender::ShadowRender(
-	MapUtils* minfo,
-	DeferredGraphics* dgraphic
-)
+ShadowRender::ShadowRender(MapUtils* minfo)
 {
 	this->m_info = minfo;
-	this->d_graphic = dgraphic;
 	this->d_buffer = make_shared<DeferredBuffer>(1);
 	this->d_buffer->setRTVsAndSRVs(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		this->m_info->width,
 		this->m_info->height
 	);
 	this->rasterizer_state = make_shared<RasterizerState>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		D3D11_FILL_SOLID,
 		D3D11_CULL_BACK
 	);
 	this->s_vertex_shader = make_shared<VertexShader>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		L"ShadowVS.hlsl",
 		"main",
 		"vs_5_0"
 	);
 	this->s_pixel_shader = make_shared<PixelShader>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		L"ShadowPS.hlsl",
 		"main",
 		"ps_5_0"
 	);
 	this->s_input_layout = make_shared<InputLayout>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		InputLayouts::layout_pns.data(),
 		InputLayouts::layout_pns.size(),
 		this->s_vertex_shader->getBlob()
 	);
 	this->vertex_shader = make_shared<VertexShader>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		L"CombineShadowVS.hlsl",
 		"main",
 		"vs_5_0"
 	);
 	this->pixel_shader = make_shared<PixelShader>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		L"CombineShadowPS.hlsl",
 		"main",
 		"ps_5_0"
@@ -70,19 +67,19 @@ ShadowRender::ShadowRender(
 	vector<uint32> indices;
 	Block::makeBox(1, vertices, indices);
 	this->vbuffer = make_shared<Buffer<VertexDefer>>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		vertices.data(),
 		vertices.size(),
 		D3D11_BIND_VERTEX_BUFFER
 	);
 	this->ibuffer = make_shared<Buffer<uint32>>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		indices.data(),
 		indices.size(),
 		D3D11_BIND_INDEX_BUFFER
 	);
 	this->input_layout = make_shared<InputLayout>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		InputLayouts::layout_pt.data(),
 		InputLayouts::layout_pt.size(),
 		this->vertex_shader->getBlob()
@@ -90,51 +87,46 @@ ShadowRender::ShadowRender(
 	vector<ComPtr<ID3D11ShaderResourceView>> srvs_vec;
 	for (int i = 0; i < this->split_cnt; i++) {
 		this->csms.push_back(
-			make_shared<CascadeShadow>(
-				this->d_graphic, 2048, 2048, this->m_info));
+			make_shared<CascadeShadow>(2048, 2048, this->m_info));
 		srvs_vec.push_back(this->csms.back()->getSRV());
 	}
 	this->tex2d_arr = make_shared<TextureArray>(
-		this->d_graphic->getDevice(),
-		this->d_graphic->getContext(),
+		d_graphic->getDevice(),
+		d_graphic->getContext(),
 		srvs_vec,
 		DXGI_FORMAT_R32_FLOAT
 	);
 
 	this->mvps.resize(this->split_cnt);
 	this->structured_buffer = make_shared<StructuredBuffer>(
-		this->d_graphic->getDevice().Get(),
-		this->d_graphic->getContext().Get(),
+		d_graphic->getDevice().Get(),
+		d_graphic->getContext().Get(),
 		static_cast<void *>(this->mvps.data()),
 		static_cast<uint32>(sizeof(MVP)),
 		static_cast<uint32>(this->mvps.size()), 0, 0
 	);
 	this->ps_cbuffer = make_shared<ConstantBuffer>(
-		this->d_graphic->getDevice(),
-		this->d_graphic->getContext(),
+		d_graphic->getDevice(),
+		d_graphic->getContext(),
 		this->frustum_split
 	);
 	this->s_rasterizer_state = make_shared<RasterizerState>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		D3D11_FILL_SOLID,
 		D3D11_CULL_NONE
 	);
 	this->devideFrustum();
 }
 
-ShadowRender::~ShadowRender()
-{
-}
-
-void ShadowRender::renderCSM(Mat const& cam_view, Mat const& cam_proj)
+void ShadowRender::renderCSM(CamType type)
 {
 	ComPtr<ID3D11DeviceContext> context =
-		this->d_graphic->getContext();
+		d_graphic->getContext();
 
 	
 	// update structured buffer
 	for (int i = 0; i < split_cnt; i++) {
-		this->csms[i]->updateCBuffer(cam_view, cam_proj);
+		this->csms[i]->updateCBuffer(type);
 		this->mvps[i] = this->csms[i]->getMVP();
 	}
 	this->structured_buffer->CopyToInput(
@@ -145,15 +137,15 @@ void ShadowRender::renderCSM(Mat const& cam_view, Mat const& cam_proj)
 	for (int k = 0; k < split_cnt; k++) {
 		context->VSSetConstantBuffers(0, 1,
 			this->csms[k]->getCBuffer()->getComPtr().GetAddressOf());
-		this->d_graphic->renderBegin(this->csms[k]->getDBuffer().get(),
+		d_graphic->renderBegin(this->csms[k]->getDBuffer().get(),
 			this->csms[k]->getDSV());
-		this->d_graphic->setViewPort(this->csms[k]->getViewPort());
+		d_graphic->setViewPort(this->csms[k]->getViewPort());
 		for (int i = 0; i < this->m_info->size_h; i++) {
 			for (int j = 0; j < this->m_info->size_w; j++) {
 				if (this->m_info->chunks[i][j]->render_flag == false)
 					continue;
 				this->m_info->chunks[i][j]->setShadowRender(
-					this->d_graphic->getContext()
+					d_graphic->getContext()
 				);
 			}
 		}
@@ -164,7 +156,7 @@ void ShadowRender::renderCSM(Mat const& cam_view, Mat const& cam_proj)
 void ShadowRender::setPipe()
 {
 	ComPtr<ID3D11DeviceContext> context =
-		this->d_graphic->getContext();
+		d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	uint32 stride = this->vbuffer->getStride();
@@ -196,7 +188,7 @@ void ShadowRender::setPipe()
 void ShadowRender::setCSMPipe()
 {
 	ComPtr<ID3D11DeviceContext> context =
-		this->d_graphic->getContext();
+		d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	context->IASetInputLayout(this->s_input_layout->getComPtr().Get());
@@ -265,20 +257,17 @@ void ShadowRender::devideFrustum() // view space
 		cout << "c: " << this->frustum_split.vz_arr[i] << endl;*/
 }
 
-void ShadowRender::render(
-	Mat const& cam_view,
-	Mat const& cam_proj
-)
+void ShadowRender::render(CamType type)
 {
 	ComPtr<ID3D11DeviceContext> context =
-		this->d_graphic->getContext();
+		d_graphic->getContext();
 
-	this->d_graphic->renderBegin(this->d_buffer.get());
+	d_graphic->renderBegin(this->d_buffer.get());
 
 	// shadow csm
 	vec3 lp = this->m_info->directional_light_pos;
 	this->frustum_split.light_pos = vec4(lp.x, lp.y, lp.z, this->split_cnt);
-	this->frustum_split.view = cam_view.Transpose();
+	this->frustum_split.view = cam->getMVP(type).view.Transpose();
 	this->ps_cbuffer->update(this->frustum_split);
 
 

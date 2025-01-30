@@ -4,16 +4,11 @@
 #include "Filter.h"
 
 
-Blur::Blur(
-	DeferredGraphics* graphic, 
-	UINT width, 
-	UINT height
-)
+Blur::Blur(UINT width, UINT height)
 {
-	this->d_graphic = graphic;
 	this->width = width;
 	this->height = height;
-	ComPtr<ID3D11Device> device = graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->makeFilter();
 	//this->makeFilterMultiLevel();
 }
@@ -49,7 +44,6 @@ void Blur::makeFilter()
 	UINT h = this->height / 16;
 	this->down_filter.push_back(
 		make_shared<Filter>(
-			this->d_graphic,
 			w, h,
 			L"SamplingVS.hlsl",
 			L"SamplingPS.hlsl"
@@ -57,7 +51,6 @@ void Blur::makeFilter()
 	);
 	this->up_blur_x_filter.push_back(
 		make_shared<Filter>(
-			this->d_graphic,
 			w, h,
 			L"SamplingVS.hlsl",
 			L"BlurXPS.hlsl"
@@ -65,14 +58,12 @@ void Blur::makeFilter()
 	);
 	this->up_blur_y_filter.push_back(
 		make_shared<Filter>(
-			this->d_graphic,
 			w, h,
 			L"SamplingVS.hlsl",
 			L"BlurYPS.hlsl"
 		)
 	);
 	this->final_filter = make_shared<Filter>(
-		this->d_graphic,
 		this->width,
 		this->height,
 		L"SamplingVS.hlsl",
@@ -96,7 +87,6 @@ void Blur::makeFilterMultiLevel()
 	this->multi_level_target = 16;
 	for (int i = 2; i <= this->multi_level_target; i *= 2) {
 		auto last = make_shared<Filter>(
-			this->d_graphic,
 			this->width / i,
 			this->height / i,
 			L"SamplingVS.hlsl",
@@ -107,7 +97,6 @@ void Blur::makeFilterMultiLevel()
 	for (int i = this->multi_level_target; i >= 1; i /= 2) {
 		this->up_blur_x_filter.push_back(
 			make_shared<Filter>(
-				this->d_graphic,
 				this->width / i,
 				this->height / i,
 				L"SamplingVS.hlsl",
@@ -116,7 +105,6 @@ void Blur::makeFilterMultiLevel()
 		);
 		this->up_blur_y_filter.push_back(
 			make_shared<Filter>(
-				this->d_graphic,
 				this->width / i,
 				this->height / i,
 				L"SamplingVS.hlsl",
@@ -126,7 +114,6 @@ void Blur::makeFilterMultiLevel()
 		if (i > 1) {
 			this->tmp_up_filter.push_back(
 				make_shared<Filter>(
-					this->d_graphic,
 					this->width / i * 2,
 					this->height / i * 2,
 					L"SamplingVS.hlsl",
@@ -136,7 +123,6 @@ void Blur::makeFilterMultiLevel()
 		}
 	}
 	this->final_filter = make_shared<Filter>(
-		this->d_graphic,
 		this->width,
 		this->height,
 		L"SamplingVS.hlsl",

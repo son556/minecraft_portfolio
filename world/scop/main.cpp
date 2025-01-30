@@ -5,17 +5,18 @@
 #include "scop.h"
 
 
-// test
 #include "Terrain.h"
 #include "time.h"
 #include "TestCam.h"
-// test 
+#include "DeferredGraphics.h" 
 
 #define MAX_LOADSTRING 100
+
+shared_ptr<DeferredGraphics> d_graphic;
+shared_ptr<TestCam> cam;
 HWND hWnd;
 
 // test 용 전역변수
-TestCam cam(800, 650, 60, 0.1, 1000);
 vec3 dir;
 int w_width = 800;
 int w_height = 650;
@@ -52,25 +53,29 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
     RECT client_rect;
     GetClientRect(hWnd, &client_rect);
-    cam.setWidth(client_rect.right - 1);
-    cam.setHeight(client_rect.bottom - 1);
+
+    d_graphic = make_shared<DeferredGraphics>(hWnd, 800, 650);
+    cam = make_shared<TestCam>(800, 650, 60, 0.1, 1000);
+    
+    cam->setWidth(client_rect.right - 1);
+    cam->setHeight(client_rect.bottom - 1);
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SCOP));
 
     // test code
     Terrain terrain(12, 12, hWnd, w_width, w_height, 1, 8); // 짝수 단위로만
     float h = terrain.getHeight(0.5, 0.5) + 0.5;
-    cam.movePos(0.5, h, 0.5);
-    cam.setDir(vec3(0, 0, 1));
+    cam->movePos(0.5, h, 0.5);
+    cam->setDir(vec3(0, 0, 1));
 
-    //cam.setDir(vec3(0, 0, 1));
-    //cam.movePos(0, 15, -25);
+    //cam->setDir(vec3(0, 0, 1));
+    //cam->movePos(0, 15, -25);
     terrain.setSightChunk(1);
     // test code
 
     MSG msg = {};
 
     // 기본 메시지 루프입니다:
-    cam.setCursorInClient(hWnd);
+    cam->setCursorInClient(hWnd);
     move_check = true;
     int tp_idx = 0;
     while (msg.message != WM_QUIT)
@@ -86,27 +91,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         else
         {
             if (lb_flag) {
-                /*terrain.testClickLightBlock(cam.getPos(),
-                    cam.getDir());*/
-                terrain.putBlock(cam.getPos(), 
-                    cam.getDir(), -3 + tp_idx);
+                /*terrain.testClickLightBlock(cam->getPos(),
+                    cam->getDir());*/
+                terrain.putBlock(cam->getPos(), 
+                    cam->getDir(), -3 + tp_idx);
                 tp_idx++;
                 if (tp_idx == 3)
                     tp_idx = 0;
                 lb_flag = false;
             }
             if (rb_flag) {
-                terrain.deleteBlock(cam.getPos(), cam.getDir());
+                terrain.deleteBlock(cam->getPos(), cam->getDir());
                 rb_flag = false;
             }
-            cam.update();
-            terrain.userPositionCheck(cam.getPos().x,
-                cam.getPos().z);
-            terrain.Render(
-                cam.getViewProj().view,
-                cam.getViewProj().proj,
-                cam.getPos()
-            );
+            cam->update();
+            terrain.userPositionCheck(cam->getPos().x,
+                cam->getPos().z);
+            terrain.Render();
         }
     }
     return (int) msg.wParam;
@@ -244,8 +245,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 return 0; // 움직임을 무시
             }
-            cam.onMouseMove(hWnd, pt.x, pt.y);
-            cam.setCursorInClient(hWnd);
+            cam->onMouseMove(hWnd, pt.x, pt.y);
+            cam->setCursorInClient(hWnd);
         }
         }
         break;

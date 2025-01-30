@@ -16,7 +16,7 @@ struct VertexDefer;
 class TestRender
 {
 public:
-	TestRender(DeferredGraphics* d_graphic, MapUtils* m_info);
+	TestRender(MapUtils* m_info);
 	~TestRender() = default;
 	void setPipe();
 	void render(ComPtr<ID3D11ShaderResourceView> srv);
@@ -27,7 +27,6 @@ private:
 	TestRender& operator=(TestRender const&) = delete;
 
 private:
-	DeferredGraphics* d_graphic;
 	MapUtils* m_info;
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<VertexShader> vertex_shader;

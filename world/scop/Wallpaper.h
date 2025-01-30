@@ -16,15 +16,16 @@ template<typename T> class Buffer;
 class Wallpaper
 {
 public:
-	Wallpaper(DeferredGraphics* graphic,
-		UINT width, UINT height);
-	void render(
-		vec3 const& cam_pos,
-		Mat const& cam_view,
-		Mat const& cam_proj
-	);
+	Wallpaper(UINT width, UINT height);
+	void render(CamType type);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	vec3 getDirectionalLightPos();
+	~Wallpaper() = default;
+
+private:
+	Wallpaper() = delete;
+	Wallpaper(Wallpaper const&) = delete;
+	Wallpaper& operator=(Wallpaper const&) = delete;
 
 private:
 	void setPipe();
@@ -36,7 +37,6 @@ private:
 	shared_ptr<Buffer<uint32>> ibuffer;
 
 private:
-	DeferredGraphics* d_graphic;
 	UINT width;
 	UINT height;
 	shared_ptr<DeferredBuffer> d_buffer;

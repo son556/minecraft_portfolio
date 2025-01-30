@@ -12,14 +12,13 @@
 #include "RasterizerState.h"
 #include "SamplerState.h"
 #include "ConstantBuffer.h"
+#include "TestCam.h"
 
-SsaoRender::SsaoRender(DeferredGraphics* d_graphic,
-	UINT width, UINT height)
+SsaoRender::SsaoRender(UINT width, UINT height)
 {
-	this->d_graphic = d_graphic;
 	this->buildOffset();
 	this->buildRandomVecTexture();
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buffer = make_shared<DeferredBuffer>(1);
 	this->d_buffer->setRTVsAndSRVs(
 		device,
@@ -96,26 +95,21 @@ SsaoRender::SsaoRender(DeferredGraphics* d_graphic,
 	this->view_port.Height = height / 2;
 	this->view_port.MinDepth = 0.f;
 	this->view_port.MaxDepth = 1.f;
-	MVP mvp;
 	this->cbuffer = make_shared<ConstantBuffer>(
 		device,
-		this->d_graphic->getContext(),
-		mvp
+		d_graphic->getContext(),
+		this->mOffsets
 	);
 }
 
-void SsaoRender::render(Mat const& cam_view, Mat const& cam_proj)
+void SsaoRender::render(CamType type)
 {
 	this->setPipe();
-	this->d_graphic->setViewPort(this->view_port);
+	d_graphic->setViewPort(this->view_port);
 	ComPtr<ID3D11DeviceContext> context = 
-		this->d_graphic->getContext();
-	MVP mvp;
-	mvp.view = cam_view.Transpose();
-	mvp.proj = cam_proj.Transpose();
-	this->cbuffer->update(mvp);
+		d_graphic->getContext();
 	context->PSSetConstantBuffers(0, 1, 
-		this->cbuffer->getComPtr().GetAddressOf());
+		cam->getConstantBuffer(type)->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(
 		3,
 		1,
@@ -142,7 +136,7 @@ shared_ptr<DeferredBuffer> SsaoRender::getDBuffer()
 void SsaoRender::setPipe()
 {
 	ComPtr<ID3D11DeviceContext> context =
-		this->d_graphic->getContext();
+		d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	);
@@ -179,12 +173,9 @@ void SsaoRender::setPipe()
 		1,
 		this->sampler_state->getComPtr().GetAddressOf()
 	);
-	ConstantBuffer cbuffer(
-		this->d_graphic->getDevice(),
-		context,
-		this->mOffsets
-	);
-	context->PSSetConstantBuffers(1, 1, cbuffer.getComPtr().GetAddressOf());
+	this->cbuffer->update(this->mOffsets);
+	context->PSSetConstantBuffers(1, 1, 
+		this->cbuffer->getComPtr().GetAddressOf());
 }
 
 void SsaoRender::buildOffset()
@@ -256,7 +247,7 @@ void SsaoRender::buildRandomVecTexture()
 
 	ComPtr<ID3D11Texture2D> tex = 0;
 	HRESULT hr;
-	hr = this->d_graphic->getDevice()->CreateTexture2D(&desc, &initData, tex.GetAddressOf());
+	hr = d_graphic->getDevice()->CreateTexture2D(&desc, &initData, tex.GetAddressOf());
 	CHECK(hr);
 	
 	D3D11_SHADER_RESOURCE_VIEW_DESC view_desc;
@@ -264,7 +255,7 @@ void SsaoRender::buildRandomVecTexture()
 	view_desc.Format = desc.Format;
 	view_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	view_desc.Texture2D.MipLevels = 1;
-	hr = this->d_graphic->getDevice()->CreateShaderResourceView(tex.Get(), &view_desc, 
+	hr = d_graphic->getDevice()->CreateShaderResourceView(tex.Get(), &view_desc, 
 		this->random_vec_SRV.GetAddressOf());
 	CHECK(hr);
 }

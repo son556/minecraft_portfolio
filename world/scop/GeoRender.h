@@ -10,15 +10,10 @@ class DepthMap;
 class GeoRender
 {
 public:
-	GeoRender(
-		MapUtils* minfo,
-		DeferredGraphics* dgraphic
-	);
-	~GeoRender();
+	GeoRender(MapUtils* minfo);
+	~GeoRender() = default;
 	void render(
-		Mat const& view,
-		Mat const& proj,
-		vec3 const& cam_pos,
+		CamType type,
 		D3D11_VIEWPORT* view_port = nullptr
 	);
 	void setParallaxFlag(bool flag);
@@ -29,17 +24,17 @@ public:
 	ComPtr<ID3D11RenderTargetView> getRTV(RTVIndex idx);
 
 private:
+	GeoRender() = delete;
+	GeoRender(GeoRender const&) = delete;
+	GeoRender& operator=(GeoRender const&) = delete;
+
+private:
 	void setPipe();
-	void setConstantBuffer(
-		Mat const& view,
-		Mat const& proj,
-		vec3 const& cam_pos
-	);
+	void setConstantBuffer(CamType type);
 	void parallaxRender(vec3 const& cam_pos);
 
 private:
 	MapUtils* m_info;
-	DeferredGraphics* d_graphic;
 	shared_ptr<ParallaxMapping> parallax_mapping;
 	shared_ptr<DeferredBuffer> d_buffer;
 	shared_ptr<RasterizerState> rasterizer_state;

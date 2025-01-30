@@ -11,16 +11,11 @@
 #include "Buffer.h"
 #include "SamplerState.h"
 
-#include "TestRender.h"
-
-OIT::OIT(
-	DeferredGraphics *graphic,
-	MapUtils* minfo
-) 
-	: d_graphic(graphic), m_info(minfo), d_buff(nullptr), tp(graphic, minfo),
-	cp(graphic, minfo), water(graphic, minfo)
+OIT::OIT(MapUtils* minfo) 
+	: m_info(minfo), d_buff(nullptr), tp(minfo),
+	cp(minfo), water(minfo)
 {
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buff = make_shared<DeferredBuffer>(1);
 	this->d_buff->setRTVsAndSRVs(device,
 		this->m_info->width, this->m_info->height);
@@ -64,12 +59,6 @@ OIT::OIT(
 		indices.size(),
 		D3D11_BIND_INDEX_BUFFER
 	);
-
-	this->test_render = make_shared<TestRender>(d_graphic, m_info);
-}
-
-OIT::~OIT()
-{
 }
 
 void OIT::setRTVandSRV(
@@ -85,7 +74,7 @@ void OIT::setRTVandSRV(
 
 void OIT::setPipe()
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	);
@@ -105,20 +94,15 @@ void OIT::setPipe()
 		this->sampler_state->getComPtr().GetAddressOf());
 }
 
-void OIT::render(
-	vec3 const& cam_pos,
-	Mat const& cam_view, 
-	Mat const& cam_proj
-)
+void OIT::render(CamType type)
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	
 	// water render tmp
-	this->water.render(cam_pos, cam_view, cam_proj,
-		this->depth_srv, this->solid_rtv);
+	this->water.render(type, this->depth_srv, this->solid_rtv);
 
 	// transparent render
-	this->tp.render(cam_view, cam_proj, this->depth_srv);
+	this->tp.render(type, this->depth_srv);
 
 	// composition render
 	this->cp.render(this->solid_rtv, this->tp.getAccum(), this->tp.getReveal());
@@ -134,7 +118,7 @@ void OIT::render(
 		DXGI_FORMAT_R32_UINT,
 		0
 	);
-	this->d_graphic->renderBegin(this->d_buff.get());
+	d_graphic->renderBegin(this->d_buff.get());
 	context->PSSetShaderResources(0, 1, this->solid_srv.GetAddressOf());
 	context->DrawIndexed(
 		this->i_buff->getCount(),

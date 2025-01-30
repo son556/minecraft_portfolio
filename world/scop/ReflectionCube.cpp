@@ -12,17 +12,17 @@
 #include "PixelShader.h"
 #include "Buffer.h"
 #include "ConstantBuffer.h"
+#include "TestCam.h"
 
 ReflectionCube::ReflectionCube(
-	DeferredGraphics* graphic, 
 	MapUtils* m_info, 
 	GeoRender* g_render, 
 	Wallpaper* skybox, 
 	PBR* pbr
-) : d_graphic(graphic), m_info(m_info), geo_render(g_render), sky_box(skybox),
+) : m_info(m_info), geo_render(g_render), sky_box(skybox),
 	pbr(pbr)
 {
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->vertex_shader = make_shared<VertexShader>(
 		device,
 		L"ReflectionCubeVS.hlsl",
@@ -49,7 +49,7 @@ ReflectionCube::ReflectionCube(
 	MVP mvp;
 	this->constant_buffer = make_shared<ConstantBuffer>(
 		device,
-		this->d_graphic->getContext(),
+		d_graphic->getContext(),
 		mvp
 	);
 	vector<VertexDefer> vertices;
@@ -86,7 +86,7 @@ ReflectionCube::ReflectionCube(
 
 void ReflectionCube::init()
 {
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	D3D11_TEXTURE2D_DESC cube_desc = {};
 	ZeroMemory(&cube_desc, sizeof(cube_desc));
 	cube_desc.Width = width;
@@ -98,8 +98,7 @@ void ReflectionCube::init()
 	cube_desc.SampleDesc.Quality = 0;
 	cube_desc.Usage = D3D11_USAGE_DEFAULT;
 	cube_desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	cube_desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE | 
-		D3D11_RESOURCE_MISC_GENERATE_MIPS;
+	cube_desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
 	ComPtr<ID3D11Texture2D> cube_tex;
 	HRESULT hr = device->CreateTexture2D(&cube_desc, nullptr, cube_tex.GetAddressOf());
@@ -156,7 +155,7 @@ void ReflectionCube::init()
 
 void ReflectionCube::setPipe()
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	);
@@ -183,9 +182,10 @@ void ReflectionCube::setPipe()
 
 }
 
-void ReflectionCube::render(vec3 const& cam_pos)
+void ReflectionCube::render(CamType type)
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	vec3 cam_pos = cam->getPos();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	this->cam_views[0] = XMMatrixLookToLH(cam_pos, vec3(1, 0, 0), vec3(0, 1, 0));
 	this->cam_views[1] = XMMatrixLookToLH(cam_pos, vec3(-1, 0, 0), vec3(0, 1, 0));
 	this->cam_views[2] = XMMatrixLookToLH(cam_pos, vec3(0, 1, 0), vec3(0, 0, -1));
@@ -193,16 +193,21 @@ void ReflectionCube::render(vec3 const& cam_pos)
 	this->cam_views[4] = XMMatrixLookToLH(cam_pos, vec3(0, 0, 1), vec3(0, 1, 0));
 	this->cam_views[5] = XMMatrixLookToLH(cam_pos, vec3(0, 0, -1), vec3(0, 1, 0));
 
+	MVP mvp = cam->getMVP(type);
 	for (int i = 0; i < 6; i++) {
 		// skybox render
-		this->sky_box->render(cam_pos, this->cam_views[i], this->cam_proj);
+		mvp.proj = this->cam_proj;
+		mvp.view = this->cam_views[i];
+		cam->setTmpMVP(mvp.model, mvp.view, mvp.proj);
+		mvp.model = mvp.model.Transpose();
+		mvp.view = this->cam_views[i].Transpose();
+		mvp.proj = mvp.proj.Transpose();
+		cam->tmpBufferUpdate(mvp);
+		this->sky_box->render(CamType::TEMP);
 		
 		// geographic render
 		this->geo_render->setParallaxFlag(false);
-		this->geo_render->render(
-			this->cam_views[i], 
-			this->cam_proj, 
-			cam_pos);
+		this->geo_render->render(CamType::TEMP);
 		
 		// pbr render
 		this->pbr->setRTV();

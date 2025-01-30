@@ -16,8 +16,8 @@ class Texture;
 class PBR
 {
 public:
-	PBR(DeferredGraphics* grpahic, UINT width, UINT height);
-	~PBR();
+	PBR(UINT width, UINT height);
+	~PBR() = default;
 	void setRTV();
 	void render(
 		vec3 const& light_pos, 
@@ -29,11 +29,15 @@ public:
 	ComPtr<ID3D11ShaderResourceView> getDirectLight();
 
 private:
+	PBR() = delete;
+	PBR(PBR&) = delete;
+	PBR& operator=(PBR&) = delete;
+
+private:
 	void setPipe();
 	void setCBuffer(vec3 const& light_pos, vec3 const& cam_pos);
 
 private:
-	DeferredGraphics* d_graphic;
 	shared_ptr<DeferredBuffer> d_buffer;
 
 private:

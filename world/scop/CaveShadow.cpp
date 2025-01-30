@@ -11,14 +11,14 @@
 #include "ConstantBuffer.h"
 #include "MapUtils.h"
 #include "Chunk.h"
+#include "TestCam.h"
 
-CaveShadow::CaveShadow(DeferredGraphics* d_graphic, MapUtils* m_info)
+CaveShadow::CaveShadow(MapUtils* m_info)
 {
-	this->d_graphic = d_graphic;
 	this->m_info = m_info;
 	this->d_buffer = make_shared<DeferredBuffer>(1);
-	this->device = this->d_graphic->getDevice();
-	this->context = this->d_graphic->getContext();
+	this->device = d_graphic->getDevice();
+	this->context = d_graphic->getContext();
 	this->d_buffer->setRTVsAndSRVs(this->device, 
 		this->m_info->width, this->m_info->height);
 	this->vertex_shader = make_shared<VertexShader>(
@@ -44,30 +44,20 @@ CaveShadow::CaveShadow(DeferredGraphics* d_graphic, MapUtils* m_info)
 		"main",
 		"ps_5_0"
 	);
-	MVP mvp;
-	this->c_buff = make_shared<ConstantBuffer>(
-		this->device,
-		this->d_graphic->getContext(),
-		mvp
-	);
 }
 
-void CaveShadow::render(Mat const& cam_view, Mat const& cam_proj)
+void CaveShadow::render(CamType type)
 {
 	this->setPipe();
-	MVP mvp;
-	mvp.view = cam_view.Transpose();
-	mvp.proj = cam_proj.Transpose();
-	this->c_buff->update(mvp);
 	this->context->VSSetConstantBuffers(0, 1,
-		this->c_buff->getComPtr().GetAddressOf());
-	this->d_graphic->renderBegin(this->d_buffer.get());
+		cam->getConstantBuffer(type)->getComPtr().GetAddressOf());
+	d_graphic->renderBegin(this->d_buffer.get());
 	for (int i = 0; i < this->m_info->size_h; i++) {
 		for (int j = 0; j < this->m_info->size_w; j++) {
 			if (this->m_info->chunks[i][j]->render_flag == false)
 				continue;
 			this->m_info->chunks[i][j]->setShadowRender(
-				this->d_graphic->getContext()
+				d_graphic->getContext()
 			);
 		}
 	}

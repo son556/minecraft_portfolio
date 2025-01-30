@@ -17,6 +17,10 @@ public:
 	void update(ComPtr<ID3D11Device> const& device);
 	void reset();
 
+private:
+	TPChunk(TPChunk const&) = delete;
+	TPChunk operator=(TPChunk const&) = delete;
+
 public:
 	uint32 vertices_idx = 0;
 	bool render_flag = false;

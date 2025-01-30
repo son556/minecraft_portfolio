@@ -20,7 +20,6 @@ public:
 		UINT window_w,
 		UINT window_h
 	);
-	void setDeffGraphic(shared_ptr<DeferredGraphics> defer_graphic);
 	void userPositionCheck(float x, float z);
 	void chunksSetVerticesAndIndices( // 그림자와 면 생성
 		vector<Index2> const& v_idx,
@@ -52,6 +51,11 @@ public:
 	void setSightChunk(int chunk_cnt);
 
 private:
+	Map() = delete;
+	Map& operator=(Map const&) = delete;
+	Map(Map const&) = delete;
+
+private:
 	void terrainSetVerticesAndIndices();
 	void resetChunk(Index2 const& c_idx);
 	int checkTerrainBoundary(float x, float z) const;
@@ -64,7 +68,6 @@ public:
 	RenderSystem r_system;
 
 private:
-	DeferredGraphics* d_graphic;
 	int c_fov;
 	int thread_cnt;
 };

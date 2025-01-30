@@ -11,13 +11,12 @@
 #include "ConstantBuffer.h"
 #include "Buffer.h"
 #include "SamplerState.h"
+#include "TestCam.h"
 
-ParallaxMapping::ParallaxMapping(
-	DeferredGraphics* graphic, UINT width, UINT height)
+ParallaxMapping::ParallaxMapping(UINT width, UINT height)
 {
-	this->d_graphic = graphic;
 	this->d_buffer = make_shared<DeferredBuffer>(5);
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buffer->setRTVsAndSRVs(device, width, height);
 	this->vertex_shader = make_shared<VertexShader>(
 		device,
@@ -60,26 +59,23 @@ ParallaxMapping::ParallaxMapping(
 	this->sampler_state = make_shared<SamplerState>(device);
 	this->eye_poe_cbuffer = make_shared<ConstantBuffer>(
 		device,
-		this->d_graphic->getContext(),
+		d_graphic->getContext(),
 		vec4(0, 0, 0, 0)
 	);
 }
 
-ParallaxMapping::~ParallaxMapping()
-{
-}
-
 void ParallaxMapping::setRTV()
 {
-	this->d_graphic->renderBegin(this->d_buffer.get());
+	d_graphic->renderBegin(this->d_buffer.get());
 }
 
-void ParallaxMapping::render(vec3 const& cam_pos)
+void ParallaxMapping::render()
 {
+	vec3 cam_pos = cam->getPos();
 	this->eye_poe_cbuffer->
 		update(vec4(cam_pos.x, cam_pos.y, cam_pos.z, 1));
 	this->setPipe();
-	this->d_graphic->getContext()->DrawIndexed(
+	d_graphic->getContext()->DrawIndexed(
 		this->ibuffer->getCount(), 0, 0);
 }
 
@@ -95,7 +91,7 @@ ComPtr<ID3D11RenderTargetView> ParallaxMapping::getRTV(RTVIndex idx)
 
 void ParallaxMapping::setPipe()
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	context->IASetInputLayout(this->input_layout->getComPtr().Get());

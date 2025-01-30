@@ -17,11 +17,16 @@ class ConstantBuffer;
 class SsaoRender
 {
 public:
-	SsaoRender(DeferredGraphics* d_graphic, 
-		UINT width, UINT height);
-	void render(Mat const& cam_view, Mat const& cam_proj);
+	SsaoRender(UINT width, UINT height);
+	~SsaoRender() = default;
+	void render(CamType type);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	shared_ptr<DeferredBuffer> getDBuffer();
+
+private:
+	SsaoRender() = delete;
+	SsaoRender(SsaoRender const&) = delete;
+	SsaoRender& operator=(SsaoRender const&) = delete;
 
 private:
 	void setPipe();
@@ -34,7 +39,6 @@ private:
 	shared_ptr<ConstantBuffer> cbuffer;
 
 private:
-	DeferredGraphics* d_graphic;
 	vec4 mOffsets[14];
 	ComPtr<ID3D11ShaderResourceView> random_vec_SRV;
 	D3D11_VIEWPORT view_port = { 0, };

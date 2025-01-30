@@ -92,3 +92,17 @@ enum class BlockTexture {
 	OAK_LOG,
 	OAK_LEAVES
 };
+
+enum class CamType {
+	NORMAL,
+	REFLECTION_XZ,
+	TEMP
+};
+
+class TestCam;
+class DeferredGraphics;
+
+extern shared_ptr<TestCam> cam;
+extern shared_ptr<DeferredGraphics> d_graphic;
+
+extern HWND hWnd;

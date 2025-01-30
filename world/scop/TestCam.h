@@ -1,4 +1,7 @@
 #pragma once
+
+class ConstantBuffer;
+
 class TestCam
 {
 public:
@@ -26,6 +29,19 @@ public:
 	float getFar();
 	void setWidth(float w);
 	void setHeight(float h);
+	void setTmpMVP(
+		Mat const& model,
+		Mat const& view,
+		Mat const& proj
+	);
+	void tmpBufferUpdate(MVP const& mvp);
+	MVP getMVP(CamType type);
+	shared_ptr<ConstantBuffer>& getConstantBuffer(CamType type);
+
+private:
+	TestCam() = delete;
+	TestCam(TestCam const&) = delete;
+	TestCam& operator=(TestCam const) = delete;
 
 private:
 	double ndcToDegree(double ndc);
@@ -39,5 +55,10 @@ private:
 	vec3 pos;
 	vec3 dir;
 	MVP mvp;
+	MVP reflection_mvp;
+	MVP tmp_mvp;
+	shared_ptr<ConstantBuffer> constant_buffer;
+	shared_ptr<ConstantBuffer> constant_reflection_buffer;
+	shared_ptr<ConstantBuffer> constant_tmp_buffer;
 };
 

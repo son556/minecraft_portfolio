@@ -16,14 +16,16 @@ template<typename T> class Buffer;
 class ResultSM
 {
 public:
-	ResultSM(DeferredGraphics* graphic, UINT width, UINT height);
-	void render(
-		vec3 const& cam_pos,
-		Mat const& cam_view,
-		Mat const& cam_proj
-	);
+	ResultSM(UINT width, UINT height);
+	void render(CamType type);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	vec3 getDirectionalLightPos();
+	~ResultSM() = default;
+
+private:
+	ResultSM() = delete;
+	ResultSM(ResultSM const&) = delete;
+	ResultSM& operator=(ResultSM const&) = delete;
 
 private:
 	void setPipe();
@@ -35,7 +37,6 @@ private:
 	shared_ptr<Buffer<uint32>> ibuffer;
 
 private:
-	DeferredGraphics* d_graphic;
 	shared_ptr<DeferredBuffer> d_buffer;
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<VertexShader> vertex_sahder;

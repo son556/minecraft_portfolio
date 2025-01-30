@@ -14,8 +14,8 @@ template<typename T> class Buffer;
 class Composite
 {
 public:
-	Composite(DeferredGraphics* dgraphic, MapUtils* minfo);
-	~Composite();
+	Composite(MapUtils* minfo);
+	~Composite() = default;
 
 	void setPipe();
 	void render(
@@ -25,12 +25,16 @@ public:
 	);
 
 private:
+	Composite() = delete;
+	Composite(Composite const&) = delete;
+	Composite& operator=(Composite const&) = delete;
+
+private:
 	shared_ptr<Buffer<VertexDefer>> v_buffer;
 	shared_ptr<Buffer<uint32>> i_buffer;
 	ComPtr<ID3D11BlendState> blend_state;
 
 private:
-	DeferredGraphics* d_graphic;
 	MapUtils* m_info;
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<VertexShader> vertex_shader;

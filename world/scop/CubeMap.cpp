@@ -13,17 +13,13 @@
 #include "ConstantBuffer.h"
 #include "SunMoon.h"
 #include "Texture.h"
+#include "TestCam.h"
 
-CubeMap::CubeMap(
-	DeferredGraphics* dgraphic,
-	UINT width, 
-	UINT height
-)
+CubeMap::CubeMap(UINT width, UINT height)
 {
-	this->d_graphic = dgraphic;
 	this->width = width;
 	this->height = height;
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buffer = make_shared<DeferredBuffer>(1);
 	this->d_buffer->setRTVsAndSRVs(device, width, height);
 	this->vertex_shader = make_shared<VertexShader>(
@@ -55,15 +51,6 @@ CubeMap::CubeMap(
 		L"./textures/skybox/HDRI/MyCubesEnvHDR.dds",
 		true
 	);
-}
-
-void CubeMap::render(
-	Mat const& cam_view, 
-	Mat const& cam_proj,
-	vec3 const& cam_pos
-)
-{
-	this->d_graphic->renderBegin(this->d_buffer.get());
 	vector<VertexDefer> vertices;
 	vector<uint32> indices;
 	Block::makeCubeMap(
@@ -72,29 +59,41 @@ void CubeMap::render(
 		indices
 	);
 	this->vbuffer = make_shared<Buffer<VertexDefer>>(
-		this->d_graphic->getDevice(),
+		device,
 		vertices.data(),
 		vertices.size(),
 		D3D11_BIND_VERTEX_BUFFER
 	);
 	this->ibuffer = make_shared<Buffer<uint32>>(
-		this->d_graphic->getDevice(),
+		device,
 		indices.data(),
 		indices.size(),
 		D3D11_BIND_INDEX_BUFFER
 	);
-	this->setPipe();
-	ComPtr<ID3D11DeviceContext> context = 
-		this->d_graphic->getContext();
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
 	MVP mvp;
-	mvp.model = XMMatrixTranslation(cam_pos.x, cam_pos.y, cam_pos.z);
+	this->constant_buffer = make_shared<ConstantBuffer>(
+		device,
+		d_graphic->getContext(),
+		mvp
+	);
+}
+
+void CubeMap::render(CamType type)
+{
+	d_graphic->renderBegin(this->d_buffer.get());
+	this->setPipe();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
+	MVP mvp = cam->getMVP(type);
+	vec3 cam_pos = cam->getPos();
+	Mat m = XMMatrixTranslation(cam_pos.x, cam_pos.y, cam_pos.z);
+	mvp.model = m * mvp.model;
 	mvp.model = mvp.model.Transpose();
-	mvp.view = cam_view.Transpose();
-	mvp.proj = cam_proj.Transpose();
-	ConstantBuffer cbuffer(device, context, mvp);
+	mvp.view = mvp.view.Transpose();
+	mvp.proj = mvp.proj.Transpose();
+	this->constant_buffer->update(mvp);
 	context->VSSetConstantBuffers(0, 1,
-		cbuffer.getComPtr().GetAddressOf());
+		this->constant_buffer->getComPtr().GetAddressOf());
 	context->DrawIndexed(this->ibuffer->getCount(), 0, 0);
 }
 
@@ -107,7 +106,7 @@ ComPtr<ID3D11ShaderResourceView> CubeMap::getSRV()
 void CubeMap::setPipe()
 {
 	ComPtr<ID3D11DeviceContext> context;
-	context = this->d_graphic->getContext();
+	context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	);

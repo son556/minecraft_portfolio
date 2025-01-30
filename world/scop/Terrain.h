@@ -25,15 +25,10 @@ public: // test
 		vec3 const& ray_dir);
 
 public:
-	void Render(
-		Mat const& cam_view, 
-		Mat const& cam_proj,
-		vec3 const& cam_pos
-	);
+	void Render();
 
 private:
 	shared_ptr<Map> m_manager;
-	shared_ptr<DeferredGraphics> deff_graphic;
 	set<string> file_book;
 	map<vec3, uint32> object_book;
 	map<vec3, shared_ptr<Chunk>> tmp_storage;

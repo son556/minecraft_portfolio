@@ -12,13 +12,12 @@
 #include "ConstantBuffer.h"
 #include "Block.h"
 #include "RasterizerState.h"
+#include "TestCam.h"
 
-WaterReflection::WaterReflection(
-	DeferredGraphics* d_graphic, 
-	MapUtils* m_info
-) : d_graphic(d_graphic), m_info(m_info)
+WaterReflection::WaterReflection(MapUtils* m_info) 
+	: m_info(m_info)
 {
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 
 	this->d_buff = make_shared<DeferredBuffer>(1);
 	this->d_buff->setRTVsAndSRVs(device, 
@@ -64,7 +63,7 @@ WaterReflection::WaterReflection(
 	vec4 dummy;
 	this->constant_buffer = make_shared<ConstantBuffer>(
 		device,
-		this->d_graphic->getContext(),
+		d_graphic->getContext(),
 		dummy
 	);
 	D3D11_SAMPLER_DESC sampler_desc;
@@ -80,7 +79,7 @@ WaterReflection::WaterReflection(
 
 void WaterReflection::setPipe()
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	context->IASetInputLayout(this->input_layout->getComPtr().Get());
@@ -109,16 +108,16 @@ void WaterReflection::setPipe()
 }
 
 void WaterReflection::render(
-	vec3 const& cam_pos,
 	ComPtr<ID3D11ShaderResourceView> const& reflection_cube,
 	ComPtr<ID3D11ShaderResourceView> const& water_pos
 )
 {
+	vec3 cam_pos = cam->getPos();
 	vec4 tmp = vec4(cam_pos.x, cam_pos.y, cam_pos.z, 1);
 	this->constant_buffer->update(tmp);
 
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
-	this->d_graphic->renderBegin(this->d_buff.get());
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
+	d_graphic->renderBegin(this->d_buff.get());
 	this->setPipe();
 	context->PSSetShaderResources(0, 1, reflection_cube.GetAddressOf());
 	context->PSSetShaderResources(1, 1, water_pos.GetAddressOf());

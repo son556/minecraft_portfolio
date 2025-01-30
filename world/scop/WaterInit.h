@@ -19,12 +19,11 @@ enum class WaterRTVType {
 class WaterInit
 {
 public:
-	WaterInit(DeferredGraphics* d_graphic, MapUtils* m_info);
+	WaterInit(MapUtils* m_info);
 	~WaterInit() = default;
 	void setPipe();
 	void render(
-		Mat const& cam_view,
-		Mat const& cam_proj,
+		CamType type,
 		ComPtr<ID3D11ShaderResourceView> const& depth_srv
 	);
 	ComPtr<ID3D11ShaderResourceView> getSRV(WaterRTVType type);
@@ -35,12 +34,10 @@ private:
 	WaterInit& operator=(WaterInit const&) = delete;
 
 private:
-	DeferredGraphics* d_graphic;
 	MapUtils* m_info;
 	shared_ptr<DeferredBuffer> d_buff;
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<VertexShader> vertex_shader;
-	shared_ptr<ConstantBuffer> constnat_buffer;
 	shared_ptr<RasterizerState> rasterizer_state;
 	shared_ptr<PixelShader> pixel_shader;
 	shared_ptr<SamplerState> sampler_state;

@@ -21,12 +21,6 @@ Map::Map(
 {
 	this->c_fov = fov_chunk;
 	this->thread_cnt = thread_cnt;
-}
-
-void Map::setDeffGraphic(shared_ptr<DeferredGraphics> defer_graphic)
-{
-	this->d_graphic = defer_graphic.get();
-	this->r_system.setDeffGraphics(this->d_graphic);
 	clock_t start, finish;
 	start = clock();
 	this->t_system.createHeightMap();
@@ -187,7 +181,7 @@ void Map::vertexAndIndexGeneratorTP(Index2 const& c_idx)
 			}
 		}
 	}
-	chunk.tp_chunk.update(this->d_graphic->getDevice());
+	chunk.tp_chunk.update(d_graphic->getDevice());
 }
 
 void Map::vertexAndIndexGeneratorWater(Index2 const& c_idx)
@@ -212,7 +206,7 @@ void Map::vertexAndIndexGeneratorWater(Index2 const& c_idx)
 			v_idx += 4;
 		}
 	}
-	chunk.w_chunk.update(this->d_graphic->getDevice());
+	chunk.w_chunk.update(d_graphic->getDevice());
 }
 
 void Map::setSightChunk(int chunk_cnt)
@@ -269,11 +263,11 @@ void Map::chunksSetVerticesAndIndices(
 		this->vertexAndIndexGeneratorTP(c_idx);
 		this->vertexAndIndexGeneratorWater(c_idx);
 		this->m_info.chunks[c_idx.y][c_idx.x]->createGeoBuffer(
-			this->d_graphic->getDevice(),
+			d_graphic->getDevice(),
 			vertices_geo
 		);
 		this->m_info.chunks[c_idx.y][c_idx.x]->createShadowBuffer(
-			this->d_graphic->getDevice(),
+			d_graphic->getDevice(),
 			vertices_shadow,
 			s_indices
 		);

@@ -17,13 +17,12 @@ class ReflectionCube
 {
 public:
 	ReflectionCube(
-		DeferredGraphics* graphic,
 		MapUtils* m_info,
 		GeoRender* g_render,
 		Wallpaper* skybox,
 		PBR* pbr
 	);
-	void render(vec3 const& cam_pos);
+	void render(CamType type);
 	ComPtr<ID3D11ShaderResourceView>& getSRV();
 
 private:
@@ -31,7 +30,6 @@ private:
 	void setPipe();
 
 private:
-	DeferredGraphics* d_graphic;
 	MapUtils* m_info;
 	GeoRender* geo_render;
 	Wallpaper* sky_box;

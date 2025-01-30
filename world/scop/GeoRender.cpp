@@ -15,22 +15,19 @@
 #include "DomainShader.h"
 #include "Chunk.h"
 #include "DepthMap.h"
+#include "TestCam.h"
 
-GeoRender::GeoRender(
-	MapUtils* minfo,
-	DeferredGraphics* dgraphic
-)
+GeoRender::GeoRender(MapUtils* minfo)
 {
 	this->m_info = minfo;
-	this->d_graphic = dgraphic;
 	this->d_buffer = make_shared<DeferredBuffer>(8);
 	this->d_buffer->setRTVsAndSRVs(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		this->m_info->width,
 		this->m_info->height
 	);
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	this->rasterizer_state = make_shared<RasterizerState>(
 		device,
 		D3D11_FILL_SOLID,
@@ -178,49 +175,42 @@ GeoRender::GeoRender(
 	);
 	if (this->parallax_flag) {
 		this->parallax_mapping = make_shared<ParallaxMapping>(
-			this->d_graphic,
 			this->m_info->width,
 			this->m_info->height
 		);
 	}
 	this->depth_map = make_shared<DepthMap>(
-		this->d_graphic->getDevice(),
+		d_graphic->getDevice(),
 		this->m_info->width, this->m_info->height
 	);
 }
 
-GeoRender::~GeoRender()
-{
-}
-
 void GeoRender::render(
-	Mat const& view, 
-	Mat const& proj,
-	vec3 const& cam_pos,
+	CamType type,
 	D3D11_VIEWPORT* view_port
 )
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
-	this->d_graphic->renderBegin(this->d_buffer.get(), 
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
+	d_graphic->renderBegin(this->d_buffer.get(), 
 		this->depth_map->getDepthStencilView());
 	if (view_port)
 		context->RSSetViewports(1, view_port);
 	this->setPipe();
-	this->setConstantBuffer(view, proj, cam_pos);
+	this->setConstantBuffer(type);
 	for (int i = 0; i < this->m_info->size_h; i++) {
 		for (int j = 0; j < this->m_info->size_w; j++) {
 			if (this->m_info->chunks[i][j]->render_flag == false)
 				continue;
 			this->m_info->chunks[i][j]->setGeoRender(
-				this->d_graphic->getContext()
+				d_graphic->getContext()
 			);
 		}
 	}
 	context->HSSetShader(nullptr, nullptr, 0);
 	context->DSSetShader(nullptr, nullptr, 0);
 	if (this->parallax_flag)
-		this->parallaxRender(cam_pos);
+		this->parallaxRender(cam->getPos());
 }
 
 void GeoRender::setParallaxFlag(bool flag)
@@ -263,7 +253,7 @@ ComPtr<ID3D11RenderTargetView> GeoRender::getRTV(RTVIndex idx)
 void GeoRender::setPipe()
 {
 	ComPtr<ID3D11DeviceContext> context = 
-		this->d_graphic->getContext();
+		d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
 	context->IASetInputLayout(this->input_layout->getComPtr().Get());
@@ -314,16 +304,13 @@ void GeoRender::setPipe()
 		this->texture_array_normal->getComPtr().GetAddressOf());
 }
 
-void GeoRender::setConstantBuffer(
-	Mat const& view, 
-	Mat const& proj, 
-	vec3 const& cam_pos
-)
+void GeoRender::setConstantBuffer(CamType type)
 {
 	ComPtr<ID3D11DeviceContext> context = 
-		this->d_graphic->getContext();
+		d_graphic->getContext();
 
 	// set hs constant
+	vec3 cam_pos = cam->getPos();
 	vec4 eye;
 	eye.x = cam_pos.x;
 	eye.y = cam_pos.y;
@@ -334,21 +321,16 @@ void GeoRender::setConstantBuffer(
 		this->eye_pos_cbuffer->getComPtr().GetAddressOf());
 	
 	// set ds constant
-	MVP mvp;  
-	mvp.view = view.Transpose();
-	mvp.proj = proj.Transpose();
-	this->mvp_cbuffer->update(mvp);
 	context->DSSetConstantBuffers(0, 1,
-		this->mvp_cbuffer->getComPtr().GetAddressOf());
+		cam->getConstantBuffer(type)->getComPtr().GetAddressOf());
 	context->DSSetConstantBuffers(1, 1,
 		this->eye_pos_cbuffer->getComPtr().GetAddressOf());
-
 }
 
 void GeoRender::parallaxRender(vec3 const& cam_pos)
 {
 	this->parallax_mapping->setRTV();
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->PSSetShaderResources(0, 1,
 		this->texture_array_color->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(1, 1,
@@ -363,5 +345,5 @@ void GeoRender::parallaxRender(vec3 const& cam_pos)
 		this->d_buffer->getSRV(6).GetAddressOf());
 	context->PSSetShaderResources(6, 1,
 		this->d_buffer->getSRV(7).GetAddressOf());
-	this->parallax_mapping->render(cam_pos);
+	this->parallax_mapping->render();
 }

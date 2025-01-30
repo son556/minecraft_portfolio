@@ -6,14 +6,17 @@ class Filter;
 class Blur
 {
 public:
-	Blur(
-		DeferredGraphics* graphic, 
-		UINT width, 
-		UINT height
-	);
+	Blur(UINT width, UINT height);
 	void setStartSRV(ComPtr<ID3D11ShaderResourceView> start_srv);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	void render();
+	~Blur() = default;
+
+private:
+	Blur() = delete;
+	Blur(Blur const&) = delete;
+	Blur& operator=(Blur const&) = delete;
+
 
 private:
 	void makeFilter();
@@ -26,8 +29,8 @@ private:
 	vector<shared_ptr<Filter>> tmp_up_filter;
 	vector<shared_ptr<Filter>> up_blur_y_filter;
 	shared_ptr<Filter> final_filter;
+
 private:
-	DeferredGraphics* d_graphic = nullptr;
 	UINT width;
 	UINT height;
 	int multi_level_target;

@@ -11,21 +11,17 @@
 #include "Chunk.h"
 #include "MapUtils.h"
 #include "SamplerState.h"
-
+#include "TestCam.h"
 #include "BlendState.h"
 
-Transparent::Transparent(
-	DeferredGraphics* d_graphic, 
-	MapUtils* minfo
-)
+Transparent::Transparent(MapUtils* minfo)
 {
-	this->d_graphic = d_graphic;
 	this->m_info = minfo;
 	this->d_buffer = make_shared<DeferredBuffer>(2);
-	this->d_buffer->setRTVsAndSRVs(this->d_graphic->getDevice(), 
+	this->d_buffer->setRTVsAndSRVs(d_graphic->getDevice(), 
 		this->m_info->width, this->m_info->height);
 
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 
 	D3D11_BLEND_DESC blend_desc;
 	ZeroMemory(&blend_desc, sizeof(blend_desc));
@@ -79,14 +75,8 @@ Transparent::Transparent(
 		D3D11_FILL_SOLID,
 		D3D11_CULL_BACK
 	);
-	MVP mvp;
-	this->constant_buffer = make_shared<ConstantBuffer>(
-		device,
-		this->d_graphic->getContext(),
-		mvp
-	);
 
-	this->d_graphic->getContext()->OMGetDepthStencilState(
+	d_graphic->getContext()->OMGetDepthStencilState(
 		this->prev_ds_state.GetAddressOf(),
 		&(this->prev_ref)
 	);
@@ -111,13 +101,9 @@ Transparent::Transparent(
 	this->sampler_state = make_shared<SamplerState>(device, sampler_desc);
 }
 
-Transparent::~Transparent()
-{
-}
-
 void Transparent::setPipe()
 {
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	);
@@ -145,20 +131,15 @@ void Transparent::setPipe()
 }
 
 void Transparent::render(
-	Mat const& cam_view, 
-	Mat const& cam_proj,
+	CamType type,
 	ComPtr<ID3D11ShaderResourceView> depth_srv
 )
 {
 	this->setPipe();
-	MVP mvp;
-	mvp.view = cam_view.Transpose();
-	mvp.proj = cam_proj.Transpose();
-	this->constant_buffer->update(mvp);
-	ComPtr<ID3D11DeviceContext> context = this->d_graphic->getContext();
-	this->d_graphic->renderBegin(this->d_buffer.get());
+	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
+	d_graphic->renderBegin(this->d_buffer.get());
 	context->VSSetConstantBuffers(0, 1,
-		this->constant_buffer->getComPtr().GetAddressOf());
+		cam->getConstantBuffer(type)->getComPtr().GetAddressOf());
 	context->ClearRenderTargetView(
 		this->d_buffer->getRTV(0).Get(),
 		this->clear_accum

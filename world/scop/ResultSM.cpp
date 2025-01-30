@@ -13,18 +13,13 @@
 #include "SamplerState.h"
 #include "RasterizerState.h"
 
-ResultSM::ResultSM(
-	DeferredGraphics* graphic, 
-	UINT width, 
-	UINT height
-)
+ResultSM::ResultSM(UINT width, UINT height)
 {
-	this->d_graphic = graphic;
-	ComPtr<ID3D11Device> device = this->d_graphic->getDevice();
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buffer = make_shared<DeferredBuffer>(1);
 	this->d_buffer->setRTVsAndSRVs(device, width, height);
-	this->sun_moon = make_shared<SunMoon>(graphic, width, height);
-	this->blur = make_shared<Blur>(graphic, width, height);
+	this->sun_moon = make_shared<SunMoon>(width, height);
+	this->blur = make_shared<Blur>(width, height);
 	vector<VertexDefer> vertices;
 	vector<uint32> indices;
 	Block::makeBox(1, vertices, indices);
@@ -66,19 +61,15 @@ ResultSM::ResultSM(
 	this->sampler_state = make_shared<SamplerState>(device);
 }
 
-void ResultSM::render(
-	vec3 const& cam_pos,
-	Mat const& cam_view,
-	Mat const& cam_proj
-)
+void ResultSM::render(CamType type)
 {
 	ComPtr<ID3D11DeviceContext> context = 
-		this->d_graphic->getContext();	
-	this->sun_moon->render(cam_pos, cam_view, cam_proj);
+		d_graphic->getContext();	
+	this->sun_moon->render(type);
 	this->blur->setStartSRV(this->sun_moon->getSRV());
 	this->blur->render();
 	this->setPipe();
-	this->d_graphic->renderBegin(this->d_buffer.get());
+	d_graphic->renderBegin(this->d_buffer.get());
 	context->PSSetShaderResources(0, 1,
 		this->sun_moon->getSRV().GetAddressOf());
 	context->PSSetShaderResources(1, 1,
@@ -89,7 +80,7 @@ void ResultSM::render(
 void ResultSM::setPipe()
 {
 	ComPtr<ID3D11DeviceContext> context = 
-		this->d_graphic->getContext();
+		d_graphic->getContext();
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	);
