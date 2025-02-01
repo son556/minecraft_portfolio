@@ -13,7 +13,7 @@
 
 OIT::OIT(MapUtils* minfo) 
 	: m_info(minfo), d_buff(nullptr), tp(minfo),
-	cp(minfo), water(minfo)
+	cp(minfo)
 {
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buff = make_shared<DeferredBuffer>(1);
@@ -97,9 +97,6 @@ void OIT::setPipe()
 void OIT::render(CamType type)
 {
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
-	
-	// water render tmp
-	this->water.render(type, this->depth_srv, this->solid_rtv);
 
 	// transparent render
 	this->tp.render(type, this->depth_srv);
@@ -123,11 +120,6 @@ void OIT::render(CamType type)
 	context->DrawIndexed(
 		this->i_buff->getCount(),
 		0, 0);
-}
-
-void OIT::setReflectionCube(ComPtr<ID3D11ShaderResourceView>& reflection_cube)
-{
-	this->water.setReflectionCube(reflection_cube);
 }
 
 ComPtr<ID3D11ShaderResourceView> OIT::getSRV()

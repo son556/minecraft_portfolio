@@ -90,23 +90,25 @@ void Water::setPipe()
 }
 
 void Water::render(
-	CamType type,
 	ComPtr<ID3D11ShaderResourceView> depth_srv, 
-	ComPtr<ID3D11RenderTargetView>& rtv
+	ComPtr<ID3D11RenderTargetView> rtv
 )
 {
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
-	
+
 	// 물위치가 있는 곳을 그림
-	this->water_init.render(type, depth_srv);
+	this->water_init.render(CamType::NORMAL, depth_srv);
 
 	// 물 표면 반사를 그림
-	this->water_reflection.render(this->reflection_cube,
-		this->water_init.getSRV(WaterRTVType::POSITION));
+	this->water_reflection.setDSV(this->water_init.getDSV());
+	this->water_reflection.render();
+	/*this->rt->render(this->water_reflection.getSRV());
+	return;*/
 	
 	// 물 굴절 그림
 	{ // 반사 행렬 증명 부록 c.4.3(평면 정의), c.4.10(반사행렬 증명)
-		SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, 0, 0), vec3(0, 1, 0));
+		SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, WATER_HEIGHT - 1, 0), 
+			vec3(0, 1, 0));
 		Mat reflectionRow = Mat::CreateReflection(plane);
 	}
 	// 물 굴절 + 반사
@@ -117,11 +119,4 @@ void Water::render(
 	context->DrawIndexed(
 		this->i_buff->getCount(),
 		0, 0);
-}
-
-void Water::setReflectionCube(
-	ComPtr<ID3D11ShaderResourceView>& reflection_cube
-)
-{
-	this->reflection_cube = reflection_cube;
 }

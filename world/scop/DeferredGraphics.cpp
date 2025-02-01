@@ -25,7 +25,9 @@ void DeferredGraphics::setViewPort(D3D11_VIEWPORT const& view_port)
 
 void DeferredGraphics::renderBegin(
 	DeferredBuffer* d_buffer,
-	ComPtr<ID3D11DepthStencilView> dsv
+	ComPtr<ID3D11DepthStencilView> dsv,
+	bool reset_rtv,
+	bool reset_dsv
 )
 {
 	int cnt = 1;
@@ -35,19 +37,23 @@ void DeferredGraphics::renderBegin(
 	if (d_buffer) {
 		for (int i = 0; i < cnt; i++)
 			views[i] = d_buffer->getRTV(i).Get();
-		for (int i = 0; i < cnt; i++) {
-			this->context->ClearRenderTargetView(
-				views[i],
-				this->clear_color
-			);
+		if (reset_rtv) {
+			for (int i = 0; i < cnt; i++) {
+				this->context->ClearRenderTargetView(
+					views[i],
+					this->clear_color
+				);
+			}
 		}
 	}
 	else {
 		views[0] = this->defer_rtv.Get();
-		this->context->ClearRenderTargetView(
-			views[0],
-			this->clear_color
-		);
+		if (reset_rtv) {
+			this->context->ClearRenderTargetView(
+				views[0],
+				this->clear_color
+			);
+		}
 	}
 	ComPtr<ID3D11DepthStencilView> depth_stencil_view;
 	if (dsv)
@@ -55,12 +61,14 @@ void DeferredGraphics::renderBegin(
 	else
 		depth_stencil_view = this->DSV;
 	
-	this->context->ClearDepthStencilView(
-		depth_stencil_view.Get(),
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-		1.f,
-		0
-	);
+	if (reset_dsv) {
+		this->context->ClearDepthStencilView(
+			depth_stencil_view.Get(),
+			D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+			1.f,
+			0
+		);
+	}
 	this->context->OMSetRenderTargets(
 		cnt,
 		views.data(),
@@ -216,3 +224,4 @@ ComPtr<ID3D11DepthStencilView> DeferredGraphics::getDSV()
 {
 	return this->DSV;
 }
+

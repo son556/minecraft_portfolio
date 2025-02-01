@@ -5,7 +5,8 @@ public:
 	RasterizerState(
 		ComPtr<ID3D11Device> device,
 		D3D11_FILL_MODE fill_mode,
-		D3D11_CULL_MODE cull_mode
+		D3D11_CULL_MODE cull_mode,
+		bool front_ccw = false
 	);
 	RasterizerState(RasterizerState const&) = delete;
 	~RasterizerState();

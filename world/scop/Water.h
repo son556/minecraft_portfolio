@@ -5,18 +5,20 @@
 
 class TestRender;
 
+template<typename T> class Buffer;
+class OpacityRender;
+struct VertexDefer;
+struct RenderOption;
+
 class Water
 {
 public:
 	Water(MapUtils* m_info);
 	void setPipe();
 	void render(
-		CamType type,
 		ComPtr<ID3D11ShaderResourceView> depth_srv,
-		ComPtr<ID3D11RenderTargetView>& rtv
+		ComPtr<ID3D11RenderTargetView> rtv
 	);
-	void setReflectionCube(
-		ComPtr<ID3D11ShaderResourceView>& reflection_cube);
 	~Water() = default;
 
 private:
@@ -28,6 +30,7 @@ private:
 	MapUtils* m_info;
 	WaterInit water_init;
 	WaterReflection water_reflection;
+	shared_ptr<OpacityRender> o_render;
 
 private:
 	shared_ptr<DeferredBuffer> d_buff;

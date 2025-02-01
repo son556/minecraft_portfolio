@@ -39,6 +39,12 @@ CubeMap::CubeMap(UINT width, UINT height)
 		D3D11_FILL_SOLID,
 		D3D11_CULL_BACK
 	);
+	this->ccw_rasterizer_sate = make_shared<RasterizerState>(
+		device,
+		D3D11_FILL_SOLID,
+		D3D11_CULL_BACK,
+		true
+	);
 	this->pixel_shader = make_shared<PixelShader>(
 		device,
 		L"SkyBoxPS.hlsl",
@@ -78,10 +84,10 @@ CubeMap::CubeMap(UINT width, UINT height)
 	);
 }
 
-void CubeMap::render(CamType type)
-{
+void CubeMap::render(CamType type, bool ccw_flag)
+{	
 	d_graphic->renderBegin(this->d_buffer.get());
-	this->setPipe();
+	this->setPipe(ccw_flag);
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	MVP mvp = cam->getMVP(type);
@@ -103,7 +109,7 @@ ComPtr<ID3D11ShaderResourceView> CubeMap::getSRV()
 }
 
 
-void CubeMap::setPipe()
+void CubeMap::setPipe(bool ccw_flag)
 {
 	ComPtr<ID3D11DeviceContext> context;
 	context = d_graphic->getContext();
@@ -126,7 +132,10 @@ void CubeMap::setPipe()
 		nullptr,
 		0
 	);
-	context->RSSetState(this->rasterizer_state->getComPtr().Get());
+	if (ccw_flag == false)
+		context->RSSetState(this->rasterizer_state->getComPtr().Get());
+	else
+		context->RSSetState(this->ccw_rasterizer_sate->getComPtr().Get());
 	context->PSSetShader(
 		this->pixel_shader->getComPtr().Get(),
 		nullptr,

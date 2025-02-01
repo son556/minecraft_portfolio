@@ -106,9 +106,6 @@
     <Filter Include="소스 파일\World\Map\System\RenderSystem">
       <UniqueIdentifier>{11ebfda0-cf85-41ab-91e0-59d22b3d82dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\InputLayouts">
-      <UniqueIdentifier>{8c0d1be0-0a0b-43af-bdb2-f69925e6ed2d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\World\Map\System\LightSystem\LightUtils">
       <UniqueIdentifier>{7823df89-7b72-44b6-ae69-5d01a89620c8}</UniqueIdentifier>
     </Filter>
@@ -121,23 +118,11 @@
     <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\Shadow">
       <UniqueIdentifier>{3e527fc0-a097-4aed-82eb-a9e4f74b3880}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\GeoRender">
-      <UniqueIdentifier>{1c9a78b1-25c0-4e33-9e60-ca96cd93364b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\ShadowRender">
-      <UniqueIdentifier>{fabe4eb9-248b-4966-9f0b-18fc06c6f590}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender">
       <UniqueIdentifier>{103ef51b-849c-4ef5-baa2-63cb6bb5300f}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\World\DeferredGraphic">
       <UniqueIdentifier>{ad67f954-44c5-402f-aa3d-e75ab747dac0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\SsaoRender">
-      <UniqueIdentifier>{5f8d742e-9b44-44d0-a478-1f1af9607434}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\SsaoBlur">
-      <UniqueIdentifier>{239ac719-1e45-4ea0-a247-86c099614391}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\Ssao">
       <UniqueIdentifier>{0f92ee97-4ff7-4cb8-ac0b-18297c59ae61}</UniqueIdentifier>
@@ -154,18 +139,6 @@
     <Filter Include="소스 파일\Engine\Pipeline\3_Shader\ComputeShader">
       <UniqueIdentifier>{837fc306-591b-4d32-8205-e8d14a4a333d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\Wallpaper">
-      <UniqueIdentifier>{f8af4932-3717-41a5-8222-88d01f6a2704}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\Wallpaper\cubemap">
-      <UniqueIdentifier>{a7973095-e4cd-42b1-8aad-66b44c0ef85e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon">
-      <UniqueIdentifier>{f3759840-a3d6-410e-81b8-201f76e06ee7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Blur">
-      <UniqueIdentifier>{a73a7cb9-6374-4627-875f-1cf9dcc2aa93}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\SkyBox\SunMoon\Blur">
       <UniqueIdentifier>{c029516e-190c-459b-8d1e-2470b76b5844}</UniqueIdentifier>
     </Filter>
@@ -174,15 +147,6 @@
     </Filter>
     <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\SkyBox\SunMoon\Object">
       <UniqueIdentifier>{b31d9d50-41bc-4b43-8a85-224d6e22bdf4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Object">
-      <UniqueIdentifier>{1a447a19-1fe9-4202-810b-679cfa5da5a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Object\Moon">
-      <UniqueIdentifier>{7b2df57c-a174-4ee7-bbdf-e4a5975b6a83}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Object\Sun">
-      <UniqueIdentifier>{61e1663b-8c1a-41b4-9d26-ada09a42569b}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\SkyBox\SunMoon\SemiCombine">
       <UniqueIdentifier>{2b02307e-1773-4c63-a3bc-e527da3ea666}</UniqueIdentifier>
@@ -196,20 +160,11 @@
     <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\Geometry\GeoTess">
       <UniqueIdentifier>{2811ede9-fd6a-4b5d-a558-d55469912f0a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\PBR">
-      <UniqueIdentifier>{7564cc85-f26a-4313-ac7f-c685f103946c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\PBR">
       <UniqueIdentifier>{7dc24004-77e5-41ac-8256-f80323200823}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\Geometry\ParallaxMapping">
       <UniqueIdentifier>{d459ee3d-ead2-432d-92d2-0f0d51be6491}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\GeoRender\ParallaxMapping">
-      <UniqueIdentifier>{8a2f8a74-16ea-4455-bc1f-780decb89bd9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\ShadowRender\CSM">
-      <UniqueIdentifier>{3e41ab42-dd83-4e85-8ccc-0554d3429f92}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\Engine\Pipeline\0_Buffer\StructuredBuffer">
       <UniqueIdentifier>{8c408968-2bc7-42c6-811d-90b59bdd5d12}</UniqueIdentifier>
@@ -228,9 +183,6 @@
     </Filter>
     <Filter Include="소스 파일\Engine\Pipeline\3_Shader\GeometryShader">
       <UniqueIdentifier>{6841dc83-faba-4430-b944-b7f3aebd5d6f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\ShadowRender\CaveShadow">
-      <UniqueIdentifier>{ec7fefaf-83dd-4718-916c-0d82c8e1c447}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\CaveShadow">
       <UniqueIdentifier>{89ffe001-d9ed-404a-a274-c265bf648884}</UniqueIdentifier>
@@ -300,6 +252,60 @@
     </Filter>
     <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\WaterRefrection">
       <UniqueIdentifier>{c813763a-bb42-4778-b638-5c0c6adadd17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender">
+      <UniqueIdentifier>{669c3fe7-0add-416d-abf8-22f2c236bbae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\GeoRender">
+      <UniqueIdentifier>{1c9a78b1-25c0-4e33-9e60-ca96cd93364b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\GeoRender\ParallaxMapping">
+      <UniqueIdentifier>{8a2f8a74-16ea-4455-bc1f-780decb89bd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\InputLayouts">
+      <UniqueIdentifier>{8c0d1be0-0a0b-43af-bdb2-f69925e6ed2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\PBR">
+      <UniqueIdentifier>{7564cc85-f26a-4313-ac7f-c685f103946c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\ShadowRender">
+      <UniqueIdentifier>{fabe4eb9-248b-4966-9f0b-18fc06c6f590}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\ShadowRender\CSM">
+      <UniqueIdentifier>{3e41ab42-dd83-4e85-8ccc-0554d3429f92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\ShadowRender\CaveShadow">
+      <UniqueIdentifier>{ec7fefaf-83dd-4718-916c-0d82c8e1c447}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Ssao">
+      <UniqueIdentifier>{d95aab1c-b673-4c45-bb16-9f1c30a2a7a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Ssao\SsaoBlur">
+      <UniqueIdentifier>{239ac719-1e45-4ea0-a247-86c099614391}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Ssao\SsaoRender">
+      <UniqueIdentifier>{5f8d742e-9b44-44d0-a478-1f1af9607434}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper">
+      <UniqueIdentifier>{f8af4932-3717-41a5-8222-88d01f6a2704}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\cubemap">
+      <UniqueIdentifier>{a7973095-e4cd-42b1-8aad-66b44c0ef85e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon">
+      <UniqueIdentifier>{f3759840-a3d6-410e-81b8-201f76e06ee7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Blur">
+      <UniqueIdentifier>{a73a7cb9-6374-4627-875f-1cf9dcc2aa93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object">
+      <UniqueIdentifier>{1a447a19-1fe9-4202-810b-679cfa5da5a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Moon">
+      <UniqueIdentifier>{7b2df57c-a174-4ee7-bbdf-e4a5975b6a83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Sun">
+      <UniqueIdentifier>{61e1663b-8c1a-41b4-9d26-ada09a42569b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -382,7 +388,7 @@
       <Filter>소스 파일\World\Map\System\TerrainSystem</Filter>
     </ClInclude>
     <ClInclude Include="InputLayouts.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\InputLayouts</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\InputLayouts</Filter>
     </ClInclude>
     <ClInclude Include="MyQueue.h">
       <Filter>소스 파일\World\Map\System\LightSystem\LightUtils</Filter>
@@ -394,10 +400,10 @@
       <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender</Filter>
     </ClInclude>
     <ClInclude Include="GeoRender.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\GeoRender</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\GeoRender</Filter>
     </ClInclude>
     <ClInclude Include="ShadowRender.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\ShadowRender</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\ShadowRender</Filter>
     </ClInclude>
     <ClInclude Include="RenderSystem.h">
       <Filter>소스 파일\World\Map\System\RenderSystem</Filter>
@@ -409,37 +415,37 @@
       <Filter>소스 파일\World\Utils</Filter>
     </ClInclude>
     <ClInclude Include="SsaoBlur.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\SsaoBlur</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Ssao\SsaoBlur</Filter>
     </ClInclude>
     <ClInclude Include="SsaoRender.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\SsaoRender</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Ssao\SsaoRender</Filter>
     </ClInclude>
     <ClInclude Include="CubeMap.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\cubemap</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\cubemap</Filter>
     </ClInclude>
     <ClInclude Include="Sun.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Object\Sun</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Sun</Filter>
     </ClInclude>
     <ClInclude Include="Moon.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Object\Moon</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Moon</Filter>
     </ClInclude>
     <ClInclude Include="Blur.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Blur</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Blur</Filter>
     </ClInclude>
     <ClInclude Include="ComputeShader.h">
       <Filter>소스 파일\Engine\Pipeline\3_Shader\ComputeShader</Filter>
     </ClInclude>
     <ClInclude Include="Filter.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Blur</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Blur</Filter>
     </ClInclude>
     <ClInclude Include="SunMoon.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Object</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object</Filter>
     </ClInclude>
     <ClInclude Include="ResultSM.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon</Filter>
     </ClInclude>
     <ClInclude Include="Wallpaper.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper</Filter>
     </ClInclude>
     <ClInclude Include="HullShader.h">
       <Filter>소스 파일\Engine\Pipeline\3_Shader\HullShader</Filter>
@@ -448,13 +454,13 @@
       <Filter>소스 파일\Engine\Pipeline\3_Shader\DomainShader</Filter>
     </ClInclude>
     <ClInclude Include="PBR.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\PBR</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\PBR</Filter>
     </ClInclude>
     <ClInclude Include="ParallaxMapping.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\GeoRender\ParallaxMapping</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\GeoRender\ParallaxMapping</Filter>
     </ClInclude>
     <ClInclude Include="CascadeShadow.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\ShadowRender\CSM</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\ShadowRender\CSM</Filter>
     </ClInclude>
     <ClInclude Include="ConstantBuffer.h">
       <Filter>소스 파일\Engine\Pipeline\0_Buffer\ConstantBuffer</Filter>
@@ -472,7 +478,7 @@
       <Filter>소스 파일\Engine\Pipeline\3_Shader\GeometryShader</Filter>
     </ClInclude>
     <ClInclude Include="CaveShadow.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\ShadowRender\CaveShadow</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\ShadowRender\CaveShadow</Filter>
     </ClInclude>
     <ClInclude Include="Trees.h">
       <Filter>소스 파일\World\Map\System\TerrainSystem\Trees</Filter>
@@ -515,6 +521,9 @@
     </ClInclude>
     <ClInclude Include="TestRender.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="OpacityRender.h">
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -588,7 +597,7 @@
       <Filter>소스 파일\World\Map\System\TerrainSystem</Filter>
     </ClCompile>
     <ClCompile Include="InputLayouts.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\InputLayouts</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\InputLayouts</Filter>
     </ClCompile>
     <ClCompile Include="MyQueue.cpp">
       <Filter>소스 파일\World\Map\System\LightSystem\LightUtils</Filter>
@@ -600,10 +609,10 @@
       <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender</Filter>
     </ClCompile>
     <ClCompile Include="GeoRender.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\GeoRender</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\GeoRender</Filter>
     </ClCompile>
     <ClCompile Include="ShadowRender.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\ShadowRender</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\ShadowRender</Filter>
     </ClCompile>
     <ClCompile Include="RenderSystem.cpp">
       <Filter>소스 파일\World\Map\System\RenderSystem</Filter>
@@ -615,37 +624,37 @@
       <Filter>소스 파일\World\Utils</Filter>
     </ClCompile>
     <ClCompile Include="SsaoBlur.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\SsaoBlur</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Ssao\SsaoBlur</Filter>
     </ClCompile>
     <ClCompile Include="SsaoRender.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\SsaoRender</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Ssao\SsaoRender</Filter>
     </ClCompile>
     <ClCompile Include="CubeMap.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\cubemap</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\cubemap</Filter>
     </ClCompile>
     <ClCompile Include="Sun.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Object\Sun</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Sun</Filter>
     </ClCompile>
     <ClCompile Include="Moon.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Object\Moon</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Moon</Filter>
     </ClCompile>
     <ClCompile Include="Blur.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Blur</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Blur</Filter>
     </ClCompile>
     <ClCompile Include="ComputeShader.cpp">
       <Filter>소스 파일\Engine\Pipeline\3_Shader\ComputeShader</Filter>
     </ClCompile>
     <ClCompile Include="Filter.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Blur</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Blur</Filter>
     </ClCompile>
     <ClCompile Include="ResultSM.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon</Filter>
     </ClCompile>
     <ClCompile Include="SunMoon.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper\SunMoon\Object</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object</Filter>
     </ClCompile>
     <ClCompile Include="Wallpaper.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\Wallpaper</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper</Filter>
     </ClCompile>
     <ClCompile Include="HullShader.cpp">
       <Filter>소스 파일\Engine\Pipeline\3_Shader\HullShader</Filter>
@@ -654,13 +663,13 @@
       <Filter>소스 파일\Engine\Pipeline\3_Shader\DomainShader</Filter>
     </ClCompile>
     <ClCompile Include="PBR.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\PBR</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\PBR</Filter>
     </ClCompile>
     <ClCompile Include="ParallaxMapping.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\GeoRender\ParallaxMapping</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\GeoRender\ParallaxMapping</Filter>
     </ClCompile>
     <ClCompile Include="CascadeShadow.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\ShadowRender\CSM</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\ShadowRender\CSM</Filter>
     </ClCompile>
     <ClCompile Include="ConstantBuffer.cpp">
       <Filter>소스 파일\Engine\Pipeline\0_Buffer\ConstantBuffer</Filter>
@@ -678,7 +687,7 @@
       <Filter>소스 파일\Engine\Pipeline\3_Shader\GeometryShader</Filter>
     </ClCompile>
     <ClCompile Include="CaveShadow.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\ShadowRender\CaveShadow</Filter>
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\ShadowRender\CaveShadow</Filter>
     </ClCompile>
     <ClCompile Include="Trees.cpp">
       <Filter>소스 파일\World\Map\System\TerrainSystem\Trees</Filter>
@@ -721,6 +730,9 @@
     </ClCompile>
     <ClCompile Include="TestRender.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="OpacityRender.cpp">
+      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

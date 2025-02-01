@@ -2,7 +2,6 @@
 
 #include "Transparent.h"
 #include "Composite.h"
-#include "Water.h"
 
 class OIT
 {
@@ -16,8 +15,6 @@ public:
 	);
 	void setPipe();
 	void render(CamType type);
-	void setReflectionCube(
-		ComPtr<ID3D11ShaderResourceView>& reflection_cube);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 
 private:
@@ -25,7 +22,6 @@ private:
 	shared_ptr<DeferredBuffer> d_buff;
 	Transparent tp;
 	Composite cp;
-	Water water;
 
 private:
 	shared_ptr<InputLayout> input_layout;

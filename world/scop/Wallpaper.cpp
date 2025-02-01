@@ -63,12 +63,12 @@ Wallpaper::Wallpaper(UINT width, UINT height)
 	this->sampler_state = make_shared<SamplerState>(device);
 }
 
-void Wallpaper::render(CamType type)
+void Wallpaper::render(CamType type, bool ccw_flag)
 {
 	ComPtr<ID3D11DeviceContext> context =
 		d_graphic->getContext();
-	this->sun_moon->render(type);
-	this->cube_map->render(type);
+	this->sun_moon->render(type, ccw_flag);
+	this->cube_map->render(type, ccw_flag);
 	this->setPipe();
 	d_graphic->renderBegin(this->d_buffer.get());
 	context->PSSetShaderResources(0, 1,

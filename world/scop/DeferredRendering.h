@@ -1,33 +1,27 @@
 #pragma once
 
-#include "ShadowRender.h"
-#include "GeoRender.h"
-#include "WorldUtils.h"
-#include "SsaoRender.h"
-#include "SsaoBlur.h"
-#include "PBR.h"
-#include "CaveShadow.h"
+#include "OpacityRender.h"
 #include "OIT.h"
+#include "Water.h"
 
-
-class DeferredGraphics;
 class MapUtils;
 template <typename T> class Buffer;
 class Wallpaper;
-class ReflectionCube;
 
 class DeferredRendering
 {
 public:
 	DeferredRendering(MapUtils* minfo);
-	~DeferredRendering();
+	~DeferredRendering() = default;
 	void Render();
 	
 private:
-	void setPipe();
+	DeferredRendering() = delete;
+	DeferredRendering(DeferredRendering const&) = delete;
+	DeferredRendering& operator=(DeferredRendering const&) = delete;
+
+private:
 	void setFinPipe();
-	void setPBRShaderResources();
-	void ssaoBlur(int cnt, CamType type);
 
 private:
 	shared_ptr<Buffer<VertexDefer>> vbuffer;
@@ -35,24 +29,12 @@ private:
 
 private:
 	MapUtils* m_info = nullptr;
-	ShadowRender s_render;
-	GeoRender g_render;
-	SsaoRender ssao_render;
-	SsaoBlur ssao_blur;
-	PBR pbr;
-	CaveShadow cave_shadow;
+	OpacityRender opacity_render;
 	OIT oit;
-	shared_ptr<ReflectionCube> reflection_cube;
-	shared_ptr<Wallpaper> cube_map;
-	D3D11_VIEWPORT view_port;
+	Water water;
 
 private:
-	shared_ptr<DeferredBuffer> d_buffer;
-	shared_ptr<VertexShader> vertex_shader;
-	shared_ptr<PixelShader> pixel_shader;
-	shared_ptr<SamplerState> sampler_state;
 	shared_ptr<RasterizerState> rasterizer_state;
-	shared_ptr<InputLayout> input_layout;
 
 private:
 	shared_ptr<VertexShader> fin_vs;

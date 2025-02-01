@@ -194,6 +194,7 @@
     <ClInclude Include="SetTree.h" />
     <ClInclude Include="SetWater.h" />
     <ClInclude Include="ShadowRender.h" />
+    <ClInclude Include="OpacityRender.h" />
     <ClInclude Include="SsaoRender.h" />
     <ClInclude Include="SsaoBlur.h" />
     <ClInclude Include="StructuredBuffer.h" />
@@ -268,6 +269,7 @@
     <ClCompile Include="SetTree.cpp" />
     <ClCompile Include="SetWater.cpp" />
     <ClCompile Include="ShadowRender.cpp" />
+    <ClCompile Include="OpacityRender.cpp" />
     <ClCompile Include="SsaoRender.cpp" />
     <ClCompile Include="SsaoBlur.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />

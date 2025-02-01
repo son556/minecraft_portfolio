@@ -34,6 +34,12 @@ GeoRender::GeoRender(MapUtils* minfo)
 		//D3D11_FILL_WIREFRAME,
 		D3D11_CULL_BACK
 	);
+	this->ccw_rasterizer_state = make_shared<RasterizerState>(
+		device,
+		D3D11_FILL_SOLID,
+		D3D11_CULL_BACK,
+		true
+	);
 	vector<wstring> path_color = {
 		L"./textures/pbr/test_sample/grass_path_top.png",
 		L"./textures/pbr/test_sample/grass_path_side.png",
@@ -187,16 +193,23 @@ GeoRender::GeoRender(MapUtils* minfo)
 
 void GeoRender::render(
 	CamType type,
-	D3D11_VIEWPORT* view_port
+	GeoRenderOption opt
 )
 {
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
-	d_graphic->renderBegin(this->d_buffer.get(), 
-		this->depth_map->getDepthStencilView());
-	if (view_port)
-		context->RSSetViewports(1, view_port);
-	this->setPipe();
+	if (opt.ptr_dsv == nullptr)
+		d_graphic->renderBegin(this->d_buffer.get(),
+			this->depth_map->getDepthStencilView());
+	else {
+		d_graphic->renderBegin(this->d_buffer.get(), opt.ptr_dsv,
+			opt.clear_rtv, opt.clear_dsv);
+	}
+	if (opt.ds_state)
+		context->OMSetDepthStencilState(opt.ds_state, *(opt.stencil_ref_num));
+	if (opt.view_port)
+		context->RSSetViewports(1, opt.view_port);
+	this->setPipe(opt.ccw_flag);
 	this->setConstantBuffer(type);
 	for (int i = 0; i < this->m_info->size_h; i++) {
 		for (int j = 0; j < this->m_info->size_w; j++) {
@@ -207,6 +220,8 @@ void GeoRender::render(
 			);
 		}
 	}
+	if (opt.ds_state)
+		context->OMSetDepthStencilState(nullptr, 0);
 	context->HSSetShader(nullptr, nullptr, 0);
 	context->DSSetShader(nullptr, nullptr, 0);
 	if (this->parallax_flag)
@@ -250,7 +265,7 @@ ComPtr<ID3D11RenderTargetView> GeoRender::getRTV(RTVIndex idx)
 	return this->d_buffer->getRTV(index);
 }
 
-void GeoRender::setPipe()
+void GeoRender::setPipe(bool ccw_flag)
 {
 	ComPtr<ID3D11DeviceContext> context = 
 		d_graphic->getContext();
@@ -262,7 +277,10 @@ void GeoRender::setPipe()
 		nullptr,
 		0
 	);
-	context->RSSetState(this->rasterizer_state->getComPtr().Get());
+	if (ccw_flag == false)
+		context->RSSetState(this->rasterizer_state->getComPtr().Get());
+	else
+		context->RSSetState(this->ccw_rasterizer_state->getComPtr().Get());
 	context->PSSetShader(
 		this->pixel_shader->getComPtr().Get(),
 		nullptr,

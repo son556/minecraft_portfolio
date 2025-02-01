@@ -42,10 +42,6 @@ TestCam::TestCam(
 	);
 }
 
-TestCam::~TestCam()
-{
-}
-
 void TestCam::movePos(float x, float y, float z)
 {
 	this->pos = vec3(x, y, z);
@@ -152,21 +148,21 @@ void TestCam::update()
 	move_dir = XMVector3Normalize(move_dir) * 0.03f;
 	this->pos += move_dir;
 	this->mvp.view = XMMatrixLookToLH(this->pos, this->dir, vec3(0, 1, 0));
-	
-	SimpleMath::Plane p = SimpleMath::Plane(vec3(0, 0, 0), vec3(0, 1, 0));
-	Mat reflection_xz_plane_matrix = Mat::CreateReflection(p);
-	this->reflection_mvp.model = reflection_xz_plane_matrix;
-	this->reflection_mvp.view = this->mvp.view;
-	this->reflection_mvp.proj = this->mvp.proj;
-
-
 	MVP tmvp;
 	tmvp.view = this->mvp.view.Transpose();
 	tmvp.proj = this->mvp.proj.Transpose();
 	this->constant_buffer->update(tmvp);
+}
 
-	tmvp.model = this->reflection_mvp.model.Transpose();
-	this->constant_reflection_buffer->update(tmvp);
+void TestCam::update(SimpleMath::Plane const& plane)
+{
+	this->reflection_mvp = this->mvp;
+	this->reflection_mvp.view = Mat::CreateReflection(plane) * this->mvp.view;
+	MVP m;
+	m.model = this->reflection_mvp.model.Transpose();
+	m.view = this->reflection_mvp.view.Transpose();
+	m.proj = this->reflection_mvp.proj.Transpose();
+	this->constant_reflection_buffer->update(m);
 }
 
 void TestCam::setNear(float cam_near)
@@ -256,12 +252,6 @@ shared_ptr<ConstantBuffer>& TestCam::getConstantBuffer(CamType type)
 	else if (type == CamType::TEMP)
 		return this->constant_tmp_buffer;
 	return this->constant_reflection_buffer;
-}
-
-
-MVP TestCam::getViewProj()
-{
-	return this->mvp;
 }
 
 vec3 TestCam::getPos()

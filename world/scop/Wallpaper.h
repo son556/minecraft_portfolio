@@ -17,7 +17,7 @@ class Wallpaper
 {
 public:
 	Wallpaper(UINT width, UINT height);
-	void render(CamType type);
+	void render(CamType type, bool ccw_flag = false);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	vec3 getDirectionalLightPos();
 	~Wallpaper() = default;

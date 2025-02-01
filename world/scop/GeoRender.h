@@ -7,6 +7,16 @@ class HullShader;
 class DomainShader;
 class DepthMap;
 
+struct GeoRenderOption {
+	ID3D11DepthStencilState* ds_state = nullptr;
+	ComPtr<ID3D11DepthStencilView> ptr_dsv = nullptr;
+	int* stencil_ref_num = nullptr;
+	D3D11_VIEWPORT* view_port = nullptr;
+	bool clear_rtv = true;
+	bool clear_dsv = true;
+	bool ccw_flag = false;
+};
+
 class GeoRender
 {
 public:
@@ -14,7 +24,8 @@ public:
 	~GeoRender() = default;
 	void render(
 		CamType type,
-		D3D11_VIEWPORT* view_port = nullptr
+		GeoRenderOption opt = 
+		{nullptr, nullptr, nullptr, nullptr, true, true}
 	);
 	void setParallaxFlag(bool flag);
 	ComPtr<ID3D11ShaderResourceView> getSRV(RTVIndex idx);
@@ -29,7 +40,7 @@ private:
 	GeoRender& operator=(GeoRender const&) = delete;
 
 private:
-	void setPipe();
+	void setPipe(bool ccw_flag);
 	void setConstantBuffer(CamType type);
 	void parallaxRender(vec3 const& cam_pos);
 
@@ -38,6 +49,7 @@ private:
 	shared_ptr<ParallaxMapping> parallax_mapping;
 	shared_ptr<DeferredBuffer> d_buffer;
 	shared_ptr<RasterizerState> rasterizer_state;
+	shared_ptr<RasterizerState> ccw_rasterizer_state;
 	shared_ptr<SamplerState> linear_state;
 	shared_ptr<VertexShader> vertex_shader;
 	shared_ptr<PixelShader> pixel_shader;

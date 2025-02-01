@@ -61,11 +61,11 @@ ResultSM::ResultSM(UINT width, UINT height)
 	this->sampler_state = make_shared<SamplerState>(device);
 }
 
-void ResultSM::render(CamType type)
+void ResultSM::render(CamType type, bool ccw_flag)
 {
 	ComPtr<ID3D11DeviceContext> context = 
 		d_graphic->getContext();	
-	this->sun_moon->render(type);
+	this->sun_moon->render(type, ccw_flag);
 	this->blur->setStartSRV(this->sun_moon->getSRV());
 	this->blur->render();
 	this->setPipe();

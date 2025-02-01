@@ -12,12 +12,12 @@ public:
 		float cam_near, 
 		float cam_far
 	);
-	~TestCam();
+	~TestCam() = default;
 	void movePos(float x, float y, float z);
 	void setDir(vec3 dir);
 	void onMouseMove(HWND hWnd, int mouse_x, int mouse_y);
 	void update();
-	MVP getViewProj();
+	void update(SimpleMath::Plane const& plane);
 	vec3 getPos();
 	vec3 getDir();
 	void setCursorInClient(HWND hwnd);

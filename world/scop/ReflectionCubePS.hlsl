@@ -10,9 +10,9 @@ Texture2D cube_map : register(t2);
 
 SamplerState sampler0
 {
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = WRAP;
-    AddressV = WRAP;
+    Filter = MIN_MAG_MIP_POINT;
+    AddressU = CLAMP;
+    AddressV = CLAMP;
 };
 
 float3 LinearToneMapping(float3 color)

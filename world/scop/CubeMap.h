@@ -17,7 +17,7 @@ class CubeMap
 {
 public:
 	CubeMap(UINT width, UINT height);
-	void render(CamType type);
+	void render(CamType type, bool ccw_flag = false);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	~CubeMap() = default;
 
@@ -27,7 +27,7 @@ private:
 	CubeMap& operator=(CubeMap const&) = delete;
 
 private:
-	void setPipe();
+	void setPipe(bool ccw_flag);
 
 private:
 	UINT width;
@@ -42,6 +42,7 @@ private:
 	shared_ptr<PixelShader> pixel_shader;
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<RasterizerState> rasterizer_state;
+	shared_ptr<RasterizerState> ccw_rasterizer_sate;
 	shared_ptr<ConstantBuffer> constant_buffer;
 
 private:

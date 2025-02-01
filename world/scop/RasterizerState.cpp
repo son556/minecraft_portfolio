@@ -4,14 +4,15 @@
 RasterizerState::RasterizerState(
 	ComPtr<ID3D11Device> device, 
 	D3D11_FILL_MODE fill_mode, 
-	D3D11_CULL_MODE cull_mode
+	D3D11_CULL_MODE cull_mode,
+	bool front_ccw
 )
 	: device(device)
 {
 	D3D11_RASTERIZER_DESC desc = {};
 	desc.FillMode = fill_mode;
 	desc.CullMode = cull_mode;
-	desc.FrontCounterClockwise = false;
+	desc.FrontCounterClockwise = front_ccw;
 	HRESULT hr = this->device->CreateRasterizerState(
 		&desc,
 		this->rasterizer_state.GetAddressOf()

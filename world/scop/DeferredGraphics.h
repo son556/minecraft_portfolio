@@ -15,7 +15,9 @@ public:
 	void setViewPort(D3D11_VIEWPORT const& view_port);
 	void renderBegin(
 		DeferredBuffer* d_buffer = nullptr,
-		ComPtr<ID3D11DepthStencilView> dsv = nullptr
+		ComPtr<ID3D11DepthStencilView> dsv = nullptr,
+		bool reset_rtv = true,
+		bool reset_dsv = true
 	);
 	void renderBegin(int cnt,
 		ID3D11RenderTargetView** rtvs,

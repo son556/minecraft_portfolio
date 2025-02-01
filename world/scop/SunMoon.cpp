@@ -49,9 +49,15 @@ SunMoon::SunMoon(UINT width, UINT height)
 		d_graphic->getContext(),
 		tmp
 	);
+	this->ccw_rasterizer_state = make_shared<RasterizerState>(
+		device,
+		D3D11_FILL_SOLID,
+		D3D11_CULL_BACK,
+		true
+	);
 }
 
-void SunMoon::render(CamType type)
+void SunMoon::render(CamType type, bool ccw_flag)
 {
 	ComPtr<ID3D11Device> device;
 	device = d_graphic->getDevice();
@@ -76,7 +82,7 @@ void SunMoon::render(CamType type)
 	mvp.view = mvp.view.Transpose();
 	mvp.proj = mvp.proj.Transpose();
 	this->constant_buff->update(mvp);
-	this->setPipe();
+	this->setPipe(ccw_flag);
 	context->VSSetConstantBuffers(0, 1,
 		this->constant_buff->getComPtr().GetAddressOf());
 	d_graphic->renderBegin(this->d_buffer.get());
@@ -116,7 +122,7 @@ ComPtr<ID3D11ShaderResourceView> SunMoon::getSRV()
 	return this->d_buffer->getSRV(0);
 }
 
-void SunMoon::setPipe()
+void SunMoon::setPipe(bool ccw_flag)
 {
 	ComPtr<ID3D11DeviceContext> context;
 	context = d_graphic->getContext();
@@ -136,7 +142,10 @@ void SunMoon::setPipe()
 		nullptr,
 		0
 	);
-	context->RSSetState(this->rasterizer_state->getComPtr().Get());
+	if (ccw_flag == false)
+		context->RSSetState(this->rasterizer_state->getComPtr().Get());
+	else
+		context->RSSetState(this->ccw_rasterizer_state->getComPtr().Get());
 	context->PSSetShader(
 		this->pixel_shader->getComPtr().Get(),
 		nullptr,

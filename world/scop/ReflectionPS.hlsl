@@ -80,6 +80,6 @@ float4 main(PS_INPUT input) : SV_TARGET
     
     float3 c = a + b;
     c = normalize(c);
-    float3 color = reflection_cube.Sample(sampler0, d).rgb;
+    float3 color = reflection_cube.SampleLevel(sampler0, d, 0).rgb;
     return float4(color, 1.0f);
 }
