@@ -61,12 +61,6 @@ OpacityRender::OpacityRender(MapUtils* m_info)
 		D3D11_FILL_SOLID,
 		D3D11_CULL_BACK
 	);
-	this->rasterizer_state_ccw = make_shared<RasterizerState>(
-		device,
-		D3D11_FILL_SOLID,
-		D3D11_CULL_BACK,
-		true
-	);
 	this->pixel_shader = make_shared<PixelShader>(
 		device,
 		L"ResultPS.hlsl",
@@ -82,7 +76,7 @@ OpacityRender::OpacityRender(MapUtils* m_info)
 	this->view_port.MaxDepth = 1.f;
 }
 
-void OpacityRender::setPipe(bool ccw_flag)
+void OpacityRender::setPipe()
 {
 	ComPtr<ID3D11DeviceContext> context;
 	context = d_graphic->getContext();
@@ -104,10 +98,7 @@ void OpacityRender::setPipe(bool ccw_flag)
 		nullptr,
 		0
 	);
-	if (ccw_flag == false)
-		context->RSSetState(this->rasterizer_state->getComPtr().Get());
-	else
-		context->RSSetState(this->rasterizer_state_ccw->getComPtr().Get());
+	context->RSSetState(this->rasterizer_state->getComPtr().Get());
 	context->PSSetShader(
 		this->pixel_shader->getComPtr().Get(),
 		nullptr,
@@ -213,7 +204,14 @@ void OpacityRender::render(
 		context->PSSetShaderResources(10, 1,
 			this->geo_render.getSRV(RTVIndex::ssao_normal).GetAddressOf());
 		this->shadow_render.render(type);
+	}
+
+	if (render_option.cave_shadow)
 		this->cave_shadow.render(type);
+	else {
+		float ca[4] = { 15.f, 15.f, 15.f, 1.f };
+		context->ClearRenderTargetView(
+			this->cave_shadow.getRTV().Get(), ca);
 	}
 
 	if (render_option.ssao) {
@@ -243,7 +241,7 @@ void OpacityRender::render(
 	}
 	d_graphic->renderBegin(this->d_buff.get());
 	d_graphic->setViewPort(this->view_port);
-	this->setPipe(render_option.ccw_flag);
+	this->setPipe();
 	context->PSSetShaderResources(0, 1,
 		this->pbr.getAmbientLight().GetAddressOf());
 	context->PSSetShaderResources(1, 1,
@@ -280,4 +278,11 @@ ComPtr<ID3D11RenderTargetView> OpacityRender::getRTV()
 ComPtr<ID3D11ShaderResourceView> OpacityRender::getGeoDepthSRV()
 {
 	return this->geo_render.getDepthSRV();
+}
+
+ComPtr<ID3D11ShaderResourceView> OpacityRender::getGeoSRV(
+	RTVIndex rtv_idx
+)
+{
+	return this->geo_render.getSRV(rtv_idx);
 }

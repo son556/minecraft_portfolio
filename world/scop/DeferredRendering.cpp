@@ -12,6 +12,8 @@
 #include "DeferredBuffer.h"
 #include "TestCam.h"
 
+#include "TestRender.h"
+
 DeferredRendering::DeferredRendering(MapUtils* minfo)
 	: m_info(minfo), opacity_render(minfo), oit(minfo), water(minfo)
 {
@@ -57,6 +59,8 @@ DeferredRendering::DeferredRendering(MapUtils* minfo)
 		"main",
 		"ps_5_0"
 	);
+
+	this->tr = make_shared<TestRender>(this->m_info);
 }
 
 void DeferredRendering::Render()
@@ -65,17 +69,20 @@ void DeferredRendering::Render()
 	context = d_graphic->getContext();
 	RenderOption r_opt;
 
-	// solid render
+	// opacity render
 	r_opt.parallax_mapping = true;
 	r_opt.ssao = true;
 	r_opt.shadow = true;
+	r_opt.cave_shadow = true;
 	r_opt.reflection_flag = false;
 	r_opt.ssao_blur_cnt = 8;
 	this->opacity_render.render(r_opt, CamType::NORMAL);
 
 	// water render
-	/*this->water.render(this->opacity_render.getGeoDepthSRV(),
-		this->opacity_render.getRTV());*/
+	this->water.test_rtv = this->opacity_render.getRTV();
+	this->water.render(this->opacity_render.getGeoDepthSRV());
+	this->tr->render(this->opacity_render.getSRV());
+	return;
 
 	// oit render
 	this->oit.setRTVandSRV(this->opacity_render.getRTV(),

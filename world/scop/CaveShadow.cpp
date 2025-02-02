@@ -68,6 +68,11 @@ ComPtr<ID3D11ShaderResourceView> CaveShadow::getSRV()
 	return this->d_buffer->getSRV(0);
 }
 
+ComPtr<ID3D11RenderTargetView> CaveShadow::getRTV()
+{
+	return this->d_buffer->getRTV(0);
+}
+
 void CaveShadow::setPipe()
 {
 	this->context->IASetPrimitiveTopology(

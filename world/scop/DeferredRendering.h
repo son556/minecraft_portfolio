@@ -8,6 +8,8 @@ class MapUtils;
 template <typename T> class Buffer;
 class Wallpaper;
 
+class TestRender;
+
 class DeferredRendering
 {
 public:
@@ -40,5 +42,9 @@ private:
 	shared_ptr<VertexShader> fin_vs;
 	shared_ptr<PixelShader> fin_ps;
 	shared_ptr<InputLayout> fin_ia;
+
+
+private:
+	shared_ptr<TestRender> tr;
 };
 

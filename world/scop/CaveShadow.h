@@ -16,6 +16,7 @@ public:
 	~CaveShadow() = default;
 	void render(CamType type);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
+	ComPtr<ID3D11RenderTargetView> getRTV();
 
 private:
 	CaveShadow() = delete;

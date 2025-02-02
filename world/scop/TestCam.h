@@ -17,7 +17,6 @@ public:
 	void setDir(vec3 dir);
 	void onMouseMove(HWND hWnd, int mouse_x, int mouse_y);
 	void update();
-	void update(SimpleMath::Plane const& plane);
 	vec3 getPos();
 	vec3 getDir();
 	void setCursorInClient(HWND hwnd);

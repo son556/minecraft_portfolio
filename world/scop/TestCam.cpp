@@ -152,11 +152,10 @@ void TestCam::update()
 	tmvp.view = this->mvp.view.Transpose();
 	tmvp.proj = this->mvp.proj.Transpose();
 	this->constant_buffer->update(tmvp);
-}
 
-void TestCam::update(SimpleMath::Plane const& plane)
-{
 	this->reflection_mvp = this->mvp;
+	SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, WATER_HEIGHT - 1, 0),
+		vec3(0, 1, 0));
 	this->reflection_mvp.view = Mat::CreateReflection(plane) * this->mvp.view;
 	MVP m;
 	m.model = this->reflection_mvp.model.Transpose();

@@ -52,16 +52,24 @@ WaterInit::WaterInit(MapUtils* m_info) : m_info(m_info)
 	desc.DepthEnable = true;
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	desc.DepthFunc = D3D11_COMPARISON_LESS;
+	
 	desc.StencilEnable = true;
 	desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
 	desc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+	
 	desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 	desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
+	desc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	desc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+	desc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
 	HRESULT hr = device->CreateDepthStencilState(&desc,
 		this->ds_state.GetAddressOf());
+	CHECK(hr);
 
 	this->createDSV();
 }
@@ -79,7 +87,6 @@ void WaterInit::setPipe()
 		nullptr, 0);
 	context->PSSetSamplers(0, 1,
 		this->sampler_state->getComPtr().GetAddressOf());
-	context->OMSetDepthStencilState(this->ds_state.Get(), 1);
 }
 
 void WaterInit::render(
@@ -90,6 +97,7 @@ void WaterInit::render(
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	d_graphic->renderBegin(this->d_buff.get(), this->dsv);
 	this->setPipe();
+	context->OMSetDepthStencilState(this->ds_state.Get(), 1);
 	context->VSSetConstantBuffers(0, 1,
 		cam->getConstantBuffer(type)->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(0, 1, depth_srv.GetAddressOf());

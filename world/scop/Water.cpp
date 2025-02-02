@@ -19,12 +19,9 @@ Water::Water(MapUtils* m_info)
 	water_reflection(m_info)
 {
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
-	this->d_buff = make_shared<DeferredBuffer>(2);
-	this->d_buff->setRTVsAndSRVs(
-		device,
-		this->m_info->width,
-		this->m_info->height
-	);
+
+	this->d_buff = make_shared<DeferredBuffer>(1);
+	this->d_buff->setRTVsAndSRVs(device, m_info->width, m_info->height);
 	vector<VertexDefer> vertices;
 	vector<uint32> indices;
 	Block::makeBox(1, vertices, indices);
@@ -89,10 +86,7 @@ void Water::setPipe()
 		this->sampler_state->getComPtr().GetAddressOf());
 }
 
-void Water::render(
-	ComPtr<ID3D11ShaderResourceView> depth_srv, 
-	ComPtr<ID3D11RenderTargetView> rtv
-)
+void Water::render(ComPtr<ID3D11ShaderResourceView> depth_srv)
 {
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 
@@ -102,21 +96,21 @@ void Water::render(
 	// 물 표면 반사를 그림
 	this->water_reflection.setDSV(this->water_init.getDSV());
 	this->water_reflection.render();
-	/*this->rt->render(this->water_reflection.getSRV());
-	return;*/
-	
+
 	// 물 굴절 그림
-	{ // 반사 행렬 증명 부록 c.4.3(평면 정의), c.4.10(반사행렬 증명)
-		SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, WATER_HEIGHT - 1, 0), 
-			vec3(0, 1, 0));
-		Mat reflectionRow = Mat::CreateReflection(plane);
-	}
+	
+
 	// 물 굴절 + 반사
-	d_graphic->renderBegin(1, rtv.GetAddressOf(), nullptr, false, true);
+	//d_graphic->renderBegin(this->d_buff.get());
+	d_graphic->renderBegin(1, 
+		this->test_rtv.GetAddressOf(), nullptr, false, true);
 	this->setPipe();
 	context->PSSetShaderResources(0, 1,
 		this->water_reflection.getSRV().GetAddressOf());
-	context->DrawIndexed(
-		this->i_buff->getCount(),
-		0, 0);
+	context->DrawIndexed(this->i_buff->getCount(), 0, 0);
+}
+
+ComPtr<ID3D11ShaderResourceView> Water::getSRV()
+{
+	return this->d_buff->getSRV(0);
 }

@@ -64,6 +64,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // test code
     Terrain terrain(12, 12, hWnd, w_width, w_height, 1, 8); // 짝수 단위로만
     float h = terrain.getHeight(0.5, 0.5) + 0.5;
+    cout << "my h: " << h << endl;
     cam->movePos(0.5, h, 0.5);
     cam->setDir(vec3(0, 0, 1));
 

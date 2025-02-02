@@ -15,6 +15,7 @@ struct RenderOption {
 	bool parallax_mapping;
 	bool ssao;
 	bool shadow;
+	bool cave_shadow;
 	bool reflection_flag;
 	int ssao_blur_cnt;
 	bool ccw_flag = false;
@@ -26,7 +27,7 @@ class OpacityRender
 public:
 	OpacityRender(MapUtils* m_info);
 	~OpacityRender() = default;
-	void setPipe(bool ccw_flag);
+	void setPipe();
 	void ssaoBlur(int cnt, CamType type);
 	void setPBRResources();
 	void render(
@@ -36,6 +37,7 @@ public:
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	ComPtr<ID3D11RenderTargetView> getRTV();
 	ComPtr<ID3D11ShaderResourceView> getGeoDepthSRV();
+	ComPtr<ID3D11ShaderResourceView> getGeoSRV(RTVIndex rtv_idx);
 
 private:
 	OpacityRender() = delete;
@@ -61,7 +63,6 @@ private:
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<VertexShader> vertex_shader;
 	shared_ptr<RasterizerState> rasterizer_state;
-	shared_ptr<RasterizerState> rasterizer_state_ccw;
 	shared_ptr<PixelShader> pixel_shader;
 	shared_ptr<SamplerState> sampler_state;
 };
