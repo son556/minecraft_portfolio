@@ -166,6 +166,7 @@ void PBR::setCBuffer(vec3 const& light_pos, vec3 const& cam_pos)
 {
 	PS_Constant buffer;
 	buffer.cam_pos = cam_pos;
+	buffer.cam_pos.y = under_water ? 15 : cam_pos.y;
 	buffer.light_pos = light_pos;
 	this->cbuffer->update(buffer);
 	d_graphic->getContext()->PSSetConstantBuffers(0, 1,

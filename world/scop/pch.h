@@ -106,3 +106,4 @@ extern shared_ptr<TestCam> cam;
 extern shared_ptr<DeferredGraphics> d_graphic;
 
 extern HWND hWnd;
+extern bool under_water;

@@ -15,6 +15,7 @@
 shared_ptr<DeferredGraphics> d_graphic;
 shared_ptr<TestCam> cam;
 HWND hWnd;
+bool under_water = false; // 물 속에 있는 지
 
 // test 용 전역변수
 vec3 dir;

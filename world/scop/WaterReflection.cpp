@@ -57,8 +57,10 @@ WaterReflection::WaterReflection(MapUtils* m_info)
 
 void WaterReflection::render()
 {
+	bool pre_under_water = under_water;
+	if (cam->getPos().y < WATER_HEIGHT)
+		under_water = true;
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
-
 	this->opacity_render->render(*(this->r_opt), CamType::REFLECTION_XZ);
 	
 	d_graphic->renderBegin(this->d_buff.get(), this->dsv, true, false);
@@ -69,6 +71,7 @@ void WaterReflection::render()
 	context->DrawIndexed(this->i_buff->getCount(), 0, 0);
 	
 	context->OMSetDepthStencilState(nullptr, 0);
+	under_water = pre_under_water;
 }
 
 ComPtr<ID3D11ShaderResourceView> WaterReflection::getSRV()

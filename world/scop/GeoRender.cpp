@@ -212,9 +212,9 @@ void GeoRender::render(
 		this->c_opt.cut.y = opt.cut_height;
 		this->c_opt.reflection = cam->getReflection().Transpose();
 		this->cut_constant_buff->update(this->c_opt);
-		context->PSSetConstantBuffers(0, 1,
-			this->cut_constant_buff->getComPtr().GetAddressOf());
 	}
+	context->PSSetConstantBuffers(0, 1,
+		this->cut_constant_buff->getComPtr().GetAddressOf());
 	if (opt.ptr_dsv == nullptr)
 		d_graphic->renderBegin(this->d_buffer.get(),
 			this->depth_map->getDepthStencilView());
