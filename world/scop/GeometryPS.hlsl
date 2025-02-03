@@ -30,6 +30,7 @@ struct PS_OUTPUT
 cbuffer cut_opt : register(b0)
 {
     float4 cut;
+    matrix reflection_mat;
 }
 
 PS_OUTPUT main(PS_INPUT input)
@@ -38,10 +39,18 @@ PS_OUTPUT main(PS_INPUT input)
     PS_OUTPUT output;
     
     output.w_pos = float4(input.w_pos, 1);
+    int n_sign = 1;
     if (cut.x)
     {
-        if (output.w_pos.y < cut.y)
+        if (cut.x == 1 && output.w_pos.y < cut.y)
             discard;
+        else if (cut.x == 2)
+        {
+            if (output.w_pos.y > cut.y)
+                discard;
+            n_sign = -1;
+            output.w_pos = mul(output.w_pos, reflection_mat);
+        }
     }
     uvw = float3(input.uv, input.tex_arr_idx);
     output.color = texture_arr.Sample(sampler_linear, uvw);
@@ -63,6 +72,8 @@ PS_OUTPUT main(PS_INPUT input)
     
     normal = 2 * normal - 1.0;
     normal = normalize(mul(normal, tbn));
+    normal.y *= n_sign; // 물속에서 뒤집힌 경우 부호 반대
+    
     output.w_normal = float4(normal, 1);
     float r = 1.0 - texture_arr_s.Sample(sampler_linear, uvw).r;
     float m = texture_arr_s.Sample(sampler_linear, uvw).g;

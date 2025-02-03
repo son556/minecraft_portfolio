@@ -36,6 +36,7 @@ public:
 	void tmpBufferUpdate(MVP const& mvp);
 	MVP getMVP(CamType type);
 	shared_ptr<ConstantBuffer>& getConstantBuffer(CamType type);
+	Mat getReflection();
 
 private:
 	TestCam() = delete;
@@ -55,6 +56,8 @@ private:
 	vec3 dir;
 	MVP mvp;
 	MVP reflection_mvp;
+	Mat reflection_mat;
+	Mat reflection_cmat;
 	MVP tmp_mvp;
 	shared_ptr<ConstantBuffer> constant_buffer;
 	shared_ptr<ConstantBuffer> constant_reflection_buffer;

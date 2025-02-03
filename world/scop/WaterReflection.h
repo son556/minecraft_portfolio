@@ -43,7 +43,6 @@ private:
 	shared_ptr<RasterizerState> rasterizer_state;
 	shared_ptr<PixelShader> pixel_shader;
 	shared_ptr<SamplerState> sampler_state;
-	shared_ptr<ConstantBuffer> constant_buffer;
 
 private:
 	shared_ptr<OpacityRender> opacity_render = nullptr;

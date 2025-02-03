@@ -13,7 +13,6 @@
 #include "Buffer.h"
 #include "Block.h"
 #include "MapUtils.h"
-#include "ConstantBuffer.h"
 
 WaterReflection::WaterReflection(MapUtils* m_info)
 {
@@ -31,9 +30,9 @@ WaterReflection::WaterReflection(MapUtils* m_info)
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	D3D11_DEPTH_STENCIL_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
-	desc.DepthEnable = true;
+	desc.DepthEnable = false;
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // <- 주의
+	desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
 	desc.StencilEnable = true;
 	desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
@@ -65,9 +64,7 @@ void WaterReflection::render()
 	d_graphic->renderBegin(this->d_buff.get(), this->dsv, true, false);
 	this->setPipe();
 	context->OMSetDepthStencilState(this->ds_state.Get(), 1);
-	context->PSSetShaderResources(0, 1, 
-		this->opacity_render->getGeoSRV(RTVIndex::w_position).GetAddressOf());
-	context->PSSetShaderResources(1, 1,
+	context->PSSetShaderResources(0, 1,
 		this->opacity_render->getSRV().GetAddressOf());
 	context->DrawIndexed(this->i_buff->getCount(), 0, 0);
 	
@@ -100,8 +97,6 @@ void WaterReflection::setPipe()
 	context->RSSetState(this->rasterizer_state->getComPtr().Get());
 	context->PSSetShader(this->pixel_shader->getComPtr().Get(), nullptr, 0);
 	context->PSSetSamplers(0, 1, this->sampler_state->getComPtr().GetAddressOf());
-	context->PSSetConstantBuffers(0, 1,
-		this->constant_buffer->getComPtr().GetAddressOf());
 }
 
 void WaterReflection::init(ComPtr<ID3D11Device>& device, MapUtils* m_info)
@@ -138,7 +133,7 @@ void WaterReflection::init(ComPtr<ID3D11Device>& device, MapUtils* m_info)
 	this->rasterizer_state = make_shared<RasterizerState>(
 		device,
 		D3D11_FILL_SOLID,
-		D3D11_CULL_BACK
+		D3D11_CULL_NONE
 	);
 	this->pixel_shader = make_shared<PixelShader>(
 		device,
@@ -147,10 +142,4 @@ void WaterReflection::init(ComPtr<ID3D11Device>& device, MapUtils* m_info)
 		"ps_5_0"
 	);
 	this->sampler_state = make_shared<SamplerState>(device);
-	vec4 h = vec4(WATER_HEIGHT - 1, 1, 1, 1);
-	this->constant_buffer = make_shared<ConstantBuffer>(
-		device,
-		d_graphic->getContext(),
-		h
-	);
 }

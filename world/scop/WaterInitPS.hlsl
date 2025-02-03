@@ -1,4 +1,4 @@
-Texture2D depth_tex : register(t0);
+Texture2D water_init_depth_tex : register(t0);
 
 SamplerState sampler0 : register(s0);
 
@@ -26,7 +26,7 @@ PS_OUTPUT main(PS_INPUT input)
     float3 ndc = input.c_pos.xyz / input.c_pos.w;
     uv.x = (ndc.x + 1.0f) * 0.5f;
     uv.y = (-ndc.y + 1.0f) * 0.5f;
-    float d = depth_tex.Sample(sampler0, uv).r;
+    float d = water_init_depth_tex.Sample(sampler0, uv).r;
     if (ndc.z >= d)
         discard;
     

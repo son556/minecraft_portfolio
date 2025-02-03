@@ -525,6 +525,9 @@
     <ClInclude Include="OpacityRender.h">
       <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender</Filter>
     </ClInclude>
+    <ClInclude Include="WaterRefrection.h">
+      <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefrection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -733,6 +736,9 @@
     </ClCompile>
     <ClCompile Include="OpacityRender.cpp">
       <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterRefrection.cpp">
+      <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefrection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

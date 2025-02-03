@@ -40,6 +40,14 @@ TestCam::TestCam(
 		d_graphic->getContext(),
 		this->mvp
 	);
+
+	SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, WATER_HEIGHT, 0),
+		vec3(0, 1, 0));
+	this->reflection_mat = Mat::CreateReflection(plane);
+	
+	plane = SimpleMath::Plane(vec3(0, WATER_HEIGHT, 0),
+		vec3(0, -1, 0));
+	this->reflection_cmat = Mat::CreateReflection(plane);
 }
 
 void TestCam::movePos(float x, float y, float z)
@@ -154,9 +162,12 @@ void TestCam::update()
 	this->constant_buffer->update(tmvp);
 
 	this->reflection_mvp = this->mvp;
-	SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, WATER_HEIGHT, 0),
-		vec3(0, 1, 0));
-	this->reflection_mvp.view = Mat::CreateReflection(plane) * this->mvp.view;
+
+	if (this->pos.y > WATER_HEIGHT)
+		this->reflection_mvp.view = this->reflection_mat * this->mvp.view;
+	else
+		this->reflection_mvp.view = this->reflection_cmat * this->mvp.view;
+
 	MVP m;
 	m.model = this->reflection_mvp.model.Transpose();
 	m.view = this->reflection_mvp.view.Transpose();
@@ -251,6 +262,13 @@ shared_ptr<ConstantBuffer>& TestCam::getConstantBuffer(CamType type)
 	else if (type == CamType::TEMP)
 		return this->constant_tmp_buffer;
 	return this->constant_reflection_buffer;
+}
+
+Mat TestCam::getReflection()
+{
+	if (this->pos.y > WATER_HEIGHT)
+		return this->reflection_mat;
+	return this->reflection_cmat;
 }
 
 vec3 TestCam::getPos()

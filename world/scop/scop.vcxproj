@@ -217,6 +217,7 @@
     <ClInclude Include="WaterChunk.h" />
     <ClInclude Include="WaterInit.h" />
     <ClInclude Include="WaterReflection.h" />
+    <ClInclude Include="WaterRefrection.h" />
     <ClInclude Include="WICTextureLoader11.h" />
     <ClInclude Include="WorldUtils.h" />
   </ItemGroup>
@@ -291,6 +292,7 @@
     <ClCompile Include="WaterChunk.cpp" />
     <ClCompile Include="WaterInit.cpp" />
     <ClCompile Include="WaterReflection.cpp" />
+    <ClCompile Include="WaterRefrection.cpp" />
     <ClCompile Include="WICTextureLoader11.cpp" />
     <ClCompile Include="WorldUtils.cpp" />
   </ItemGroup>
