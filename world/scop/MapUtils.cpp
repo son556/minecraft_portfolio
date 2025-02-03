@@ -238,9 +238,12 @@ WorldIndex MapUtils::pickBlock(vec3 r_pos, vec3 r_dir)
 			}
 		}
 		ans = this->getBlockIndex(x, y, z);
-		if (ans.flag && this->findBlock(ans.c_idx, ans.b_idx)) {
-			ans.pos = vec3(x, y, z);
-			return ans;
+		if (ans.flag) {
+			int b = this->findBlock(ans.c_idx, ans.b_idx);
+			if (b && b != BlockType::WATER) {
+				ans.pos = vec3(x, y, z);
+				return ans;
+			}
 		}
 	}
 	ans.flag = false;
