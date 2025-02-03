@@ -15,6 +15,8 @@ struct GeoRenderOption {
 	bool clear_rtv = true;
 	bool clear_dsv = true;
 	bool ccw_flag = false;
+	bool cut_flag = false;
+	int cut_height;
 };
 
 class GeoRender
@@ -56,6 +58,7 @@ private:
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<HullShader> hull_shader;
 	shared_ptr<DomainShader> domain_shader;
+	shared_ptr<ConstantBuffer> cut_constant_buff;
 
 private:
 	bool parallax_flag = true;

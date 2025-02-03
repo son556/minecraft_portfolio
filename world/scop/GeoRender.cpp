@@ -189,6 +189,12 @@ GeoRender::GeoRender(MapUtils* minfo)
 		d_graphic->getDevice(),
 		this->m_info->width, this->m_info->height
 	);
+	vec4 tmp;
+	this->cut_constant_buff = make_shared<ConstantBuffer>(
+		device,
+		d_graphic->getContext(),
+		tmp
+	);
 }
 
 void GeoRender::render(
@@ -198,6 +204,14 @@ void GeoRender::render(
 {
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
+	vec4 cut = vec4(0, 0, 0, 0);
+	if (opt.cut_flag == true) {
+		cut.x = 1;
+		cut.y = opt.cut_height;
+	}
+	this->cut_constant_buff->update(cut);
+	context->PSSetConstantBuffers(0, 1,
+		this->cut_constant_buff->getComPtr().GetAddressOf());
 	if (opt.ptr_dsv == nullptr)
 		d_graphic->renderBegin(this->d_buffer.get(),
 			this->depth_map->getDepthStencilView());

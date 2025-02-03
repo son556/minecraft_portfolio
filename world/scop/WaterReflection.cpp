@@ -25,6 +25,8 @@ WaterReflection::WaterReflection(MapUtils* m_info)
 	this->r_opt->cave_shadow = false;
 	this->r_opt->ccw_flag = true;
 	this->r_opt->geo_opt.ccw_flag = true;
+	this->r_opt->geo_opt.cut_flag = true;
+	this->r_opt->geo_opt.cut_height = WATER_HEIGHT;
 
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	D3D11_DEPTH_STENCIL_DESC desc;
@@ -44,7 +46,7 @@ WaterReflection::WaterReflection(MapUtils* m_info)
 
 	desc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	desc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+	desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	desc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 	HRESULT hr = device->CreateDepthStencilState(&desc, 
 		this->ds_state.GetAddressOf());
@@ -145,8 +147,7 @@ void WaterReflection::init(ComPtr<ID3D11Device>& device, MapUtils* m_info)
 		"ps_5_0"
 	);
 	this->sampler_state = make_shared<SamplerState>(device);
-	vec4 h = vec4(WATER_HEIGHT - 1, WATER_HEIGHT - 1, 
-		WATER_HEIGHT - 1, WATER_HEIGHT - 1);
+	vec4 h = vec4(WATER_HEIGHT - 1, 1, 1, 1);
 	this->constant_buffer = make_shared<ConstantBuffer>(
 		device,
 		d_graphic->getContext(),

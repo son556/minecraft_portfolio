@@ -890,12 +890,6 @@
     <FxCompile Include="ReflectionCubeVS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection\Cube</Filter>
     </FxCompile>
-    <FxCompile Include="ReflectionVS.hlsl">
-      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection</Filter>
-    </FxCompile>
-    <FxCompile Include="ReflectionPS.hlsl">
-      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection</Filter>
-    </FxCompile>
     <FxCompile Include="WaterInitPS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\WaterInit</Filter>
     </FxCompile>
@@ -907,6 +901,12 @@
     </FxCompile>
     <FxCompile Include="WaterPS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\OIT\Water</Filter>
+    </FxCompile>
+    <FxCompile Include="ReflectionPS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\WaterRefrection</Filter>
+    </FxCompile>
+    <FxCompile Include="ReflectionVS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\WaterRefrection</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

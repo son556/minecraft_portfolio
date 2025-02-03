@@ -286,3 +286,8 @@ ComPtr<ID3D11ShaderResourceView> OpacityRender::getGeoSRV(
 {
 	return this->geo_render.getSRV(rtv_idx);
 }
+
+ComPtr<ID3D11ShaderResourceView> OpacityRender::getCubeSRV()
+{
+	return this->cube_map.getSRV();
+}

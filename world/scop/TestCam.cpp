@@ -154,7 +154,7 @@ void TestCam::update()
 	this->constant_buffer->update(tmvp);
 
 	this->reflection_mvp = this->mvp;
-	SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, WATER_HEIGHT - 1, 0),
+	SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, WATER_HEIGHT, 0),
 		vec3(0, 1, 0));
 	this->reflection_mvp.view = Mat::CreateReflection(plane) * this->mvp.view;
 	MVP m;

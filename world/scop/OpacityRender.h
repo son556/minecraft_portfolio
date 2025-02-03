@@ -38,6 +38,7 @@ public:
 	ComPtr<ID3D11RenderTargetView> getRTV();
 	ComPtr<ID3D11ShaderResourceView> getGeoDepthSRV();
 	ComPtr<ID3D11ShaderResourceView> getGeoSRV(RTVIndex rtv_idx);
+	ComPtr<ID3D11ShaderResourceView> getCubeSRV();
 
 private:
 	OpacityRender() = delete;

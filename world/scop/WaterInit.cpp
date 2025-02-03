@@ -64,7 +64,7 @@ WaterInit::WaterInit(MapUtils* m_info) : m_info(m_info)
 
 	desc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	desc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+	desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	desc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	HRESULT hr = device->CreateDepthStencilState(&desc,

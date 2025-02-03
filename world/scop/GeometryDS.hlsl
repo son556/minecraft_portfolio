@@ -92,7 +92,6 @@ PS_INPUT main(
     float3 uvw = float3(output.uv, output.tex_arr_idx);
     
     //output.pos = movePos(output.pos, uvw, 1, output.normal);
-    output.pos = mul(output.pos, world);
     output.pos = mul(output.pos, view);
     output.pos = mul(output.pos, proj);
     return output;

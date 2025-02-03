@@ -27,12 +27,22 @@ struct PS_OUTPUT
     float4 tan_n : SV_Target7; // bitangent 계산을 위한 normal
 };
 
+cbuffer cut_opt : register(b0)
+{
+    float4 cut;
+}
+
 PS_OUTPUT main(PS_INPUT input)
 {
     float3 uvw;
     PS_OUTPUT output;
     
     output.w_pos = float4(input.w_pos, 1);
+    if (cut.x)
+    {
+        if (output.w_pos.y < cut.y)
+            discard;
+    }
     uvw = float3(input.uv, input.tex_arr_idx);
     output.color = texture_arr.Sample(sampler_linear, uvw);
     if (output.color.w < 0.8)
