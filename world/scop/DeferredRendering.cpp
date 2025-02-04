@@ -80,7 +80,11 @@ void DeferredRendering::Render()
 
 	// water render
 	this->water.test_rtv = this->opacity_render.getRTV();
-	this->water.render(this->opacity_render.getGeoDepthSRV());
+	this->water.render(
+		this->opacity_render.getGeoDepthSRV(),
+		this->opacity_render.getGeoSRV(RTVIndex::w_position),
+		this->opacity_render.getSRV()
+	);
 
 	// oit render
 	this->oit.setRTVandSRV(this->opacity_render.getRTV(),

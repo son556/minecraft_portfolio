@@ -241,17 +241,11 @@
     <Filter Include="소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterReflection">
       <UniqueIdentifier>{80edb7ee-da58-4954-b392-3aeb6cdf4627}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefrection">
-      <UniqueIdentifier>{747ec7eb-eb50-4bbe-a430-65991d329dd9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterInit">
       <UniqueIdentifier>{f7778bd9-d3b1-4b5c-872a-01a21e5badb5}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\WaterInit">
       <UniqueIdentifier>{50a56646-c107-4b10-b60d-0d304e29300c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\WaterRefrection">
-      <UniqueIdentifier>{c813763a-bb42-4778-b638-5c0c6adadd17}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender">
       <UniqueIdentifier>{669c3fe7-0add-416d-abf8-22f2c236bbae}</UniqueIdentifier>
@@ -306,6 +300,12 @@
     </Filter>
     <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Sun">
       <UniqueIdentifier>{61e1663b-8c1a-41b4-9d26-ada09a42569b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\WaterRefraction">
+      <UniqueIdentifier>{c813763a-bb42-4778-b638-5c0c6adadd17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefraction">
+      <UniqueIdentifier>{747ec7eb-eb50-4bbe-a430-65991d329dd9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -525,8 +525,8 @@
     <ClInclude Include="OpacityRender.h">
       <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender</Filter>
     </ClInclude>
-    <ClInclude Include="WaterRefrection.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefrection</Filter>
+    <ClInclude Include="WaterRefraction.h">
+      <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefraction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -737,8 +737,8 @@
     <ClCompile Include="OpacityRender.cpp">
       <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender</Filter>
     </ClCompile>
-    <ClCompile Include="WaterRefrection.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefrection</Filter>
+    <ClCompile Include="WaterRefraction.cpp">
+      <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefraction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -909,10 +909,16 @@
       <Filter>소스 파일\World\WorldShaderFIle\OIT\Water</Filter>
     </FxCompile>
     <FxCompile Include="ReflectionPS.hlsl">
-      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\WaterRefrection</Filter>
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection</Filter>
     </FxCompile>
     <FxCompile Include="ReflectionVS.hlsl">
-      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\WaterRefrection</Filter>
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection</Filter>
+    </FxCompile>
+    <FxCompile Include="RefractionVS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\WaterRefraction</Filter>
+    </FxCompile>
+    <FxCompile Include="RefractionPS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\WaterRefraction</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

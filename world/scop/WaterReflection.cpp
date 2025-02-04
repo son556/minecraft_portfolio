@@ -46,7 +46,7 @@ WaterReflection::WaterReflection(MapUtils* m_info)
 	desc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	desc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	desc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	desc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 	HRESULT hr = device->CreateDepthStencilState(&desc, 
 		this->ds_state.GetAddressOf());
 	CHECK(hr);
@@ -82,6 +82,15 @@ ComPtr<ID3D11ShaderResourceView> WaterReflection::getSRV()
 void WaterReflection::setDSV(ComPtr<ID3D11DepthStencilView> dsv)
 {
 	this->dsv = dsv;
+}
+
+void WaterReflection::setWaterND(
+	ComPtr<ID3D11ShaderResourceView> normal, 
+	ComPtr<ID3D11ShaderResourceView> distortion
+)
+{
+	this->water_normal_srv = normal;
+	this->water_distortion_srv = distortion;
 }
 
 void WaterReflection::setPipe()

@@ -49,7 +49,7 @@ WaterInit::WaterInit(MapUtils* m_info) : m_info(m_info)
 
 	D3D11_DEPTH_STENCIL_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
-	desc.DepthEnable = true;
+	desc.DepthEnable = false;
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	desc.DepthFunc = D3D11_COMPARISON_LESS;
 	

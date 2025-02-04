@@ -2,6 +2,7 @@
 
 #include "WaterInit.h"
 #include "WaterReflection.h"
+#include "WaterRefraction.h"
 
 class TestRender;
 
@@ -14,7 +15,11 @@ class Water
 public:
 	Water(MapUtils* m_info);
 	void setPipe();
-	void render(ComPtr<ID3D11ShaderResourceView> depth_srv);
+	void render(
+		ComPtr<ID3D11ShaderResourceView> depth_srv,
+		ComPtr<ID3D11ShaderResourceView> geo_pos,
+		ComPtr<ID3D11ShaderResourceView> opacity_color
+	);
 	~Water() = default;
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 
@@ -27,6 +32,7 @@ private:
 	MapUtils* m_info;
 	WaterInit water_init;
 	WaterReflection water_reflection;
+	WaterRefraction water_refraction;
 
 private:
 	shared_ptr<InputLayout> input_layout;
@@ -39,6 +45,8 @@ private:
 	shared_ptr<Buffer<VertexDefer>> v_buff;
 	shared_ptr<Buffer<uint32>> i_buff;
 	shared_ptr<DeferredBuffer> d_buff;
+	ComPtr<ID3D11ShaderResourceView> water_normal_srv;
+	ComPtr<ID3D11ShaderResourceView> water_distortion_srv;
 
 private:
 	shared_ptr<TestRender> rt;

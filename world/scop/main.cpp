@@ -95,7 +95,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 /*terrain.testClickLightBlock(cam->getPos(),
                     cam->getDir());*/
                 terrain.putBlock(cam->getPos(),
-                    cam->getDir(), 1);//-3 + tp_idx);
+                    cam->getDir(), -3 + tp_idx);
                 tp_idx++;
                 if (tp_idx == 3)
                     tp_idx = 0;

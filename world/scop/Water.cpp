@@ -11,12 +11,12 @@
 #include "SamplerState.h"
 #include "Buffer.h"
 #include "Block.h"
-
+#include "Texture.h"
 #include "TestRender.h"
 
 Water::Water(MapUtils* m_info)
 	: m_info(m_info), water_init(m_info), 
-	water_reflection(m_info)
+	water_reflection(m_info), water_refraction(m_info)
 {
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 
@@ -61,6 +61,17 @@ Water::Water(MapUtils* m_info)
 		"ps_5_0"
 	);
 	this->sampler_state = make_shared<SamplerState>(device);
+	Texture tex_distortion(device, 
+		L"./textures/water/water_distortion_rx_gy.png");
+	this->water_distortion_srv = tex_distortion.getComPtr();
+	Texture tex_normal(device,
+		L"./textures/water/water_normal_rx_gz_by.png");
+	this->water_normal_srv = tex_normal.getComPtr();
+
+	this->water_reflection.setWaterND(
+		this->water_normal_srv, this->water_distortion_srv);
+	this->water_refraction.setWaterND(
+		this->water_normal_srv, this->water_distortion_srv);
 
 	this->rt = make_shared<TestRender>(m_info);
 }
@@ -86,7 +97,11 @@ void Water::setPipe()
 		this->sampler_state->getComPtr().GetAddressOf());
 }
 
-void Water::render(ComPtr<ID3D11ShaderResourceView> depth_srv)
+void Water::render(
+	ComPtr<ID3D11ShaderResourceView> depth_srv,
+	ComPtr<ID3D11ShaderResourceView> geo_pos,
+	ComPtr<ID3D11ShaderResourceView> opacity_color
+)
 {
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 
@@ -98,9 +113,15 @@ void Water::render(ComPtr<ID3D11ShaderResourceView> depth_srv)
 	this->water_reflection.render();
 
 	// 물 굴절 그림
-	
+	this->water_refraction.render(geo_pos, 
+		opacity_color, this->water_init.getDSV(),
+		this->water_init.getSRV(WaterRTVType::POSITION));
 
-	// 물 굴절 + 반사
+
+	// 물 굴절 + 반사 + oit
+	
+	
+	
 	//d_graphic->renderBegin(this->d_buff.get());
 	d_graphic->renderBegin(1, 
 		this->test_rtv.GetAddressOf(), nullptr, false, true);

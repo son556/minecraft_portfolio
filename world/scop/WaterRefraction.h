@@ -1,7 +1,5 @@
 #pragma once
 
-class OpacityRender;
-struct RenderOption;
 class MapUtils;
 class DeferredBuffer;
 class InputLayout;
@@ -11,34 +9,36 @@ class PixelShader;
 class SamplerState;
 class ConstantBuffer;
 template<typename T> class Buffer;
-
 struct VertexDefer;
 
-class WaterReflection
+class WaterRefraction
 {
 public:
-	WaterReflection(MapUtils* m_info);
-	~WaterReflection() = default;
-	void render();
+	WaterRefraction(MapUtils* m_info);
+	~WaterRefraction() = default;
+	void render(
+		ComPtr<ID3D11ShaderResourceView> geo_pos,
+		ComPtr<ID3D11ShaderResourceView> opacity_color,
+		ComPtr<ID3D11DepthStencilView> dsv,
+		ComPtr<ID3D11ShaderResourceView> water_pos
+	);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
-	void setDSV(ComPtr<ID3D11DepthStencilView> dsv);
 	void setWaterND(
 		ComPtr<ID3D11ShaderResourceView> normal,
 		ComPtr<ID3D11ShaderResourceView> distortion
 	);
 
 private:
-	void setPipe();
-	void init(ComPtr<ID3D11Device>& device, MapUtils* m_info);
+	WaterRefraction() = delete;
+	WaterRefraction(WaterRefraction const&) = delete;
+	WaterRefraction& operator=(WaterRefraction const&) = delete;
 
 private:
-	WaterReflection() = delete;
-	WaterReflection(WaterReflection const&) = delete;
-	WaterReflection& operator=(WaterReflection const&) = delete;
+	void setPipe();
 
 private:
 	shared_ptr<Buffer<VertexDefer>> v_buff;
-	shared_ptr <Buffer<uint32>> i_buff;
+	shared_ptr<Buffer<uint32>> i_buff;
 	shared_ptr<DeferredBuffer> d_buff;
 
 private:
@@ -47,13 +47,10 @@ private:
 	shared_ptr<RasterizerState> rasterizer_state;
 	shared_ptr<PixelShader> pixel_shader;
 	shared_ptr<SamplerState> sampler_state;
+	shared_ptr<ConstantBuffer> constant_buffer;
 
 private:
-	shared_ptr<OpacityRender> opacity_render = nullptr;
-	shared_ptr<RenderOption> r_opt;
-	ComPtr<ID3D11DepthStencilView> dsv;
 	ComPtr<ID3D11DepthStencilState> ds_state;
-	int stencil_ref_num = 1;
 	ComPtr<ID3D11ShaderResourceView> water_distortion_srv;
 	ComPtr<ID3D11ShaderResourceView> water_normal_srv;
 };
