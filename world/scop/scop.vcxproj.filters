@@ -307,6 +307,9 @@
     <Filter Include="소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefraction">
       <UniqueIdentifier>{747ec7eb-eb50-4bbe-a430-65991d329dd9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\World\Time">
+      <UniqueIdentifier>{ecd6919a-52a5-4a8a-9d7c-3fde27f5d405}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -528,6 +531,9 @@
     <ClInclude Include="WaterRefraction.h">
       <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefraction</Filter>
     </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -739,6 +745,9 @@
     </ClCompile>
     <ClCompile Include="WaterRefraction.cpp">
       <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefraction</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

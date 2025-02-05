@@ -68,6 +68,8 @@ void WaterReflection::render()
 	context->OMSetDepthStencilState(this->ds_state.Get(), 1);
 	context->PSSetShaderResources(0, 1,
 		this->opacity_render->getSRV().GetAddressOf());
+	context->PSSetShaderResources(1, 1,
+		this->water_distortion_srv.GetAddressOf());
 	context->DrawIndexed(this->i_buff->getCount(), 0, 0);
 	
 	context->OMSetDepthStencilState(nullptr, 0);

@@ -41,11 +41,12 @@ TestCam::TestCam(
 		this->mvp
 	);
 
-	SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, WATER_HEIGHT, 0),
+	float h = WATER_HEIGHT + 0.1;
+	SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, h, 0),
 		vec3(0, 1, 0));
 	this->reflection_mat = Mat::CreateReflection(plane);
 	
-	plane = SimpleMath::Plane(vec3(0, WATER_HEIGHT, 0),
+	plane = SimpleMath::Plane(vec3(0, h, 0),
 		vec3(0, -1, 0));
 	this->reflection_cmat = Mat::CreateReflection(plane);
 }
