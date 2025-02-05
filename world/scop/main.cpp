@@ -8,6 +8,7 @@
 #include "Terrain.h"
 #include "time.h"
 #include "TestCam.h"
+#include "Time.h"
 #include "DeferredGraphics.h" 
 
 #define MAX_LOADSTRING 100
@@ -17,6 +18,7 @@ shared_ptr<TestCam> cam;
 HWND hWnd;
 bool under_water = false; // 물 속에 있는 지
 
+float delta_time = 0;
 // test 용 전역변수
 vec3 dir;
 int w_width = 800;
@@ -74,8 +76,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // test code
 
     MSG msg = {};
-
     // 기본 메시지 루프입니다:
+    Time::initialize();
     cam->setCursorInClient(hWnd);
     move_check = true;
     int tp_idx = 0;
@@ -105,6 +107,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 terrain.deleteBlock(cam->getPos(), cam->getDir());
                 rb_flag = false;
             }
+            Time::update();
+            delta_time = Time::DeltaTime();
             cam->update();
             terrain.userPositionCheck(cam->getPos().x,
                 cam->getPos().z);

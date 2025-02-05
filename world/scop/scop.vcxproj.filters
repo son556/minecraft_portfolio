@@ -532,7 +532,7 @@
       <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefraction</Filter>
     </ClInclude>
     <ClInclude Include="Time.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\World\Time</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -747,7 +747,7 @@
       <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterRefraction</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\World\Time</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

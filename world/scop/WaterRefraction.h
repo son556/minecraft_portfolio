@@ -17,10 +17,8 @@ public:
 	WaterRefraction(MapUtils* m_info);
 	~WaterRefraction() = default;
 	void render(
-		ComPtr<ID3D11ShaderResourceView> geo_pos,
-		ComPtr<ID3D11ShaderResourceView> opacity_color,
-		ComPtr<ID3D11DepthStencilView> dsv,
-		ComPtr<ID3D11ShaderResourceView> water_pos
+		ComPtr<ID3D11ShaderResourceView> color,
+		ComPtr<ID3D11DepthStencilView> dsv
 	);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	void setWaterND(

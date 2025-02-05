@@ -92,25 +92,26 @@ WaterRefraction::WaterRefraction(MapUtils* m_info)
 }
 
 void WaterRefraction::render(
-	ComPtr<ID3D11ShaderResourceView> geo_pos, 
-	ComPtr<ID3D11ShaderResourceView> opacity_color, 
-	ComPtr<ID3D11DepthStencilView> dsv,
-	ComPtr<ID3D11ShaderResourceView> water_pos
+	ComPtr<ID3D11ShaderResourceView> color, 
+	ComPtr<ID3D11DepthStencilView> dsv
 )
 {
-	vec3 cp = cam->getPos();
-	vec4 cbuff = vec4(cp.x, cp.y, cp.z, 1);
-	cbuff.w = cp.y >= WATER_HEIGHT ? 1 : -1;
-	this->constant_buffer->update(cbuff);
+	static float water_move = 0;
+	water_move += WATER_SPEED * delta_time;
+	water_move = fmod(water_move, 1.0f);
+	vec4 v = vec4(water_move, 0, 0, 0);
+	this->constant_buffer->update(v);
 
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	d_graphic->renderBegin(this->d_buff.get(), dsv, true, false);
 	this->setPipe();
+	context->OMSetDepthStencilState(this->ds_state.Get(), 1);
 	context->PSSetConstantBuffers(0, 1,
 		this->constant_buffer->getComPtr().GetAddressOf());
-	context->PSSetShaderResources(0, 1, geo_pos.GetAddressOf());
-	context->PSSetShaderResources(1, 1, opacity_color.GetAddressOf());
-	context->PSSetShaderResources(2, 1, water_pos.GetAddressOf());
+
+	context->PSSetShaderResources(0, 1, color.GetAddressOf());
+	context->PSSetShaderResources(1, 1, 
+		this->water_distortion_srv.GetAddressOf());
 	context->DrawIndexed(this->i_buff->getCount(), 0, 0);
 
 	context->OMSetDepthStencilState(nullptr, 0);
@@ -156,5 +157,4 @@ void WaterRefraction::setPipe()
 	);
 	context->PSSetSamplers(0, 1,
 		this->sampler_state->getComPtr().GetAddressOf());
-	context->OMSetDepthStencilState(this->ds_state.Get(), 1);
 }

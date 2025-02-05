@@ -5,6 +5,7 @@
 #include <dsound.h>
 
 #include <windows.h>
+#include <math.h>
 #include "DirectXMath.h"
 #include "SimpleMath.h"
 #include "WICTextureLoader11.h"
@@ -75,6 +76,7 @@ using namespace Microsoft::WRL;
 #define CHECK(p)	assert(SUCCEEDED(p))
 
 #define WATER_HEIGHT 15
+#define WATER_SPEED 0.02
 
 enum BlockType {
 	WATER = -4,
@@ -107,3 +109,4 @@ extern shared_ptr<DeferredGraphics> d_graphic;
 
 extern HWND hWnd;
 extern bool under_water;
+extern float delta_time;

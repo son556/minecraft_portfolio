@@ -13,6 +13,7 @@
 #include "Buffer.h"
 #include "Block.h"
 #include "MapUtils.h"
+#include "ConstantBuffer.h"
 
 WaterReflection::WaterReflection(MapUtils* m_info)
 {
@@ -57,6 +58,12 @@ WaterReflection::WaterReflection(MapUtils* m_info)
 
 void WaterReflection::render()
 {
+	static float water_move = 0;
+	water_move += WATER_SPEED * delta_time;
+	water_move = fmod(water_move, 1.0f);
+	vec4 v = vec4(water_move, 0, 0, 0);
+	this->constant_buffer->update(v);
+
 	bool pre_under_water = under_water;
 	if (cam->getPos().y < WATER_HEIGHT)
 		under_water = true;
@@ -70,8 +77,9 @@ void WaterReflection::render()
 		this->opacity_render->getSRV().GetAddressOf());
 	context->PSSetShaderResources(1, 1,
 		this->water_distortion_srv.GetAddressOf());
+	context->PSSetConstantBuffers(0, 1,
+		this->constant_buffer->getComPtr().GetAddressOf());
 	context->DrawIndexed(this->i_buff->getCount(), 0, 0);
-	
 	context->OMSetDepthStencilState(nullptr, 0);
 	under_water = pre_under_water;
 }
@@ -156,4 +164,10 @@ void WaterReflection::init(ComPtr<ID3D11Device>& device, MapUtils* m_info)
 		"ps_5_0"
 	);
 	this->sampler_state = make_shared<SamplerState>(device);
+	vec4 v;
+	this->constant_buffer = make_shared<ConstantBuffer>(
+		device,
+		d_graphic->getContext(),
+		v
+	);
 }

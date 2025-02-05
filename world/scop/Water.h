@@ -17,8 +17,7 @@ public:
 	void setPipe();
 	void render(
 		ComPtr<ID3D11ShaderResourceView> depth_srv,
-		ComPtr<ID3D11ShaderResourceView> geo_pos,
-		ComPtr<ID3D11ShaderResourceView> opacity_color
+		ComPtr<ID3D11ShaderResourceView> color
 	);
 	~Water() = default;
 	ComPtr<ID3D11ShaderResourceView> getSRV();
@@ -50,8 +49,5 @@ private:
 
 private:
 	shared_ptr<TestRender> rt;
-
-public: // test
-	ComPtr<ID3D11RenderTargetView> test_rtv;
 };
 

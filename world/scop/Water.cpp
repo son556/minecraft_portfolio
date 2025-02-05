@@ -99,8 +99,7 @@ void Water::setPipe()
 
 void Water::render(
 	ComPtr<ID3D11ShaderResourceView> depth_srv,
-	ComPtr<ID3D11ShaderResourceView> geo_pos,
-	ComPtr<ID3D11ShaderResourceView> opacity_color
+	ComPtr<ID3D11ShaderResourceView> color
 )
 {
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
@@ -113,21 +112,16 @@ void Water::render(
 	this->water_reflection.render();
 
 	// 물 굴절 그림
-	this->water_refraction.render(geo_pos, 
-		opacity_color, this->water_init.getDSV(),
-		this->water_init.getSRV(WaterRTVType::POSITION));
-
-
-	// 물 굴절 + 반사 + oit
+	this->water_refraction.render(color, this->water_init.getDSV());
 	
-	
-	
-	//d_graphic->renderBegin(this->d_buff.get());
-	d_graphic->renderBegin(1, 
-		this->test_rtv.GetAddressOf(), nullptr, false, true);
+	d_graphic->renderBegin(this->d_buff.get());
 	this->setPipe();
 	context->PSSetShaderResources(0, 1,
 		this->water_reflection.getSRV().GetAddressOf());
+	context->PSSetShaderResources(1, 1,
+		this->water_refraction.getSRV().GetAddressOf());
+	context->PSSetShaderResources(2, 1,
+		color.GetAddressOf());
 	context->DrawIndexed(this->i_buff->getCount(), 0, 0);
 }
 

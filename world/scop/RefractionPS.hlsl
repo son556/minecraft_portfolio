@@ -1,13 +1,6 @@
-Texture2D world_pos_tex_refraction : register(t0);
-Texture2D color_tex_refraction : register(t1);
-Texture2D plane_pos_tex_refraction : register(t2);
-
+Texture2D color_tex_refraction : register(t0);
+Texture2D distortion_tex_refraction : register(t1);
 SamplerState sampler0 : register(s0);
-
-cbuffer cam : register(b0)
-{
-    float4 cam_pos;
-}
 
 struct PS_INPUT
 {
@@ -15,11 +8,30 @@ struct PS_INPUT
     float2 uv : TEXCOORD;
 };
 
-static const float air = 1.00029f; // 공기의 굴절률
-static const float water = 1.33f; // 물의 굴절률
+cbuffer constant_buffer : register(b0)
+{
+    float move_factor;
+}
+
+static float wave_strength = 0.0132;
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
+    float2 uv = input.uv;
+    uv.y *= -1;
+    uv.x += move_factor;
+    float offset1 = distortion_tex_refraction.Sample(sampler0, uv).rg;
+    offset1 = (offset1 * 2 - float2(1, 1)) * wave_strength;
     
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    uv.x = -input.uv.x;
+    uv.y += move_factor;
+    float offset2 = distortion_tex_refraction.Sample(sampler0, uv).rg;
+    offset2 = (offset2 * 2 - float2(1, 1)) * wave_strength;
+    
+    float offset = offset1 + offset2;
+    input.uv += offset;
+    input.uv.x = clamp(input.uv.x, 0, 1);
+    input.uv.y = clamp(input.uv.y, 0.01, 1);
+    float3 color = color_tex_refraction.Sample(sampler0, input.uv).rgb;
+    return float4(color, 1);
 }

@@ -41,12 +41,13 @@ TestCam::TestCam(
 		this->mvp
 	);
 
+	// 원래 반사보다 조금더 위쪽을 반사하여 지형을 수면에서 자를 때 여유분이 생김
 	float h = WATER_HEIGHT + 0.1;
 	SimpleMath::Plane plane = SimpleMath::Plane(vec3(0, h, 0),
 		vec3(0, 1, 0));
 	this->reflection_mat = Mat::CreateReflection(plane);
 	
-	plane = SimpleMath::Plane(vec3(0, h, 0),
+	plane = SimpleMath::Plane(vec3(0, WATER_HEIGHT, 0),
 		vec3(0, -1, 0));
 	this->reflection_cmat = Mat::CreateReflection(plane);
 }
