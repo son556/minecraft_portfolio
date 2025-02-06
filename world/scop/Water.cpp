@@ -13,6 +13,8 @@
 #include "Block.h"
 #include "Texture.h"
 #include "TestRender.h"
+#include "ConstantBuffer.h"
+#include "TestCam.h"
 
 Water::Water(MapUtils* m_info)
 	: m_info(m_info), water_init(m_info), 
@@ -72,6 +74,12 @@ Water::Water(MapUtils* m_info)
 		this->water_normal_srv, this->water_distortion_srv);
 	this->water_refraction.setWaterND(
 		this->water_normal_srv, this->water_distortion_srv);
+	vec4 v;
+	this->constant_buffer = make_shared<ConstantBuffer>(
+		device,
+		d_graphic->getContext(),
+		v
+	);
 
 	this->rt = make_shared<TestRender>(m_info);
 }
@@ -99,6 +107,11 @@ void Water::setPipe()
 
 void Water::render(ComPtr<ID3D11ShaderResourceView> color)
 {
+	vec3 cp = cam->getPos();
+	vec4 buff = vec4(cp.x, cp.y, cp.z, 1);
+	if (under_water)
+		buff.w = -1;
+	this->constant_buffer->update(buff);
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	
 	d_graphic->renderBegin(this->d_buff.get());
@@ -109,6 +122,10 @@ void Water::render(ComPtr<ID3D11ShaderResourceView> color)
 		this->water_refraction.getSRV().GetAddressOf());
 	context->PSSetShaderResources(2, 1,
 		color.GetAddressOf());
+	context->PSSetShaderResources(3, 1,
+		this->water_init.getSRV(WaterRTVType::POSITION).GetAddressOf());
+	context->PSSetConstantBuffers(0, 1,
+		this->constant_buffer->getComPtr().GetAddressOf());
 	context->DrawIndexed(this->i_buff->getCount(), 0, 0);
 }
 

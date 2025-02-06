@@ -47,6 +47,7 @@ private:
 	shared_ptr<DeferredBuffer> d_buff;
 	ComPtr<ID3D11ShaderResourceView> water_normal_srv;
 	ComPtr<ID3D11ShaderResourceView> water_distortion_srv;
+	shared_ptr<ConstantBuffer> constant_buffer;
 
 private:
 	shared_ptr<TestRender> rt;

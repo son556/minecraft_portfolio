@@ -165,11 +165,14 @@ void TestCam::update()
 
 	this->reflection_mvp = this->mvp;
 
-	if (this->pos.y > WATER_HEIGHT)
+	if (this->pos.y >= WATER_HEIGHT) {
 		this->reflection_mvp.view = this->reflection_mat * this->mvp.view;
-	else
+		under_water = false;
+	}
+	else {
 		this->reflection_mvp.view = this->reflection_cmat * this->mvp.view;
-
+		under_water = true;
+	}
 	MVP m;
 	m.model = this->reflection_mvp.model.Transpose();
 	m.view = this->reflection_mvp.view.Transpose();

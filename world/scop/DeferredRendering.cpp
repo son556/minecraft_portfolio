@@ -81,13 +81,19 @@ void DeferredRendering::Render()
 	// oit down render
 	this->oit.setRTVandSRV(this->opacity_render.getRTV(),
 		this->opacity_render.getSRV(), this->opacity_render.getGeoDepthSRV());
-	this->oit.render(CamType::NORMAL, false);
+	if (under_water == false)
+		this->oit.render(CamType::NORMAL, false);
+	else
+		this->oit.render(CamType::NORMAL, true);
 
 	// water init;
 	this->water.renderWaterInit(this->opacity_render.getGeoDepthSRV());
 
 	// water refraction render
-	this->water.renderWaterRefraction(this->oit.getSRV(false));
+	if (under_water == false)
+		this->water.renderWaterRefraction(this->oit.getSRV(false));
+	else
+		this->water.renderWaterRefraction(this->oit.getSRV(true));
 
 	// water reflection render
 	this->water.renderWaterReflection();
@@ -99,13 +105,22 @@ void DeferredRendering::Render()
 	// oit up render
 	this->oit.setRTVandSRV(this->water.getRTV(), this->water.getSRV(),
 		this->opacity_render.getGeoDepthSRV());
-	this->oit.render(CamType::NORMAL, true);
+	if (under_water == false)
+		this->oit.render(CamType::NORMAL, true);
+	else
+		this->oit.render(CamType::NORMAL, false);
 
 	// result
 	d_graphic->renderBegin();
 	this->setFinPipe();
-	context->PSSetShaderResources(0, 1,
-		this->oit.getSRV(true).GetAddressOf());
+	if (under_water == false) {
+		context->PSSetShaderResources(0, 1,
+			this->oit.getSRV(true).GetAddressOf());
+	}
+	else {
+		context->PSSetShaderResources(0, 1,
+			this->oit.getSRV(false).GetAddressOf());
+	}
 	context->DrawIndexed(
 		this->ibuffer->getCount(),
 		0, 0);
