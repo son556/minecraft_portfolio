@@ -10,6 +10,7 @@ class RasterizerState;
 class PixelShader;
 class SamplerState;
 class ConstantBuffer;
+class OIT;
 template<typename T> class Buffer;
 
 struct VertexDefer;
@@ -51,6 +52,7 @@ private:
 
 private:
 	shared_ptr<OpacityRender> opacity_render = nullptr;
+	shared_ptr<OIT> oit;
 	shared_ptr<RenderOption> r_opt;
 	ComPtr<ID3D11DepthStencilView> dsv;
 	ComPtr<ID3D11DepthStencilState> ds_state;

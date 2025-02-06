@@ -132,7 +132,8 @@ void Transparent::setPipe()
 
 void Transparent::render(
 	CamType type,
-	ComPtr<ID3D11ShaderResourceView> depth_srv
+	ComPtr<ID3D11ShaderResourceView> depth_srv,
+	bool water_up_flag
 )
 {
 	this->setPipe();
@@ -152,9 +153,16 @@ void Transparent::render(
 	context->PSSetShaderResources(0, 1, depth_srv.GetAddressOf());
 	for (int i = 0; i < this->m_info->size_h; i++) {
 		for (int j = 0; j < this->m_info->size_w; j++) {
-			if (this->m_info->chunks[i][j]->tp_chunk.render_flag == false)
-				continue;
-			this->m_info->chunks[i][j]->tp_chunk.setTPBuffer(context);
+			if (water_up_flag) {
+				if (this->m_info->chunks[i][j]->tp_chunk.render_up_flag == false)
+					continue;
+				this->m_info->chunks[i][j]->tp_chunk.render(context, true);
+			}
+			else {
+				if (this->m_info->chunks[i][j]->tp_chunk.render_down_flag == false)
+					continue;
+				this->m_info->chunks[i][j]->tp_chunk.render(context, false);
+			}
 		}
 	}
 	context->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);

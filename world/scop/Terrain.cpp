@@ -90,22 +90,38 @@ void Terrain::putBlock(
 				this->m_manager->m_info.addBlock(cidx, bidx, type);
 				Chunk& chunk = *(this->m_manager->m_info.chunks[cidx.y][cidx.x]);
 				chunk.tp_block_cnt += 1;
-				vector<VertexColor>& vertices = chunk.tp_chunk.vertices;
-				vector<uint32>& indices = chunk.tp_chunk.indices;
-				uint32& idx = chunk.tp_chunk.vertices_idx;
+				vector<VertexColor>& u_vertices = chunk.tp_chunk.vertices_up;
+				vector<uint32>& u_indices = chunk.tp_chunk.indices_up;
+				uint32& u_idx = chunk.tp_chunk.vertices_idx_up;
+
+				vector<VertexColor>& d_vertices = chunk.tp_chunk.vertices_down;
+				vector<uint32>& d_indices = chunk.tp_chunk.indices_down;
+				uint32& d_idx = chunk.tp_chunk.vertices_idx_down;
 				int16& max_h = chunk.max_h;
 				max_h = max(max_h, bidx.y + 1);
 				vec4 col;
 				if (type == -3)
 					col = vec4(1, 0, 0, 0.3);
-				for (int i = 0; i < 6; i++) {
-					Block::addBlockFacePosAndCol(
-						chunk.start_pos, bidx.x, bidx.y, bidx.z, i, 
-							type, vertices);
-					Block::addBlockFaceIndices(idx, indices);
-					idx += 4;
+				if (bidx.y >= WATER_HEIGHT) {
+					for (int i = 0; i < 6; i++) {
+						Block::addBlockFacePosAndCol(
+							chunk.start_pos, bidx.x, bidx.y, bidx.z, i,
+							type, u_vertices);
+						Block::addBlockFaceIndices(u_idx, u_indices);
+						u_idx += 4;
+					}
+					chunk.tp_chunk.update(d_graphic->getDevice(), true);
 				}
-				chunk.tp_chunk.update(d_graphic->getDevice());
+				else {
+					for (int i = 0; i < 6; i++) {
+						Block::addBlockFacePosAndCol(
+							chunk.start_pos, bidx.x, bidx.y, bidx.z, i,
+							type, d_vertices);
+						Block::addBlockFaceIndices(d_idx, d_indices);
+						d_idx += 4;
+					}
+					chunk.tp_chunk.update(d_graphic->getDevice(), false);
+				}
 				return;
 			}
 			
@@ -165,7 +181,6 @@ void Terrain::deleteBlock(vec3 const& ray_pos, vec3 const& ray_dir)
 			chunk.tp_block_cnt -= 1;
 			chunk.tp_chunk.reset();
 			this->m_manager->vertexAndIndexGeneratorTP(widx.c_idx);
-			chunk.tp_chunk.update(d_graphic->getDevice());
 			return;
 		}
 		this->m_manager->l_system.chunkSetLight(widx.c_idx);

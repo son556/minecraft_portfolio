@@ -97,22 +97,9 @@ void Water::setPipe()
 		this->sampler_state->getComPtr().GetAddressOf());
 }
 
-void Water::render(
-	ComPtr<ID3D11ShaderResourceView> depth_srv,
-	ComPtr<ID3D11ShaderResourceView> color
-)
+void Water::render(ComPtr<ID3D11ShaderResourceView> color)
 {
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
-
-	// 물위치가 있는 곳을 그림
-	this->water_init.render(CamType::NORMAL, depth_srv);
-
-	// 물 표면 반사를 그림
-	this->water_reflection.setDSV(this->water_init.getDSV());
-	this->water_reflection.render();
-
-	// 물 굴절 그림
-	this->water_refraction.render(color, this->water_init.getDSV());
 	
 	d_graphic->renderBegin(this->d_buff.get());
 	this->setPipe();
@@ -125,7 +112,31 @@ void Water::render(
 	context->DrawIndexed(this->i_buff->getCount(), 0, 0);
 }
 
+void Water::renderWaterInit(ComPtr<ID3D11ShaderResourceView> depth_srv)
+{
+	// 물위치 그리기, 물 위치 스텐실에 표시
+	this->water_init.render(CamType::NORMAL, depth_srv);
+}
+
+void Water::renderWaterRefraction(ComPtr<ID3D11ShaderResourceView> color)
+{
+	// 물의 굴절을 그림
+	this->water_refraction.render(color, this->water_init.getDSV());
+}
+
+void Water::renderWaterReflection()
+{
+	// 물의 반사를 그림
+	this->water_reflection.setDSV(this->water_init.getDSV());
+	this->water_reflection.render();
+}
+
 ComPtr<ID3D11ShaderResourceView> Water::getSRV()
 {
 	return this->d_buff->getSRV(0);
+}
+
+ComPtr<ID3D11RenderTargetView> Water::getRTV()
+{
+	return this->d_buff->getRTV(0);
 }

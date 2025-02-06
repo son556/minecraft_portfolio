@@ -18,7 +18,8 @@ public:
 	void setPipe();
 	void render(
 		CamType type,
-		ComPtr<ID3D11ShaderResourceView> depth_srv
+		ComPtr<ID3D11ShaderResourceView> depth_srv,
+		bool water_up_flag
 	);
 	ComPtr<ID3D11ShaderResourceView> getAccum();
 	ComPtr<ID3D11ShaderResourceView> getReveal();

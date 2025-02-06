@@ -71,7 +71,7 @@ WaterRefraction::WaterRefraction(MapUtils* m_info)
 	ZeroMemory(&desc, sizeof(desc));
 	desc.DepthEnable = false;
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	desc.DepthFunc = D3D11_COMPARISON_ALWAYS;
 
 	desc.StencilEnable = true;
 	desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;

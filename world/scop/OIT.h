@@ -14,12 +14,13 @@ public:
 		ComPtr<ID3D11ShaderResourceView> depth_srv
 	);
 	void setPipe();
-	void render(CamType type);
-	ComPtr<ID3D11ShaderResourceView> getSRV();
+	void render(CamType type, bool water_up_flag);
+	ComPtr<ID3D11ShaderResourceView> getSRV(bool up_flag);
 
 private:
 	MapUtils* m_info;
-	shared_ptr<DeferredBuffer> d_buff;
+	shared_ptr<DeferredBuffer> d_buff_up;
+	shared_ptr<DeferredBuffer> d_buff_down;
 	Transparent tp;
 	Composite cp;
 

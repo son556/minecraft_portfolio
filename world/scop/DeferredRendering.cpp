@@ -78,22 +78,33 @@ void DeferredRendering::Render()
 	r_opt.ssao_blur_cnt = 8;
 	this->opacity_render.render(r_opt, CamType::NORMAL);
 
-	// oit render
+	// oit down render
 	this->oit.setRTVandSRV(this->opacity_render.getRTV(),
 		this->opacity_render.getSRV(), this->opacity_render.getGeoDepthSRV());
-	this->oit.render(CamType::NORMAL);
+	this->oit.render(CamType::NORMAL, false);
+
+	// water init;
+	this->water.renderWaterInit(this->opacity_render.getGeoDepthSRV());
+
+	// water refraction render
+	this->water.renderWaterRefraction(this->oit.getSRV(false));
+
+	// water reflection render
+	this->water.renderWaterReflection();
 
 	// water render
-	this->water.render(
-		this->opacity_render.getGeoDepthSRV(),
-		this->oit.getSRV()
-	);
+	this->water.render(this->opacity_render.getSRV());
+
+	// oit up render
+	this->oit.setRTVandSRV(this->water.getRTV(), this->water.getSRV(),
+		this->opacity_render.getGeoDepthSRV());
+	this->oit.render(CamType::NORMAL, true);
 
 	// result
 	d_graphic->renderBegin();
 	this->setFinPipe();
 	context->PSSetShaderResources(0, 1,
-		this->water.getSRV().GetAddressOf());
+		this->oit.getSRV(true).GetAddressOf());
 	context->DrawIndexed(
 		this->ibuffer->getCount(),
 		0, 0);

@@ -12,12 +12,15 @@
 #include "SamplerState.h"
 
 OIT::OIT(MapUtils* minfo) 
-	: m_info(minfo), d_buff(nullptr), tp(minfo),
-	cp(minfo)
+	: m_info(minfo), d_buff_up(nullptr), d_buff_down(nullptr),
+	tp(minfo), cp(minfo)
 {
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
-	this->d_buff = make_shared<DeferredBuffer>(1);
-	this->d_buff->setRTVsAndSRVs(device,
+	this->d_buff_up = make_shared<DeferredBuffer>(1);
+	this->d_buff_up->setRTVsAndSRVs(device,
+		this->m_info->width, this->m_info->height);
+	this->d_buff_down = make_shared<DeferredBuffer>(1);
+	this->d_buff_down->setRTVsAndSRVs(device,
 		this->m_info->width, this->m_info->height);
 
 	this->vertex_shader = make_shared<VertexShader>(
@@ -94,15 +97,16 @@ void OIT::setPipe()
 		this->sampler_state->getComPtr().GetAddressOf());
 }
 
-void OIT::render(CamType type)
+void OIT::render(CamType type, bool water_up_flag)
 {
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 
 	// transparent render
-	this->tp.render(type, this->depth_srv);
+	this->tp.render(type, this->depth_srv, water_up_flag);
 
 	// composition render
-	this->cp.render(this->solid_rtv, this->tp.getAccum(), this->tp.getReveal());
+	this->cp.render(this->solid_rtv, this->tp.getAccum(),
+			this->tp.getReveal());
 
 	// result render
 	this->setPipe();
@@ -115,14 +119,20 @@ void OIT::render(CamType type)
 		DXGI_FORMAT_R32_UINT,
 		0
 	);
-	d_graphic->renderBegin(this->d_buff.get());
+	if (water_up_flag)
+		d_graphic->renderBegin(this->d_buff_up.get());
+	else
+		d_graphic->renderBegin(this->d_buff_down.get());
 	context->PSSetShaderResources(0, 1, this->solid_srv.GetAddressOf());
 	context->DrawIndexed(
 		this->i_buff->getCount(),
 		0, 0);
 }
 
-ComPtr<ID3D11ShaderResourceView> OIT::getSRV()
+ComPtr<ID3D11ShaderResourceView> OIT::getSRV(bool up_flag)
 {
-	return this->d_buff->getSRV(0);
+	if (up_flag)
+		return this->d_buff_up->getSRV(0);
+	else
+		return this->d_buff_down->getSRV(0);
 }

@@ -16,7 +16,6 @@ struct PS_OUTPUT
 Texture2D tex_depth : register(t0);
 SamplerState sampler0 : register(s0);
 
-
 float4 accum_0(PS_INPUT input)
 {
     // weight function
@@ -47,13 +46,13 @@ float4 accum_1(PS_INPUT input)
 PS_OUTPUT main(PS_INPUT input)
 {
     PS_OUTPUT output;
-    
+   
     float2 texcoord;
     float3 ndc_p = input.clip_pos.xyz / input.clip_pos.w;
     texcoord.x = (ndc_p.x + 1.0f) * 0.5f;
     texcoord.y = -1.0f * (ndc_p.y + 1.0f) * 0.5f;
     float std_z = tex_depth.Sample(sampler0, texcoord).r;
-    if (ndc_p.z > std_z)
+    if (ndc_p.z > std_z + 0.00001)
         discard;
     
 	// store pixel color accumulation

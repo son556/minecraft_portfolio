@@ -11,10 +11,14 @@ class TPChunk
 public:
 	TPChunk();
 	~TPChunk();
-	void setTPBuffer(
-		ComPtr<ID3D11DeviceContext> const& context
+	void render(
+		ComPtr<ID3D11DeviceContext> const& context,
+		bool flag_up
 	);
-	void update(ComPtr<ID3D11Device> const& device);
+	void update(
+		ComPtr<ID3D11Device> const& device,
+		bool flag_up
+	);
 	void reset();
 
 private:
@@ -22,13 +26,19 @@ private:
 	TPChunk operator=(TPChunk const&) = delete;
 
 public:
-	uint32 vertices_idx = 0;
-	bool render_flag = false;
-	vector<VertexColor> vertices;
-	vector<uint32> indices;
+	uint32 vertices_idx_up = 0;
+	uint32 vertices_idx_down = 0;
+	bool render_up_flag = false;
+	bool render_down_flag = false;
+	vector<VertexColor> vertices_up;
+	vector<uint32> indices_up;
+	vector<VertexColor> vertices_down;
+	vector<uint32> indices_down;
 
 private:
-	shared_ptr<Buffer<VertexColor>> tp_vbuffer;
-	shared_ptr<Buffer<uint32>> tp_ibuffer;
+	shared_ptr<Buffer<VertexColor>> tp_up_vbuffer;
+	shared_ptr<Buffer<uint32>> tp_up_ibuffer;
+	shared_ptr<Buffer<VertexColor>> tp_down_vbuffer;
+	shared_ptr<Buffer<uint32>> tp_down_ibuffer;
 };
 

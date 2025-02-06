@@ -159,12 +159,21 @@ void Map::vertexAndIndexGeneratorTP(Index2 const& c_idx)
 	Chunk& chunk = *(this->m_info.chunks[c_idx.y][c_idx.x]);
 	if (chunk.tp_block_cnt == 0)
 		return;
-	uint32& v_idx = chunk.tp_chunk.vertices_idx;
-	vector<VertexColor>& vertices = chunk.tp_chunk.vertices;
-	vector<uint32>& indices = chunk.tp_chunk.indices;
-	v_idx = 0;
-	vertices.clear();
-	indices.clear();
+	uint32& vu_idx = chunk.tp_chunk.vertices_idx_up;
+	vector<VertexColor>& vertices_up = chunk.tp_chunk.vertices_up;
+	vector<uint32>& indices_up = chunk.tp_chunk.indices_up;
+
+	uint32& vd_idx = chunk.tp_chunk.vertices_idx_down;
+	vector<VertexColor>& vertices_down = chunk.tp_chunk.vertices_down;
+	vector<uint32>& indices_down = chunk.tp_chunk.indices_down;
+	
+	vu_idx = 0;
+	vertices_up.clear();
+	indices_up.clear();
+	vd_idx = 0;
+	vertices_down.clear();
+	indices_down.clear();
+
 	vec4 col;
 	for (int y = 0; y <= chunk.max_h; y++) {
 		for (int z = 0; z < 16; z++) {
@@ -172,16 +181,28 @@ void Map::vertexAndIndexGeneratorTP(Index2 const& c_idx)
 				int type = this->m_info.findBlock(c_idx, x, y, z);
 				if (type < 0 && type != BlockType::WATER) {
 					for (int i = 0; i < 6; i++) {
-						Block::addBlockFacePosAndCol(
-							chunk.start_pos, x, y, z, i, type, vertices);
-						Block::addBlockFaceIndices(v_idx, indices);
-						v_idx += 4;
+						if (y >= WATER_HEIGHT) {
+							Block::addBlockFacePosAndCol(
+								chunk.start_pos, x, y, z, i, type, 
+								vertices_up);
+							Block::addBlockFaceIndices(vu_idx, indices_up);
+							vu_idx += 4;
+						}
+						else {
+							Block::addBlockFacePosAndCol(
+								chunk.start_pos, x, y, 
+								z, i, type, vertices_down);
+							Block::addBlockFaceIndices(
+								vd_idx, indices_down);
+							vd_idx += 4;
+						}
 					}
 				}
 			}
 		}
 	}
-	chunk.tp_chunk.update(d_graphic->getDevice());
+	chunk.tp_chunk.update(d_graphic->getDevice(), true);
+	chunk.tp_chunk.update(d_graphic->getDevice(), false);
 }
 
 void Map::vertexAndIndexGeneratorWater(Index2 const& c_idx)

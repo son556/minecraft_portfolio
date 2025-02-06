@@ -14,6 +14,7 @@
 #include "Block.h"
 #include "MapUtils.h"
 #include "ConstantBuffer.h"
+#include "OIT.h"
 
 WaterReflection::WaterReflection(MapUtils* m_info)
 {
@@ -33,7 +34,7 @@ WaterReflection::WaterReflection(MapUtils* m_info)
 	ZeroMemory(&desc, sizeof(desc));
 	desc.DepthEnable = false;
 	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	desc.DepthFunc = D3D11_COMPARISON_ALWAYS;
 
 	desc.StencilEnable = true;
 	desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
@@ -53,6 +54,7 @@ WaterReflection::WaterReflection(MapUtils* m_info)
 	CHECK(hr);
 
 	this->opacity_render = make_shared<OpacityRender>(m_info);
+	this->oit = make_shared<OIT>(m_info);
 	this->init(device, m_info);
 }
 
@@ -69,12 +71,18 @@ void WaterReflection::render()
 		under_water = true;
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	this->opacity_render->render(*(this->r_opt), CamType::REFLECTION_XZ);
-	
+	this->oit->setRTVandSRV(
+		this->opacity_render->getRTV(),
+		this->opacity_render->getSRV(),
+		this->opacity_render->getGeoDepthSRV()
+	);
+	this->oit->render(CamType::REFLECTION_XZ, true);
+
 	d_graphic->renderBegin(this->d_buff.get(), this->dsv, true, false);
 	this->setPipe();
 	context->OMSetDepthStencilState(this->ds_state.Get(), 1);
 	context->PSSetShaderResources(0, 1,
-		this->opacity_render->getSRV().GetAddressOf());
+		this->oit->getSRV(true).GetAddressOf());
 	context->PSSetShaderResources(1, 1,
 		this->water_distortion_srv.GetAddressOf());
 	context->PSSetConstantBuffers(0, 1,

@@ -14,13 +14,14 @@ class Water
 {
 public:
 	Water(MapUtils* m_info);
-	void setPipe();
-	void render(
-		ComPtr<ID3D11ShaderResourceView> depth_srv,
-		ComPtr<ID3D11ShaderResourceView> color
-	);
 	~Water() = default;
+	void setPipe();
+	void render(ComPtr<ID3D11ShaderResourceView> color);
+	void renderWaterInit(ComPtr<ID3D11ShaderResourceView> depth_srv);
+	void renderWaterRefraction(ComPtr<ID3D11ShaderResourceView> color_srv);
+	void renderWaterReflection();
 	ComPtr<ID3D11ShaderResourceView> getSRV();
+	ComPtr<ID3D11RenderTargetView> getRTV();
 
 private:
 	Water() = delete;
