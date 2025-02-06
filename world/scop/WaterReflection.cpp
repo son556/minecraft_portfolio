@@ -16,6 +16,10 @@
 #include "ConstantBuffer.h"
 #include "OIT.h"
 
+#include "TestRender.h"
+
+shared_ptr<TestRender> test;
+
 WaterReflection::WaterReflection(MapUtils* m_info)
 {
 	this->r_opt = make_shared<RenderOption>();
@@ -56,6 +60,9 @@ WaterReflection::WaterReflection(MapUtils* m_info)
 	this->opacity_render = make_shared<OpacityRender>(m_info);
 	this->oit = make_shared<OIT>(m_info);
 	this->init(device, m_info);
+
+	// test
+	test = make_shared<TestRender>(m_info);
 }
 
 void WaterReflection::render()
@@ -71,18 +78,28 @@ void WaterReflection::render()
 		under_water = true;
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	this->opacity_render->render(*(this->r_opt), CamType::REFLECTION_XZ);
+
 	this->oit->setRTVandSRV(
 		this->opacity_render->getRTV(),
 		this->opacity_render->getSRV(),
 		this->opacity_render->getGeoDepthSRV()
 	);
-	this->oit->render(CamType::REFLECTION_XZ, true);
+	if (under_water == false)
+		this->oit->render(CamType::REFLECTION_XZ, true);
+	else
+		this->oit->render(CamType::REFLECTION_XZ, false);
 
 	d_graphic->renderBegin(this->d_buff.get(), this->dsv, true, false);
 	this->setPipe();
 	context->OMSetDepthStencilState(this->ds_state.Get(), 1);
-	context->PSSetShaderResources(0, 1,
-		this->oit->getSRV(true).GetAddressOf());
+	if (under_water == false) {
+		context->PSSetShaderResources(0, 1,
+			this->oit->getSRV(true).GetAddressOf());
+	}
+	else {
+		context->PSSetShaderResources(0, 1,
+			this->oit->getSRV(false).GetAddressOf());
+	}
 	context->PSSetShaderResources(1, 1,
 		this->water_distortion_srv.GetAddressOf());
 	context->PSSetConstantBuffers(0, 1,

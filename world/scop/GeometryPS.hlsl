@@ -30,7 +30,6 @@ struct PS_OUTPUT
 cbuffer cut_opt : register(b0)
 {
     float4 cut;
-    matrix reflection_mat;
 }
 
 PS_OUTPUT main(PS_INPUT input)

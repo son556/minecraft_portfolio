@@ -189,10 +189,11 @@ GeoRender::GeoRender(MapUtils* minfo)
 		d_graphic->getDevice(),
 		this->m_info->width, this->m_info->height
 	);
+	vec4 v;
 	this->cut_constant_buff = make_shared<ConstantBuffer>(
 		device,
 		d_graphic->getContext(),
-		this->c_opt
+		v
 	);
 }
 
@@ -204,14 +205,14 @@ void GeoRender::render(
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	float y = cam->getPos().y;
+	vec4 c_opt;
 	if (opt.cut_flag == true) {
 		if (y > WATER_HEIGHT)
-			this->c_opt.cut.x = 1;
+			c_opt.x = 1;
 		else
-			this->c_opt.cut.x = 2;
-		this->c_opt.cut.y = opt.cut_height;
-		this->c_opt.reflection = cam->getReflection().Transpose();
-		this->cut_constant_buff->update(this->c_opt);
+			c_opt.x = 2;
+		c_opt.y = opt.cut_height;
+		this->cut_constant_buff->update(c_opt);
 	}
 	context->PSSetConstantBuffers(0, 1,
 		this->cut_constant_buff->getComPtr().GetAddressOf());

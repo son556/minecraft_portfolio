@@ -91,6 +91,7 @@ void DeferredRendering::Render()
 
 	// water reflection render
 	this->water.renderWaterReflection();
+	//return;
 
 	// water render
 	this->water.render(this->opacity_render.getSRV());

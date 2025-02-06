@@ -64,14 +64,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     cam->setHeight(client_rect.bottom - 1);
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SCOP));
 
-    // test code
     Terrain terrain(12, 12, hWnd, w_width, w_height, 1, 8); // 짝수 단위로만
     float h = terrain.getHeight(0.5, 0.5) + 0.5;
     cam->movePos(0.5, h, 0.5);
     cam->setDir(vec3(0, 0, 1));
 
-    //cam->setDir(vec3(0, 0, 1));
-    //cam->movePos(0, 15, -25);
     terrain.setSightChunk(1);
     // test code
 
@@ -96,6 +93,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             if (lb_flag) {
                 /*terrain.testClickLightBlock(cam->getPos(),
                     cam->getDir());*/
+                /*vec3 p = cam->getPos();
+                cout << p.x << ' ' << p.y << ' ' << p.z << endl;*/
                 terrain.putBlock(cam->getPos(),
                     cam->getDir(), -3 + tp_idx);
                 tp_idx++;

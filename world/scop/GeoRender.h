@@ -19,11 +19,6 @@ struct GeoRenderOption {
 	int cut_height;
 };
 
-struct cut_opt {
-	vec4 cut;
-	Mat reflection;
-};
-
 class GeoRender
 {
 public:
@@ -74,6 +69,5 @@ private:
 	shared_ptr<TextureArray> texture_array_normal;
 	shared_ptr<TextureArray> texture_array_s;
 	shared_ptr<DepthMap> depth_map;
-	struct cut_opt c_opt;
 };
 
