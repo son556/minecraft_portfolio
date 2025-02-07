@@ -78,26 +78,29 @@ void DeferredRendering::Render()
 	r_opt.ssao_blur_cnt = 8;
 	this->opacity_render.render(r_opt, CamType::NORMAL);
 
-	// oit down render
+	if (under_water)
+		this->renderUnderWater(context);
+	else
+		this->renderAboveWater(context);
+
+	context->DrawIndexed(this->ibuffer->getCount(), 0, 0);
+	d_graphic->renderEnd();
+}
+
+void DeferredRendering::renderUnderWater(ComPtr<ID3D11DeviceContext>& context)
+{
 	this->oit.setRTVandSRV(this->opacity_render.getRTV(),
 		this->opacity_render.getSRV(), this->opacity_render.getGeoDepthSRV());
-	if (under_water == false)
-		this->oit.render(CamType::NORMAL, false);
-	else
-		this->oit.render(CamType::NORMAL, true);
+	this->oit.render(CamType::NORMAL, true);
 
 	// water init;
 	this->water.renderWaterInit(this->opacity_render.getGeoDepthSRV());
 
 	// water refraction render
-	if (under_water == false)
-		this->water.renderWaterRefraction(this->oit.getSRV(false));
-	else
-		this->water.renderWaterRefraction(this->oit.getSRV(true));
+	this->water.renderWaterRefraction(this->oit.getSRV(true));
 
 	// water reflection render
 	this->water.renderWaterReflection();
-	//return;
 
 	// water render
 	this->water.render(this->opacity_render.getSRV());
@@ -105,27 +108,44 @@ void DeferredRendering::Render()
 	// oit up render
 	this->oit.setRTVandSRV(this->water.getRTV(), this->water.getSRV(),
 		this->opacity_render.getGeoDepthSRV());
-	if (under_water == false)
-		this->oit.render(CamType::NORMAL, true);
-	else
-		this->oit.render(CamType::NORMAL, false);
+	this->oit.render(CamType::NORMAL, false);
 
 	// result
 	d_graphic->renderBegin();
 	this->setFinPipe();
-	if (under_water == false) {
-		context->PSSetShaderResources(0, 1,
-			this->oit.getSRV(true).GetAddressOf());
-	}
-	else {
-		context->PSSetShaderResources(0, 1,
-			this->oit.getSRV(false).GetAddressOf());
-	}
-	context->DrawIndexed(
-		this->ibuffer->getCount(),
-		0, 0);
+	context->PSSetShaderResources(0, 1,
+		this->oit.getSRV(false).GetAddressOf());
+}
 
-	d_graphic->renderEnd();
+void DeferredRendering::renderAboveWater(ComPtr<ID3D11DeviceContext>& context)
+{
+	// oit down render
+	this->oit.setRTVandSRV(this->opacity_render.getRTV(),
+		this->opacity_render.getSRV(), this->opacity_render.getGeoDepthSRV());
+	this->oit.render(CamType::NORMAL, false);
+
+	// water init;
+	this->water.renderWaterInit(this->opacity_render.getGeoDepthSRV());
+
+	// water refraction render
+	this->water.renderWaterRefraction(this->oit.getSRV(false));
+
+	// water reflection render
+	this->water.renderWaterReflection();
+
+	// water render
+	this->water.render(this->opacity_render.getSRV());
+
+	// oit up render
+	this->oit.setRTVandSRV(this->water.getRTV(), this->water.getSRV(),
+		this->opacity_render.getGeoDepthSRV());
+	this->oit.render(CamType::NORMAL, true);
+
+	// result
+	d_graphic->renderBegin();
+	this->setFinPipe();
+	context->PSSetShaderResources(0, 1,
+		this->oit.getSRV(true).GetAddressOf());
 }
 
 void DeferredRendering::setFinPipe()

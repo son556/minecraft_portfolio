@@ -23,6 +23,8 @@ private:
 	DeferredRendering& operator=(DeferredRendering const&) = delete;
 
 private:
+	void renderUnderWater(ComPtr<ID3D11DeviceContext>& context);
+	void renderAboveWater(ComPtr<ID3D11DeviceContext>& context);
 	void setFinPipe();
 
 private:

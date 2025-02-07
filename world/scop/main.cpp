@@ -17,8 +17,9 @@ shared_ptr<DeferredGraphics> d_graphic;
 shared_ptr<TestCam> cam;
 HWND hWnd;
 bool under_water = false; // 물 속에 있는 지
-
+bool in_water = false;
 float delta_time = 0;
+
 // test 용 전역변수
 vec3 dir;
 int w_width = 800;
