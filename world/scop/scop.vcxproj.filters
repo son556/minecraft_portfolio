@@ -310,6 +310,12 @@
     <Filter Include="소스 파일\World\Time">
       <UniqueIdentifier>{ecd6919a-52a5-4a8a-9d7c-3fde27f5d405}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\InWater">
+      <UniqueIdentifier>{b295b086-6f7c-4e59-8983-8345a6ffe767}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Engine\Pipeline\3_Shader\EXEPath">
+      <UniqueIdentifier>{9311e7ca-a7ac-4798-9dc2-c5a61fe2b5b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -534,6 +540,9 @@
     <ClInclude Include="Time.h">
       <Filter>소스 파일\World\Time</Filter>
     </ClInclude>
+    <ClInclude Include="EXEPath.h">
+      <Filter>소스 파일\Engine\Pipeline\3_Shader\EXEPath</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -749,6 +758,9 @@
     <ClCompile Include="Time.cpp">
       <Filter>소스 파일\World\Time</Filter>
     </ClCompile>
+    <ClCompile Include="EXEPath.cpp">
+      <Filter>소스 파일\Engine\Pipeline\3_Shader\EXEPath</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="scop.rc">
@@ -896,9 +908,6 @@
     <FxCompile Include="FinishPS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle</Filter>
     </FxCompile>
-    <FxCompile Include="refPS.hlsl">
-      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water</Filter>
-    </FxCompile>
     <FxCompile Include="ReflectionCubePS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\Reflection\Cube</Filter>
     </FxCompile>
@@ -928,6 +937,12 @@
     </FxCompile>
     <FxCompile Include="RefractionPS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\WaterRefraction</Filter>
+    </FxCompile>
+    <FxCompile Include="InWaterVS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\InWater</Filter>
+    </FxCompile>
+    <FxCompile Include="InWaterPS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\InWater</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

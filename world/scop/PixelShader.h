@@ -5,7 +5,7 @@ class PixelShader
 public:
 	PixelShader(
 		ComPtr<ID3D11Device> device,
-		wstring const& path,
+		wstring path,
 		string const& entry_point,
 		string const& version
 	);

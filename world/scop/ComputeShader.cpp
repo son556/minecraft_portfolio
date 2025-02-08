@@ -1,13 +1,15 @@
 #include "pch.h"
 #include "ComputeShader.h"
+#include "EXEPath.h"
 
 ComputeShader::ComputeShader(
 	ComPtr<ID3D11Device> device, 
-	wstring const& path, 
+	wstring path, 
 	string const& entry_point, 
 	string const& version
 )
 {
+	path = EXEPath::ori_path + path;
 	uint32 compile_flag = D3DCOMPILE_DEBUG |
 		D3DCOMPILE_SKIP_OPTIMIZATION;
 	HRESULT hr = D3DCompileFromFile(
