@@ -316,6 +316,12 @@
     <Filter Include="소스 파일\Engine\Pipeline\3_Shader\EXEPath">
       <UniqueIdentifier>{9311e7ca-a7ac-4798-9dc2-c5a61fe2b5b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\World\Entity">
+      <UniqueIdentifier>{b96ef6ce-375a-44d2-8c2b-ae6887ff4009}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Entity\Character">
+      <UniqueIdentifier>{5ab59b65-46ba-4f0c-98b7-9786b5da8bf3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -543,6 +549,9 @@
     <ClInclude Include="EXEPath.h">
       <Filter>소스 파일\Engine\Pipeline\3_Shader\EXEPath</Filter>
     </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>소스 파일\World\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -760,6 +769,9 @@
     </ClCompile>
     <ClCompile Include="EXEPath.cpp">
       <Filter>소스 파일\Engine\Pipeline\3_Shader\EXEPath</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>소스 파일\World\Entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

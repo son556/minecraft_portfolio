@@ -2,7 +2,6 @@
 class EXEPath
 {
 public:
-    EXEPath();
     static std::wstring GetExecutablePath() {
         wchar_t path[MAX_PATH];
         GetModuleFileNameW(nullptr, path, MAX_PATH);
