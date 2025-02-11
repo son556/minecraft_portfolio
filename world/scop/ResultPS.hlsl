@@ -10,6 +10,7 @@ Texture2D shadow_map : register(t2);
 Texture2D ssao_map : register(t3);
 Texture2D cube_map : register(t4);
 Texture2D c_shadow_map : register(t5);
+Texture2D entity_tex : register(t6);
 
 SamplerState sampler0 : register(s0);
 
@@ -24,6 +25,7 @@ float3 LinearToneMapping(float3 color)
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
+    float3 e_color = entity_tex.Sample(sampler0, input.uv).rgb;
     float3 a_color = 
         ambient_color.Sample(sampler0, input.uv).rgb;
     a_color = LinearToneMapping(a_color);
@@ -36,10 +38,24 @@ float4 main(PS_INPUT input) : SV_TARGET
     d_color = LinearToneMapping(d_color);
     float4 color = float4(a_color + d_color, 1);
     if (color.r == 0 && color.g == 0 && color.b == 0)
+    {
+        if (e_color.r || e_color.g || e_color.b)
+            return float4(e_color, 1);
         return float4(LinearToneMapping(
             cube_map.Sample(sampler0, input.uv).rgb), 1);
+    }
     
     float sp = shadow_map.Sample(sampler0, input.uv).r;
+    
+    if (e_color.r || e_color.g || e_color.b)
+    {
+        float ambient = length(a_color);
+        float direct = length(d_color);
+        float t = ambient + direct;
+        float a = 1 * ambient / t;
+        float d = 1 * direct / t;
+        return float4(e_color * max(0.2, sp), 1);
+    }
     
     float4 ssao = ssao_map.Sample(sampler0, input.uv);
     color = clamp(color, 0.0, 1000.0);

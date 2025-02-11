@@ -184,4 +184,10 @@ struct CamPos {
 	Mat view;
 };
 
+struct VertexPTN {
+	vec3 pos;
+	vec2 uv;
+	vec3 normal;
+};
+
 

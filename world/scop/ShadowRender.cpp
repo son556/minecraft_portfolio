@@ -17,6 +17,7 @@
 #include "Block.h"
 #include "Buffer.h"
 #include "TestCam.h"
+#include "Entity.h"
 
 ShadowRender::ShadowRender(MapUtils* minfo)
 {
@@ -149,6 +150,7 @@ void ShadowRender::renderCSM(CamType type)
 				);
 			}
 		}
+		entity->render(type, true);
 	}
 }
 

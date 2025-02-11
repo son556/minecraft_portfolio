@@ -150,8 +150,10 @@
     <ClInclude Include="BlendState.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Blur.h" />
+    <ClInclude Include="Body.h" />
     <ClInclude Include="CascadeShadow.h" />
     <ClInclude Include="CaveShadow.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="Composite.h" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="CubeMap.h" />
@@ -164,8 +166,11 @@
     <ClInclude Include="Filter.h" />
     <ClInclude Include="GeometryShader.h" />
     <ClInclude Include="GeoRender.h" />
+    <ClInclude Include="Head.h" />
     <ClInclude Include="HullShader.h" />
     <ClInclude Include="InputLayouts.h" />
+    <ClInclude Include="LeftArm.h" />
+    <ClInclude Include="LeftLeg.h" />
     <ClInclude Include="LightSystem.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Moon.h" />
@@ -181,6 +186,7 @@
     <ClInclude Include="MapUtils.h" />
     <ClInclude Include="OIT.h" />
     <ClInclude Include="ParallaxMapping.h" />
+    <ClInclude Include="Parts.h" />
     <ClInclude Include="PBR.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PerlinNoise.h" />
@@ -190,6 +196,8 @@
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResultSM.h" />
+    <ClInclude Include="RightArm.h" />
+    <ClInclude Include="RightLeg.h" />
     <ClInclude Include="SamplerState.h" />
     <ClInclude Include="scop.h" />
     <ClInclude Include="SetCave.h" />
@@ -228,8 +236,10 @@
     <ClCompile Include="BlendState.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Blur.cpp" />
+    <ClCompile Include="Body.cpp" />
     <ClCompile Include="CascadeShadow.cpp" />
     <ClCompile Include="CaveShadow.cpp" />
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="Composite.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="CubeMap.cpp" />
@@ -242,8 +252,11 @@
     <ClCompile Include="Filter.cpp" />
     <ClCompile Include="GeometryShader.cpp" />
     <ClCompile Include="GeoRender.cpp" />
+    <ClCompile Include="Head.cpp" />
     <ClCompile Include="HullShader.cpp" />
     <ClCompile Include="InputLayouts.cpp" />
+    <ClCompile Include="LeftArm.cpp" />
+    <ClCompile Include="LeftLeg.cpp" />
     <ClCompile Include="LightSystem.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="Moon.cpp" />
@@ -258,6 +271,7 @@
     <ClCompile Include="MapUtils.cpp" />
     <ClCompile Include="OIT.cpp" />
     <ClCompile Include="ParallaxMapping.cpp" />
+    <ClCompile Include="Parts.cpp" />
     <ClCompile Include="PBR.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -269,6 +283,8 @@
     <ClCompile Include="ReflectionCube.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="ResultSM.cpp" />
+    <ClCompile Include="RightArm.cpp" />
+    <ClCompile Include="RightLeg.cpp" />
     <ClCompile Include="SamplerState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SetCave.cpp" />
@@ -391,6 +407,22 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="EntityPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="EntityVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>

@@ -13,6 +13,7 @@
 #include "TestCam.h"
 
 #include "TestRender.h"
+#include "Entity.h"
 
 DeferredRendering::DeferredRendering(MapUtils* minfo)
 	: m_info(minfo), opacity_render(minfo), oit(minfo), water(minfo)

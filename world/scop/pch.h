@@ -103,11 +103,15 @@ enum class CamType {
 
 class TestCam;
 class DeferredGraphics;
+class Entity;
 
 extern shared_ptr<TestCam> cam;
 extern shared_ptr<DeferredGraphics> d_graphic;
+extern shared_ptr<Entity> entity;
 
 extern HWND hWnd;
 extern bool under_water;
 extern float delta_time;
 extern bool in_water;
+extern int w_width;
+extern int w_height;

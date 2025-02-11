@@ -12,6 +12,7 @@
 #include "Block.h"
 #include "Buffer.h"
 #include "TestCam.h"
+#include "Entity.h"
 
 OpacityRender::OpacityRender(MapUtils* m_info)
 	: m_info(m_info), geo_render(m_info),
@@ -189,6 +190,10 @@ void OpacityRender::render(
 	this->geo_render.setParallaxFlag(render_option.parallax_mapping);
 	this->geo_render.render(type, render_option.geo_opt);
 
+	// entity render
+	entity->setRTV(this->geo_render.getDSV());
+	entity->render(type);
+
 	// pbr render
 	this->pbr.setRTV();
 	this->setPBRResources();
@@ -203,6 +208,10 @@ void OpacityRender::render(
 			this->geo_render.getSRV(RTVIndex::w_position).GetAddressOf());
 		context->PSSetShaderResources(10, 1,
 			this->geo_render.getSRV(RTVIndex::ssao_normal).GetAddressOf());
+		context->PSSetShaderResources(11, 1,
+			entity->getSRVPos().GetAddressOf());
+		context->PSSetShaderResources(12, 1,
+			entity->getSRVNormal().GetAddressOf());
 		this->shadow_render.render(type);
 	}
 
@@ -260,6 +269,7 @@ void OpacityRender::render(
 		this->cube_map.getSRV().GetAddressOf());
 	context->PSSetShaderResources(5, 1,
 		this->cave_shadow.getSRV().GetAddressOf());
+	context->PSSetShaderResources(6, 1, entity->getSRV().GetAddressOf());
 	context->DrawIndexed(
 		this->i_buff->getCount(),
 		0, 0);

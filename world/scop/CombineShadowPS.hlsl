@@ -16,6 +16,8 @@ Texture2D shadow_7 : register(t8);
 
 Texture2D pos_tex : register(t9); // world space
 Texture2D normal_tex : register(t10); // world space
+Texture2D entity_pos_tex : register(t11); // world space
+Texture2D entity_normal_tex : register(t12); // world space
 
 SamplerState shadow_point_sampler
 {
@@ -110,10 +112,16 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
     float res = -1;
     float4 w_pos = pos_tex.Sample(sampler0, input.uv);
+    if (w_pos.x == 0 && w_pos.y == 0 && w_pos.z == 0)
+        w_pos = entity_pos_tex.Sample(sampler0, input.uv);
     float4 p_eye = mul(w_pos, view);
     float3 normal = normal_tex.Sample(sampler0, input.uv);
     if (normal.x == 0 && normal.y == 0 && normal.z == 0)
-        discard;
+    {
+        normal = entity_normal_tex.Sample(sampler0, input.uv);
+        if (normal.x == 0 && normal.y == 0 && normal.z == 0)
+            discard;
+    }
     float4 c_arr[5] = { float4(1, 0, 0, 1), float4(0, 1, 0, 1),
             float4(0, 0, 1, 1), float4(1, 1, 0, 1),
             float4(1, 0, 1, 1)};

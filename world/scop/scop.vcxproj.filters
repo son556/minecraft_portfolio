@@ -322,6 +322,39 @@
     <Filter Include="소스 파일\World\Entity\Character">
       <UniqueIdentifier>{5ab59b65-46ba-4f0c-98b7-9786b5da8bf3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\World\Entity\Collision">
+      <UniqueIdentifier>{c0945eb1-afc7-47f8-b2fa-6aecc2c8f2ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Entity\Character\Head">
+      <UniqueIdentifier>{eec8f7d4-3532-40fa-bf3a-4118c0b56ca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Entity\Character\Body">
+      <UniqueIdentifier>{9f8ad431-f8b6-4471-be34-eb5d697bd549}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Entity\Character\Arms">
+      <UniqueIdentifier>{2096952f-100f-420e-bc7d-663cd3f1a965}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Entity\Character\Arms\RightArm">
+      <UniqueIdentifier>{a9ad3ca8-eaae-4289-a151-b8eb69eed934}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Entity\Character\Arms\LeftArm">
+      <UniqueIdentifier>{46e3ce56-c0f5-4b30-a86a-27216a9374ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Entity\Character\Legs">
+      <UniqueIdentifier>{2ab94d15-28d5-46c9-a4bb-7f036dcccfb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Entity\Character\Legs\RightLeg">
+      <UniqueIdentifier>{277048a3-a46e-4f3a-aa5e-5309cfbd765f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Entity\Character\Legs\LeftLeg">
+      <UniqueIdentifier>{c6854f63-e40f-4743-a5b1-d934a7d06aed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\Entity">
+      <UniqueIdentifier>{fe9a8499-dfd7-4fda-abc3-8dcb3ea0241c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\World\Entity\Parts">
+      <UniqueIdentifier>{7867e7e4-96e5-429b-a3c5-4085d80ff433}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -552,6 +585,30 @@
     <ClInclude Include="Entity.h">
       <Filter>소스 파일\World\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>소스 파일\World\Entity\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Head.h">
+      <Filter>소스 파일\World\Entity\Character\Head</Filter>
+    </ClInclude>
+    <ClInclude Include="Body.h">
+      <Filter>소스 파일\World\Entity\Character\Body</Filter>
+    </ClInclude>
+    <ClInclude Include="LeftArm.h">
+      <Filter>소스 파일\World\Entity\Character\Arms\LeftArm</Filter>
+    </ClInclude>
+    <ClInclude Include="RightArm.h">
+      <Filter>소스 파일\World\Entity\Character\Arms\RightArm</Filter>
+    </ClInclude>
+    <ClInclude Include="LeftLeg.h">
+      <Filter>소스 파일\World\Entity\Character\Legs\LeftLeg</Filter>
+    </ClInclude>
+    <ClInclude Include="RightLeg.h">
+      <Filter>소스 파일\World\Entity\Character\Legs\RightLeg</Filter>
+    </ClInclude>
+    <ClInclude Include="Parts.h">
+      <Filter>소스 파일\World\Entity\Parts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -773,6 +830,30 @@
     <ClCompile Include="Entity.cpp">
       <Filter>소스 파일\World\Entity</Filter>
     </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>소스 파일\World\Entity\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Head.cpp">
+      <Filter>소스 파일\World\Entity\Character\Head</Filter>
+    </ClCompile>
+    <ClCompile Include="Body.cpp">
+      <Filter>소스 파일\World\Entity\Character\Body</Filter>
+    </ClCompile>
+    <ClCompile Include="LeftArm.cpp">
+      <Filter>소스 파일\World\Entity\Character\Arms\LeftArm</Filter>
+    </ClCompile>
+    <ClCompile Include="RightArm.cpp">
+      <Filter>소스 파일\World\Entity\Character\Arms\RightArm</Filter>
+    </ClCompile>
+    <ClCompile Include="LeftLeg.cpp">
+      <Filter>소스 파일\World\Entity\Character\Legs\LeftLeg</Filter>
+    </ClCompile>
+    <ClCompile Include="RightLeg.cpp">
+      <Filter>소스 파일\World\Entity\Character\Legs\RightLeg</Filter>
+    </ClCompile>
+    <ClCompile Include="Parts.cpp">
+      <Filter>소스 파일\World\Entity\Parts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="scop.rc">
@@ -955,6 +1036,12 @@
     </FxCompile>
     <FxCompile Include="InWaterPS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\OIT\Water\InWater</Filter>
+    </FxCompile>
+    <FxCompile Include="EntityVS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\DefferedShader\Entity</Filter>
+    </FxCompile>
+    <FxCompile Include="EntityPS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\DefferedShader\Entity</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

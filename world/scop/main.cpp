@@ -10,11 +10,13 @@
 #include "TestCam.h"
 #include "Time.h"
 #include "DeferredGraphics.h" 
+#include "Entity.h"
 
 #define MAX_LOADSTRING 100
 
 shared_ptr<DeferredGraphics> d_graphic;
 shared_ptr<TestCam> cam;
+shared_ptr<Entity> entity;
 HWND hWnd;
 bool under_water = false; // 물 속에 있는 지
 bool in_water = false;
@@ -67,8 +69,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     Terrain terrain(12, 12, hWnd, w_width, w_height, 1, 8); // 짝수 단위로만
     float h = terrain.getHeight(0.5, 0.5) + 0.5;
-    cam->movePos(0.5, h, 0.5);
+    cam->movePos(1.5, h, 0.5);
     cam->setDir(vec3(0, 0, 1));
+    entity = make_shared<Entity>();
+    entity->setCharacter(cam->getPos(), vec3(0, 0, 0));
 
     terrain.setSightChunk(1);
     // test code
@@ -110,6 +114,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             Time::update();
             delta_time = Time::DeltaTime();
             cam->update();
+            // entity update 해줄것
             terrain.userPositionCheck(cam->getPos().x,
                 cam->getPos().z);
             terrain.Render();
