@@ -26,6 +26,10 @@ float3 LinearToneMapping(float3 color)
 float4 main(PS_INPUT input) : SV_TARGET
 {
     float3 e_color = entity_tex.Sample(sampler0, input.uv).rgb;
+    float sp = shadow_map.Sample(sampler0, input.uv).r;
+    if (e_color.r || e_color.g || e_color.b)
+        return float4(e_color * max(0.6, sp), 1);
+    
     float3 a_color = 
         ambient_color.Sample(sampler0, input.uv).rgb;
     a_color = LinearToneMapping(a_color);
@@ -39,22 +43,8 @@ float4 main(PS_INPUT input) : SV_TARGET
     float4 color = float4(a_color + d_color, 1);
     if (color.r == 0 && color.g == 0 && color.b == 0)
     {
-        if (e_color.r || e_color.g || e_color.b)
-            return float4(e_color, 1);
         return float4(LinearToneMapping(
             cube_map.Sample(sampler0, input.uv).rgb), 1);
-    }
-    
-    float sp = shadow_map.Sample(sampler0, input.uv).r;
-    
-    if (e_color.r || e_color.g || e_color.b)
-    {
-        float ambient = length(a_color);
-        float direct = length(d_color);
-        float t = ambient + direct;
-        float a = 1 * ambient / t;
-        float d = 1 * direct / t;
-        return float4(e_color * max(0.2, sp), 1);
     }
     
     float4 ssao = ssao_map.Sample(sampler0, input.uv);

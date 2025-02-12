@@ -5,8 +5,6 @@
 #include "Parts.h"
 #include "Buffer.h"
 
-#include "Chunk.h"
-
 Head::Head(Mat const& o_pos, Mat const& o_rot)
 	: ori_pos(o_pos), ori_rot(o_rot)
 {

@@ -81,7 +81,7 @@ float shadowCheck(float4 w_pos, int shadow_idx, float3 normal, float p_dis)
         shadow_idx); // ndc uv
     
     float z; // linear
-    //z = shadow_arr.Sample(shadow_point_sampler, uvw).r;
+    
     if (shadow_idx == 0)
         z = shadow_0.Sample(shadow_point_sampler, uvw.xy).r;
     else if (shadow_idx == 1)
@@ -103,7 +103,7 @@ float shadowCheck(float4 w_pos, int shadow_idx, float3 normal, float p_dis)
     //float bias = max(0.05 * (1.0 + dot(normal, light_dir)), 0.005);
     bias *= 1.0 / (p_dis * 0.5f);
     bias = 0.0;
-    if (z < w_pos.z) // bias 가 0 이여도 shadow acne 가 안일어남
+    if (z < w_pos.z)
         ans = 0;
     return ans;
 };
@@ -111,22 +111,19 @@ float shadowCheck(float4 w_pos, int shadow_idx, float3 normal, float p_dis)
 float4 main(PS_INPUT input) : SV_TARGET
 {
     float res = -1;
-    float4 w_pos = pos_tex.Sample(sampler0, input.uv);
+    float4 w_pos = entity_pos_tex.Sample(sampler0, input.uv);
     if (w_pos.x == 0 && w_pos.y == 0 && w_pos.z == 0)
-        w_pos = entity_pos_tex.Sample(sampler0, input.uv);
+        w_pos = pos_tex.Sample(sampler0, input.uv);
     float4 p_eye = mul(w_pos, view);
-    float3 normal = normal_tex.Sample(sampler0, input.uv);
+    float3 normal = entity_normal_tex.Sample(sampler0, input.uv).xyz;
     if (normal.x == 0 && normal.y == 0 && normal.z == 0)
     {
-        normal = entity_normal_tex.Sample(sampler0, input.uv);
+        normal = normal_tex.Sample(sampler0, input.uv).xyz;
         if (normal.x == 0 && normal.y == 0 && normal.z == 0)
             discard;
     }
-    float4 c_arr[5] = { float4(1, 0, 0, 1), float4(0, 1, 0, 1),
-            float4(0, 0, 1, 1), float4(1, 1, 0, 1),
-            float4(1, 0, 1, 1)};
     
-    [unroll]
+    [loop]
     for (int i = 0; i < light_pos.w; i++)
     {
         if (p_eye.z < z_arr[i])
@@ -138,7 +135,6 @@ float4 main(PS_INPUT input) : SV_TARGET
                 float r2 =
                     shadowCheck(w_pos, i + 1, normal, z_arr[i + 1]);
                 
-                //return c_arr[i];
                 if (r1 == 0 || r2 == 0)
                     return float4(0, 0, 0, 1);
                 else
@@ -147,9 +143,6 @@ float4 main(PS_INPUT input) : SV_TARGET
             else
             {
                 res = shadowCheck(w_pos, i, normal, z_arr[i]);
-                //if (i < 4)
-                    //return float4(0, 0, 1, 1);
-                //return float4(res, res, res, 1) * c_arr[i];
                 return float4(res, res, res, 1);
             }
         }

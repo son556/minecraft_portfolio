@@ -13,13 +13,19 @@ class Entity
 public:
 	Entity();
 	~Entity() = default;
-	void setRTV(ComPtr<ID3D11DepthStencilView> dsv
-	);
+	void setRTV(ComPtr<ID3D11DepthStencilView> dsv);
 	void setCharacter(vec3 pos, vec3 radian_xyz);
-	void render(CamType type, bool shadow_flag = false);
+	void render(CamType type);
+	void shadowRender(
+		CamType type,
+		Mat const& view,
+		Mat const& proj,
+		ComPtr<ID3D11DepthStencilView> const& dsv
+	);
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	ComPtr<ID3D11ShaderResourceView> getSRVPos();
 	ComPtr<ID3D11ShaderResourceView> getSRVNormal();
+
 private:
 	Entity(Entity const&) = delete;
 	Entity& operator=(Entity const&) = delete;

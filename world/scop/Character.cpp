@@ -32,21 +32,34 @@ Character::Character(Mat pos, Mat rot) : pos(pos), rot(rot)
 	);
 }
 
-void Character::render(CamType type, bool shadow_flag)
+void Character::render(
+	CamType type, 
+	bool shadow_flag,
+	Mat const& view,
+	Mat const& proj
+)
 {
-	this->mvp.view = cam->getMVP(type).view.Transpose();
-	this->mvp.proj = cam->getMVP(type).proj.Transpose();
-
+	if (shadow_flag == false) {
+		this->mvp.view = cam->getMVP(type).view.Transpose();
+		this->mvp.proj = cam->getMVP(type).proj.Transpose();
+	}
+	else {
+		this->mvp.view = view;
+		this->mvp.proj = proj;
+	}
 	this->renderHead(shadow_flag);
 }
 
 void Character::renderHead(bool shadow_flag)
 {
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
+	if (shadow_flag == false) {
+		context->PSSetShaderResources(0, 1,
+			this->skin_tex->getComPtr().GetAddressOf());
+	}
 	this->mvp.model = this->head->getWorld().Transpose();
-	if (shadow_flag == false)
-		this->constant_buffer->update(this->mvp);
-	context->VSSetConstantBuffers(0, 1, 
+	this->constant_buffer->update(this->mvp);
+	context->VSSetConstantBuffers(0, 1,
 		this->constant_buffer->getComPtr().GetAddressOf());
 	uint32 stride;
 	uint32 offset;
@@ -60,10 +73,6 @@ void Character::renderHead(bool shadow_flag)
 		DXGI_FORMAT_R32_UINT,
 		0
 	);
-	if (shadow_flag == false) {
-		context->PSSetShaderResources(0, 1,
-			this->skin_tex->getComPtr().GetAddressOf());
-	}
 	context->DrawIndexed(
 		this->head->getIndexBuffer()->getCount(),
 		0, 0);

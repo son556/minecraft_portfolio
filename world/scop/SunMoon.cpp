@@ -63,7 +63,7 @@ void SunMoon::render(CamType type, bool ccw_flag)
 	device = d_graphic->getDevice();
 	ComPtr<ID3D11DeviceContext> context;
 	context = d_graphic->getContext();
-	static float d = 15;
+	static float d = 90;
 	float dt = XMConvertToRadians(d);
 	
 	//d += 0.04;

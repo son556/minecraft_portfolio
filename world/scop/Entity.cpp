@@ -64,17 +64,23 @@ void Entity::setCharacter(vec3 pos, vec3 radian_xyz)
 	cnt++;
 }
 
-void Entity::render(CamType type, bool shadow_flag)
+void Entity::render(CamType type)
 {
-	if (shadow_flag) {
-		if (this->character)
-			this->character->render(type, shadow_flag);
-		return;
-	}
 	this->setPipe();
 	d_graphic->renderBegin(this->d_buffer.get(), this->dsv, true, false);
 	if (this->character)
-		this->character->render(type, shadow_flag);
+		this->character->render(type, false);
+}
+
+void Entity::shadowRender(
+	CamType type, 
+	Mat const& view, 
+	Mat const& proj, 
+	ComPtr<ID3D11DepthStencilView> const& dsv
+)
+{
+	if (this->character)
+		this->character->render(type, true, view, proj);
 }
 
 ComPtr<ID3D11ShaderResourceView> Entity::getSRV()

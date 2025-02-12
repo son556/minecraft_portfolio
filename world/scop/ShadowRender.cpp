@@ -150,7 +150,9 @@ void ShadowRender::renderCSM(CamType type)
 				);
 			}
 		}
-		entity->render(type, true);
+		entity->shadowRender(type,
+			this->csms[k]->getMVP().view, this->csms[k]->getMVP().proj, 
+			this->csms[k]->getDSV());
 	}
 }
 
@@ -211,8 +213,8 @@ void ShadowRender::devideFrustum() // view space
 {
 	float p_near = 5.f;
 	float p_far = 250;
-	float r = 800.f / 650.f;
-	float fov = 60;
+	float r = w_width / w_height;
+	float fov = cam->getFOV();
 	float theta = XMConvertToRadians(fov / 2);
 
 	vector<tuple<float, float, float>> tmp;
@@ -228,7 +230,7 @@ void ShadowRender::devideFrustum() // view space
 		float h = c * tan(theta);
 		float w = h * r;
 
-		this->frustum_split.vz_arr[i].x = c;
+		this->frustum_split.vz_arr[i] = vec4(c, c, c, c);
 		if (i == 0) {
 			this->csms[csm_idx]->setFrustumVertices(vec3(-w, h, c), 0, 0);
 			this->csms[csm_idx]->setFrustumVertices(vec3(w, h, c), 1, 0);
@@ -254,9 +256,7 @@ void ShadowRender::devideFrustum() // view space
 		}
 	}
 	for (int i = this->split_cnt + 1; i < 8; i++)
-		this->frustum_split.vz_arr[i].x = p_far;
-	/*for (int i = 0; i < 8; i++)
-		cout << "c: " << this->frustum_split.vz_arr[i] << endl;*/
+		this->frustum_split.vz_arr[i] = vec4(p_far, p_far, p_far, p_far);
 }
 
 void ShadowRender::render(CamType type)
