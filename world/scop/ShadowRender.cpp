@@ -114,7 +114,7 @@ ShadowRender::ShadowRender(MapUtils* minfo)
 	this->s_rasterizer_state = make_shared<RasterizerState>(
 		d_graphic->getDevice(),
 		D3D11_FILL_SOLID,
-		D3D11_CULL_NONE
+		D3D11_CULL_BACK
 	);
 	this->devideFrustum();
 }
@@ -211,7 +211,7 @@ void ShadowRender::setCSMPipe()
 
 void ShadowRender::devideFrustum() // view space
 {
-	float p_near = 5.f;
+	float p_near = 0.1f;
 	float p_far = 250;
 	float r = w_width / w_height;
 	float fov = cam->getFOV();

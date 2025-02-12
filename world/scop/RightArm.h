@@ -10,8 +10,7 @@ public:
 	RightArm(Mat const& o_pos, Mat const& o_rot);
 	~RightArm() = default;
 	shared_ptr<Buffer<VertexPTN>>& getVertexBuffer();
-	shared_ptr<Buffer<uint32>>& getIndexBuffer();
-	shared_ptr<ConstantBuffer>& getConstantBuffer();
+	Mat getWorld();
 
 private:
 	RightArm() = delete;
@@ -21,11 +20,10 @@ private:
 private:
 	Mat ori_pos;
 	Mat ori_rot;
-	MVP mvp;
+	Mat world;
+	Mat basic_mat;
 
 private:
 	shared_ptr<Buffer<VertexPTN>> v_buffer;
-	shared_ptr<Buffer<uint32>> i_buffer;
-	shared_ptr<ConstantBuffer> constant_buffer;
 };
 

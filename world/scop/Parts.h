@@ -96,6 +96,192 @@ static const vector<vec2> human_head_uv = { // 시계방향 정렬
 	{2 * d, 2 * d},
 	{d, 2 * d}
 };
+static const vector<vec2> human_body_uv = {
+	// 위 
+	{2 * d + h_d, d * 2},
+	{3 * d + h_d, d * 2},
+	{3 * d + h_d, 2 * d + h_d},
+	{2 * d + h_d, 2 * d + h_d},
+
+	// 아래
+	{3 * d + h_d, 2 * d},
+	{4 * d + h_d, 2 * d},
+	{4 * d + h_d, 2 * d + h_d},
+	{3 * d + h_d, 2 * d + h_d},
+
+	// 오른
+	{4 * d, 2 * d + h_d},
+	{4 * d, 4 * d},
+	{3 * d + h_d, 4 * d},
+	{3 * d + h_d, 2 * d + h_d},
+
+	// 왼
+	{2 * d, 2 * d + h_d},
+	{2 * d + h_d, 2 * d + h_d},
+	{2 * d + h_d, 4 * d},
+	{2 * d, 4 * d},
+
+	// 뒤
+	{4 * d, 2 * d + h_d},
+	{5 * d, 2 * d + h_d},
+	{5 * d, 4 * d},
+	{4 * d, 4 * d},
+
+	// 앞
+	{2 * d + h_d, 2 * d + h_d},
+	{3 * d + h_d, 2 * d + h_d},
+	{3 * d + h_d, 4 * d},
+	{2 * d + h_d, 4 * d}
+};
+static const vector<vec2> human_left_arm_uv = {
+	// 위
+	{5 * d + h_d, 2 * d},
+	{6 * d, 2 * d},
+	{6 * d, 2 * d + h_d},
+	{5 * d + h_d, 2 * d + h_d},
+
+	// 아래
+	{6 * d, 2 * d},
+	{6 * d + h_d, 2 * d},
+	{6 * d + h_d, 2 * d + h_d},
+	{6 * d, 2 * d + h_d},
+
+	// 오른
+	{6 * d + h_d, 2 * d + h_d},
+	{6 * d + h_d, 4 * d},
+	{6 * d, 4 * d},
+	{6 * d, 2 * d + h_d},
+
+	// 왼
+	{5 * d, 2 * d + h_d},
+	{5 * d + h_d, 2 * d + h_d},
+	{5 * d + h_d, 4 * d},
+	{5 * d, 4 * d},
+
+	// 뒤
+	{6 * d + h_d, 2 * d + h_d},
+	{7 * d, 2 * d + h_d},
+	{7 * d, 4 * d},
+	{6 * d + h_d, 4 * d},
+
+	// 앞
+	{5 * d + h_d, 2 * d + h_d},
+	{6 * d, 2 * d + h_d},
+	{6 * d, 4 * d},
+	{5 * d + h_d, 4 * d}
+};
+static const vector<vec2> human_right_arm_uv = {
+	// 위
+	{5 * d + h_d, 2 * d},
+	{6 * d, 2 * d},
+	{6 * d, 2 * d + h_d},
+	{5 * d + h_d, 2 * d + h_d},
+
+	// 아래
+	{6 * d, 2 * d},
+	{6 * d + h_d, 2 * d},
+	{6 * d + h_d, 2 * d + h_d},
+	{6 * d, 2 * d + h_d},
+
+	// 오른
+	{5 * d, 2 * d + h_d},
+	{5 * d, 4 * d},
+	{5 * d + h_d, 4 * d},
+	{5 * d + h_d, 2 * d + h_d},
+
+	// 왼
+	{6 * d, 2 * d + h_d},
+	{6 * d + h_d, 2 * d + h_d},
+	{6 * d + h_d, 4 * d},
+	{6 * d, 4 * d},
+
+	// 뒤
+	{6 * d + h_d, 2 * d + h_d},
+	{7 * d, 2 * d + h_d},
+	{7 * d, 4 * d},
+	{6 * d + h_d, 4 * d},
+
+	// 앞
+	{5 * d + h_d, 2 * d + h_d},
+	{6 * d, 2 * d + h_d},
+	{6 * d, 4 * d},
+	{5 * d + h_d, 4 * d}
+};
+static const vector<vec2> human_left_leg_uv = {
+	// 위
+	{h_d, 2 * d},
+	{d, 2 * d},
+	{d, 2 * d + h_d},
+	{h_d, 2 * d + h_d},
+
+	// 아래
+	{d, 2 * d},
+	{d + h_d, 2 * d},
+	{d + h_d, 2 * d + h_d},
+	{d, 2 * d + h_d},
+
+	// 오른
+	{d, 2 * d + h_d},
+	{d + h_d, 2 * d + h_d},
+	{d + h_d, 4 * d},
+	{d, 4 * d},
+
+	// 왼
+	{0, 2 * d + h_d},
+	{0, 4 * d},
+	{h_d, 4 * d},
+	{h_d, 2 * d + h_d},
+
+	// 뒤
+	{d + h_d, 2 * d + h_d},
+	{2 * d, 2 * d + h_d},
+	{2 * d, 4 * d},
+	{d + h_d, 4 * d},
+
+	// 앞
+	{h_d, 2 * d + h_d},
+	{d, 2 * d + h_d},
+	{d, 4 * d},
+	{h_d, 4 * d}
+};
+
+static const vector<vec2> human_righ_leg_uv = {
+	// 위
+	{h_d, 2 * d},
+	{d, 2 * d},
+	{d, 2 * d + h_d},
+	{h_d, 2 * d + h_d},
+
+	// 아래
+	{d, 2 * d},
+	{d + h_d, 2 * d},
+	{d + h_d, 2 * d + h_d},
+	{d, 2 * d + h_d},
+
+	// 오른
+	{0, 2 * d + h_d},
+	{0, 4 * d},
+	{h_d, 4 * d},
+	{h_d, 2 * d + h_d},
+
+	// 왼
+	{d, 2 * d + h_d},
+	{d + h_d, 2 * d + h_d},
+	{d + h_d, 4 * d},
+	{d, 4 * d},
+
+	// 뒤
+	{d + h_d, 2 * d + h_d},
+	{2 * d, 2 * d + h_d},
+	{2 * d, 4 * d},
+	{d + h_d, 4 * d},
+	
+	// 앞
+	{h_d, 2 * d + h_d},
+	{d, 2 * d + h_d},
+	{d, 4 * d},
+	{h_d, 4 * d}
+};
 
 static const vector<uint32> arr_idx = {
 	// 위 0 1 2 3
@@ -112,16 +298,25 @@ static const vector<uint32> arr_idx = {
 	20, 21, 22, 20, 22, 23
 };
 
+enum class HumanParts {
+	HEAD,
+	BODY,
+	LEFTARM,
+	RIGHTARM,
+	LEFTLEG,
+	RIGHTLEG
+};
+
 namespace Parts {
-	inline void humanHead(
+	inline void humanVertices(
 		vector<VertexPTN>& vertices, 
 		float scale_x,
 		float scale_y,
-		float scale_z
+		float scale_z,
+		HumanParts parts_type
 	) {
 		vertices.clear();
 		VertexPTN ptn;
-		int idx = 0;
 		for (int i = 0; i < 6; i++) {
 			for (int j = 0; j < 4; j++) {
 				ptn.pos = pos[i * 4 + j];
@@ -129,7 +324,18 @@ namespace Parts {
 				ptn.pos.y *= scale_y;
 				ptn.pos.z *= scale_z;
 				ptn.normal = normal[i];
-				ptn.uv = human_head_uv[i * 4 + j];
+				if (parts_type == HumanParts::HEAD)
+					ptn.uv = human_head_uv[i * 4 + j];
+				else if (parts_type == HumanParts::BODY)
+					ptn.uv = human_body_uv[i * 4 + j];
+				else if (parts_type == HumanParts::LEFTARM)
+					ptn.uv = human_left_arm_uv[i * 4 + j];
+				else if (parts_type == HumanParts::RIGHTARM)
+					ptn.uv = human_right_arm_uv[i * 4 + j];
+				else if (parts_type == HumanParts::LEFTLEG)
+					ptn.uv = human_left_leg_uv[i * 4 + j];
+				else
+					ptn.uv = human_righ_leg_uv[i * 4 + j];
 				vertices.push_back(ptn);
 			}
 		}

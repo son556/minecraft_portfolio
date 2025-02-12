@@ -71,16 +71,15 @@ float shadowCheck(float4 w_pos, int shadow_idx, float3 normal, float p_dis)
     float3 light_dir = light_pos.xyz;
     light_dir.z = w_pos.z;
     light_dir = normalize(w_pos.xyz - light_dir);
-    //light_dir = mul(float4(light_dir, 0), rotateY(45)); // test
     
-    w_pos += float4(normal, 0) * 0.1; // self shadow 방지
+    w_pos += float4(normal, 0) * 0.02;
     w_pos = mul(w_pos, mvp_arr[shadow_idx].view);
     w_pos = mul(w_pos, mvp_arr[shadow_idx].proj);
     w_pos /= w_pos.w; // ndc
     float3 uvw = float3((w_pos.x + 1.0) * 0.5, (-w_pos.y + 1.0) * 0.5,
         shadow_idx); // ndc uv
     
-    float z; // linear
+    float z;
     
     if (shadow_idx == 0)
         z = shadow_0.Sample(shadow_point_sampler, uvw.xy).r;
@@ -98,11 +97,16 @@ float shadowCheck(float4 w_pos, int shadow_idx, float3 normal, float p_dis)
         z = shadow_6.Sample(shadow_point_sampler, uvw.xy).r;
     else
         z = shadow_7.Sample(shadow_point_sampler, uvw.xy).r;
-    
-    float bias = max(0.0001 * (1.0 + dot(normal, light_dir)), 0.0);
+    /*
+    bias를 주는 대신 위에서 노말 방향으로 살짝 이동 후 그림자 검사 하는게
+    더 잘됨
+    */
+    //float bias = max(0.0001 * (1.0 + dot(normal, light_dir)), 0.0);
     //float bias = max(0.05 * (1.0 + dot(normal, light_dir)), 0.005);
-    bias *= 1.0 / (p_dis * 0.5f);
-    bias = 0.0;
+    //bias *= 1.0 / (p_dis * 0.5f);
+    //bias = 0.0;
+    //float biasValues[4] = { 0.0005f, 0.001f, 0.0025f, 0.005f };
+    
     if (z < w_pos.z)
         ans = 0;
     return ans;

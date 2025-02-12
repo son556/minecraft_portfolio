@@ -69,10 +69,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     Terrain terrain(12, 12, hWnd, w_width, w_height, 1, 8); // 짝수 단위로만
     float h = terrain.getHeight(0.5, 0.5) + 0.5;
-    cam->movePos(1.5, h, 0.5);
+    cam->movePos(1.5, h, 1.5);
     cam->setDir(vec3(0, 0, 1));
     entity = make_shared<Entity>();
-    entity->setCharacter(cam->getPos(), vec3(0, 0, 0));
+    entity->setCharacter(vec3(1.5, h - 0.5, 0.5), vec3(0, 0, 0));
 
     terrain.setSightChunk(1);
     // test code

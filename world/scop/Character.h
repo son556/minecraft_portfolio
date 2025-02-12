@@ -10,6 +10,7 @@ class Body;
 class LeftLeg;
 class RightLeg;
 class ConstantBuffer;
+template<typename T> class Buffer;
 
 class Character
 {
@@ -24,12 +25,21 @@ public:
 	);
 
 private:
-	void renderHead(bool shadow_flag = false);
-	void renderBody();
-	void renderLeftArm();
-	void renderRightArm();
-	void renderLeftLeg();
-	void renderRightLeg();
+	void renderHead(
+		ComPtr<ID3D11DeviceContext>& context,
+		bool shadow_flag = false);
+	void renderBody(
+		ComPtr<ID3D11DeviceContext>& context,
+		bool shadow_flag = false);
+	void renderLeftArm(
+		ComPtr<ID3D11DeviceContext>& context,
+		bool shadow_flag = false);
+	void renderRightArm(ComPtr<ID3D11DeviceContext>& context,
+		bool shadow_flag = false);
+	void renderLeftLeg(ComPtr<ID3D11DeviceContext>& context,
+		bool shadow_flag = false);
+	void renderRightLeg(ComPtr<ID3D11DeviceContext>& context,
+		bool shadow_flag = false);
 
 private:
 	Character() = delete;
@@ -43,6 +53,7 @@ private:
 	MVP mvp;
 	MVP shadow_mvp;
 	shared_ptr<ConstantBuffer> constant_buffer;
+	shared_ptr<Buffer<uint32>> i_buffer;
 
 private:
 	shared_ptr<LeftArm> left_arm;
