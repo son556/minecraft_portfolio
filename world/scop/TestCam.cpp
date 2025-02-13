@@ -138,25 +138,19 @@ void TestCam::setCursorInClient(HWND hwnd)
 	SetCursorPos(pt.x, pt.y);
 }
 
-void TestCam::update()
+void TestCam::update(vec3 const& character_pos, vec3 const& character_dir)
 {
-	vec3 right_dir = vec3(0, 1, 0).Cross(this->dir);
-	vec3 up_dir = this->dir.Cross(right_dir);
-	vec3 move_dir = vec3(0, 0, 0);
-	if (GetAsyncKeyState('A') & 0x8000)
-		move_dir -= vec3(right_dir.x, 0, right_dir.z);
-	if (GetAsyncKeyState('D') & 0x8000)
-		move_dir += vec3(right_dir.x, 0, right_dir.z);
-	if (GetAsyncKeyState('W') & 0x8000)
-		move_dir += vec3(this->dir.x, 0, this->dir.z);
-	if (GetAsyncKeyState('S') & 0x8000)
-		move_dir -= vec3(this->dir.x, 0, this->dir.z);
+	vec3 reset_pos = -2 * character_dir + character_pos;
+	float up_down = 0;
 	if (GetAsyncKeyState('Q') & 0x8000)
-		move_dir += vec3(0, 1, 0);
+		up_down += 1;
 	if (GetAsyncKeyState('E') & 0x8000)
-		move_dir -= vec3(0, 1, 0);
-	move_dir = XMVector3Normalize(move_dir) * 0.03f;
-	this->pos += move_dir;
+		up_down -= 1;
+	up_down *= 0.03f;
+	this->pos.x = reset_pos.x;
+	this->pos.z = reset_pos.z;
+	this->pos.y = max(reset_pos.y + 1.125, this->pos.y + up_down);
+	this->pos.y = min(this->pos.y, reset_pos.y + 2.5);
 	this->mvp.view = XMMatrixLookToLH(this->pos, this->dir, vec3(0, 1, 0));
 	MVP tmvp;
 	tmvp.view = this->mvp.view.Transpose();

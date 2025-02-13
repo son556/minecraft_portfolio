@@ -221,16 +221,16 @@ static const vector<vec2> human_left_leg_uv = {
 	{d, 2 * d + h_d},
 
 	// 오른
-	{d, 2 * d + h_d},
 	{d + h_d, 2 * d + h_d},
 	{d + h_d, 4 * d},
 	{d, 4 * d},
+	{d, 2 * d + h_d},
 
 	// 왼
 	{0, 2 * d + h_d},
-	{0, 4 * d},
-	{h_d, 4 * d},
 	{h_d, 2 * d + h_d},
+	{h_d, 4 * d},
+	{0, 4 * d},
 
 	// 뒤
 	{d + h_d, 2 * d + h_d},
@@ -244,7 +244,6 @@ static const vector<vec2> human_left_leg_uv = {
 	{d, 4 * d},
 	{h_d, 4 * d}
 };
-
 static const vector<vec2> human_righ_leg_uv = {
 	// 위
 	{h_d, 2 * d},
@@ -282,7 +281,6 @@ static const vector<vec2> human_righ_leg_uv = {
 	{d, 4 * d},
 	{h_d, 4 * d}
 };
-
 static const vector<uint32> arr_idx = {
 	// 위 0 1 2 3
 	0, 1, 2, 0, 2, 3,

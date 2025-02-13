@@ -6,7 +6,6 @@
 #include "Buffer.h"
 
 RightArm::RightArm(Mat const& o_pos, Mat const& o_rot)
-	: ori_pos(o_pos), ori_rot(o_rot)
 {
 	vector<VertexPTN> vertices;
 	Parts::humanVertices(vertices, 0.25, 0.75, 0.25, HumanParts::RIGHTARM);
@@ -17,7 +16,7 @@ RightArm::RightArm(Mat const& o_pos, Mat const& o_rot)
 		D3D11_BIND_VERTEX_BUFFER
 	);
 	this->basic_mat = Mat::CreateTranslation(vec3(0.375, 1.125, 0));
-	this->world = o_rot * o_pos * this->basic_mat;
+	this->world = this->basic_mat * o_rot * o_pos;
 }
 
 shared_ptr<Buffer<VertexPTN>>& RightArm::getVertexBuffer()
@@ -28,5 +27,10 @@ shared_ptr<Buffer<VertexPTN>>& RightArm::getVertexBuffer()
 Mat RightArm::getWorld()
 {
 	return this->world;
+}
+
+void RightArm::update(Mat const& o_pos, Mat const& o_rot)
+{
+	this->world = this->basic_mat * o_rot * o_pos;
 }
 

@@ -16,7 +16,7 @@ public:
 	void movePos(float x, float y, float z);
 	void setDir(vec3 dir);
 	void onMouseMove(HWND hWnd, int mouse_x, int mouse_y);
-	void update();
+	void update(vec3 const& character_pos, vec3 const& character_dir);
 	vec3 getPos();
 	vec3 getDir();
 	void setCursorInClient(HWND hwnd);

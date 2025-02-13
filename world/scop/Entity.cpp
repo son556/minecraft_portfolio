@@ -68,8 +68,15 @@ void Entity::render(CamType type)
 {
 	this->setPipe();
 	d_graphic->renderBegin(this->d_buffer.get(), this->dsv, true, false);
-	if (this->character)
-		this->character->render(type, false);
+}
+
+void Entity::characterRenderTP(
+	CamType type,
+	ComPtr<ID3D11ShaderResourceView> depth_srv,
+	shared_ptr<SamplerState> sampler_tp
+)
+{
+	this->character->render(type, depth_srv, sampler_tp);
 }
 
 void Entity::shadowRender(
@@ -79,23 +86,6 @@ void Entity::shadowRender(
 	ComPtr<ID3D11DepthStencilView> const& dsv
 )
 {
-	if (this->character)
-		this->character->render(type, true, view, proj);
-}
-
-ComPtr<ID3D11ShaderResourceView> Entity::getSRV()
-{
-	return this->d_buffer->getSRV(0);
-}
-
-ComPtr<ID3D11ShaderResourceView> Entity::getSRVPos()
-{
-	return this->d_buffer->getSRV(1);
-}
-
-ComPtr<ID3D11ShaderResourceView> Entity::getSRVNormal()
-{
-	return this->d_buffer->getSRV(2);
 }
 
 void Entity::setPipe()
@@ -113,4 +103,34 @@ void Entity::setPipe()
 		this->pixel_shader->getComPtr().Get(),
 		nullptr, 0);
 	context->PSSetSamplers(0, 1, this->sampler_state->getComPtr().GetAddressOf());
+}
+
+ComPtr<ID3D11ShaderResourceView> Entity::getSRV()
+{
+	return this->d_buffer->getSRV(0);
+}
+
+ComPtr<ID3D11ShaderResourceView> Entity::getSRVPos()
+{
+	return this->d_buffer->getSRV(1);
+}
+
+ComPtr<ID3D11ShaderResourceView> Entity::getSRVNormal()
+{
+	return this->d_buffer->getSRV(2);
+}
+
+vec3 const& Entity::getCharacterPos()
+{
+	return this->character->getPos();
+}
+
+vec3 const& Entity::getCharacterDir()
+{
+	return this->character->getDir();
+}
+
+void Entity::update(vec3 const& cam_dir)
+{
+	this->character->update(cam_dir);
 }

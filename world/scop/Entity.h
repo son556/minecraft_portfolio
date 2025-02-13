@@ -16,6 +16,11 @@ public:
 	void setRTV(ComPtr<ID3D11DepthStencilView> dsv);
 	void setCharacter(vec3 pos, vec3 radian_xyz);
 	void render(CamType type);
+	void characterRenderTP( // 캐릭터는 반투명으로 렌더링
+		CamType type,
+		ComPtr<ID3D11ShaderResourceView> depth_srv,
+		shared_ptr<SamplerState> sampler_tp
+	);
 	void shadowRender(
 		CamType type,
 		Mat const& view,
@@ -25,6 +30,9 @@ public:
 	ComPtr<ID3D11ShaderResourceView> getSRV();
 	ComPtr<ID3D11ShaderResourceView> getSRVPos();
 	ComPtr<ID3D11ShaderResourceView> getSRVNormal();
+	vec3 const& getCharacterPos();
+	vec3 const& getCharacterDir();
+	void update(vec3 const& cam_dir);
 
 private:
 	Entity(Entity const&) = delete;

@@ -11,6 +11,7 @@ public:
 	~Body() = default;
 	shared_ptr<Buffer<VertexPTN>>& getVertexBuffer();
 	Mat getWorld();
+	void update(Mat const& o_pos, Mat const& o_rot);
 
 private:
 	Body() = delete;
@@ -18,8 +19,6 @@ private:
 	Body& operator=(Body const&) = delete;
 
 private:
-	Mat ori_pos;
-	Mat ori_rot;
 	Mat world;
 	Mat basic_mat;
 

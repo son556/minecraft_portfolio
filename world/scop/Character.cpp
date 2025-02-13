@@ -12,13 +12,22 @@
 #include "Buffer.h"
 #include "ConstantBuffer.h"
 #include "TestCam.h"
+#include "PixelShader.h"
+#include "VertexShader.h"
+#include "SamplerState.h"
+#include "InputLayout.h"
+#include "InputLayouts.h"
 
 Character::Character(Mat pos, Mat rot) : pos(pos), rot(rot)
 {
+	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->skin_tex = make_shared<Texture>(
-		d_graphic->getDevice(),
+		device,
 		L"./textures/zombie/TEXTURE/zombie.png"
 	);
+	this->c_pos = vec3(pos._41, pos._42, pos._43);
+	vec4 d = XMVector4Transform(vec4(0, 0, -1, 0), rot);
+	this->dir = XMVector3Normalize(vec3(d.x, d.y, d.z));
 	this->left_arm = make_shared<LeftArm>(pos, rot);
 	this->right_arm = make_shared<RightArm>(pos, rot);
 	this->left_leg = make_shared<LeftLeg>(pos, rot);
@@ -26,57 +35,60 @@ Character::Character(Mat pos, Mat rot) : pos(pos), rot(rot)
 	this->body = make_shared<Body>(pos, rot);
 	this->head = make_shared<Head>(pos, rot);
 	this->constant_buffer = make_shared<ConstantBuffer>(
-		d_graphic->getDevice(),
+		device,
 		d_graphic->getContext(),
 		this->mvp
 	);
 	vector<uint32> indices;
 	Parts::makeIndices(indices);
 	this->i_buffer = make_shared<Buffer<uint32>>(
-		d_graphic->getDevice(),
+		device,
 		indices.data(),
 		indices.size(),
 		D3D11_BIND_INDEX_BUFFER
 	);
+	this->vertex_shader = make_shared<VertexShader>(
+		device,
+		L"CharacterVS.hlsl",
+		"main",
+		"vs_5_0"
+	);
+	this->input_layout = make_shared<InputLayout>(
+		device,
+		InputLayouts::layout_ptn.data(),
+		InputLayouts::layout_ptn.size(),
+		this->vertex_shader->getBlob()
+	);
+	this->pixel_shader = make_shared<PixelShader>(
+		device,
+		L"CharacterPS.hlsl",
+		"main",
+		"ps_5_0"
+	);
+	this->sampler_state = make_shared<SamplerState>(device);
 }
 
 void Character::render(
-	CamType type, 
-	bool shadow_flag,
-	Mat const& view,
-	Mat const& proj
+	CamType type,
+	ComPtr<ID3D11ShaderResourceView> depth_srv,
+	shared_ptr<SamplerState> sampler_tp
 )
 {
-	if (shadow_flag == false) {
-		this->mvp.view = cam->getMVP(type).view.Transpose();
-		this->mvp.proj = cam->getMVP(type).proj.Transpose();
-	}
-	else {
-		this->mvp.view = view;
-		this->mvp.proj = proj;
-	}
+	this->mvp.view = cam->getMVP(type).view.Transpose();
+	this->mvp.proj = cam->getMVP(type).proj.Transpose();
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
-	context->IASetIndexBuffer(
-		this->i_buffer->getComPtr().Get(),
-		DXGI_FORMAT_R32_UINT,
-		0
-	);
-	if (shadow_flag == false) {
-		context->PSSetShaderResources(0, 1,
-			this->skin_tex->getComPtr().GetAddressOf());
-	}
-	this->renderHead(context, shadow_flag);
-	this->renderBody(context, shadow_flag);
-	this->renderLeftArm(context, shadow_flag);
-	this->renderRightArm(context, shadow_flag);
-	this->renderLeftLeg(context, shadow_flag);
-	this->renderRightLeg(context, shadow_flag);
+	context->PSSetShaderResources(1, 1, depth_srv.GetAddressOf());
+	context->PSSetSamplers(1, 1, sampler_tp->getComPtr().GetAddressOf());
+	this->setPipe(context);
+	this->renderHead(context);
+	this->renderBody(context);
+	this->renderLeftArm(context);
+	this->renderRightArm(context);
+	this->renderLeftLeg(context);
+	this->renderRightLeg(context);
 }
 
-void Character::renderHead(
-	ComPtr<ID3D11DeviceContext>& context,
-	bool shadow_flag
-)
+void Character::renderHead(ComPtr<ID3D11DeviceContext>& context)
 {
 	this->mvp.model = this->head->getWorld().Transpose();
 	this->constant_buffer->update(this->mvp);
@@ -94,10 +106,7 @@ void Character::renderHead(
 		0, 0);
 }
 
-void Character::renderBody(
-	ComPtr<ID3D11DeviceContext>& context,
-	bool shadow_flag
-)
+void Character::renderBody(ComPtr<ID3D11DeviceContext>& context)
 {
 	this->mvp.model = this->body->getWorld().Transpose();
 	this->constant_buffer->update(this->mvp);
@@ -115,10 +124,7 @@ void Character::renderBody(
 		0, 0);
 }
 
-void Character::renderLeftArm(
-	ComPtr<ID3D11DeviceContext>& context,
-	bool shadow_flag
-)
+void Character::renderLeftArm(ComPtr<ID3D11DeviceContext>& context)
 {
 	this->mvp.model = this->left_arm->getWorld().Transpose();
 	this->constant_buffer->update(this->mvp);
@@ -136,10 +142,7 @@ void Character::renderLeftArm(
 		0, 0);
 }
 
-void Character::renderRightArm(
-	ComPtr<ID3D11DeviceContext>& context,
-	bool shadow_flag
-)
+void Character::renderRightArm(ComPtr<ID3D11DeviceContext>& context)
 {
 	this->mvp.model = this->right_arm->getWorld().Transpose();
 	this->constant_buffer->update(this->mvp);
@@ -157,9 +160,7 @@ void Character::renderRightArm(
 		0, 0);
 }
 
-void Character::renderLeftLeg(
-	ComPtr<ID3D11DeviceContext>& context,
-	bool shadow_flag
+void Character::renderLeftLeg(ComPtr<ID3D11DeviceContext>& context
 )
 {
 	this->mvp.model = this->left_leg->getWorld().Transpose();
@@ -178,10 +179,7 @@ void Character::renderLeftLeg(
 		0, 0);
 }
 
-void Character::renderRightLeg(
-	ComPtr<ID3D11DeviceContext>& context,
-	bool shadow_flag
-)
+void Character::renderRightLeg(ComPtr<ID3D11DeviceContext>& context)
 {
 	this->mvp.model = this->right_leg->getWorld().Transpose();
 	this->constant_buffer->update(this->mvp);
@@ -197,4 +195,65 @@ void Character::renderRightLeg(
 	context->DrawIndexed(
 		this->i_buffer->getCount(),
 		0, 0);
+}
+
+void Character::setPipe(ComPtr<ID3D11DeviceContext>& context)
+{
+	context->IASetIndexBuffer(
+		this->i_buffer->getComPtr().Get(),
+		DXGI_FORMAT_R32_UINT,
+		0
+	);
+	context->PSSetShaderResources(0, 1,
+		this->skin_tex->getComPtr().GetAddressOf());
+	context->IASetInputLayout(this->input_layout->getComPtr().Get());
+	context->VSSetShader(this->vertex_shader->getComPtr().Get(),
+		nullptr, 0);
+	context->PSSetShader(this->pixel_shader->getComPtr().Get(), nullptr, 0);
+	context->PSSetSamplers(0, 1, this->sampler_state->getComPtr().GetAddressOf());
+}
+
+
+vec3 const& Character::getPos()
+{
+	return this->c_pos;
+}
+
+vec3 const& Character::getDir()
+{
+	return this->dir;
+}
+
+void Character::update(vec3 const& dir)
+{
+	vec3 new_dir = XMVector3Normalize(vec3(dir.x, 0, dir.z));
+	this->dir = new_dir;
+	float theta = atan2(-new_dir.x, -new_dir.z);
+	this->rot = Mat::CreateRotationY(theta);
+
+	vec3 right_dir = vec3(0, 1, 0).Cross(this->dir);
+	vec3 up_dir = this->dir.Cross(right_dir);
+	vec3 move_dir = vec3(0, 0, 0);
+	if (GetAsyncKeyState('A') & 0x8000)
+		move_dir -= vec3(right_dir.x, 0, right_dir.z);
+	if (GetAsyncKeyState('D') & 0x8000)
+		move_dir += vec3(right_dir.x, 0, right_dir.z);
+	if (GetAsyncKeyState('W') & 0x8000)
+		move_dir += vec3(this->dir.x, 0, this->dir.z);
+	if (GetAsyncKeyState('S') & 0x8000)
+		move_dir -= vec3(this->dir.x, 0, this->dir.z);
+	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+		move_dir -= up_dir;
+	if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
+		move_dir += up_dir;
+	move_dir = XMVector3Normalize(move_dir) * 3 * delta_time;
+	this->c_pos += move_dir;
+	this->pos = Mat::CreateTranslation(this->c_pos);
+
+	this->head->update(this->pos, this->rot);
+	this->body->update(this->pos, this->rot);
+	this->left_arm->update(this->pos, this->rot);
+	this->right_arm->update(this->pos, this->rot);
+	this->left_leg->update(this->pos, this->rot);
+	this->right_leg->update(this->pos, this->rot);
 }

@@ -355,6 +355,9 @@
     <Filter Include="소스 파일\World\Entity\Parts">
       <UniqueIdentifier>{7867e7e4-96e5-429b-a3c5-4085d80ff433}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\Character">
+      <UniqueIdentifier>{0e08c997-d14b-45bc-990d-5f50642f92ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -1042,6 +1045,12 @@
     </FxCompile>
     <FxCompile Include="EntityPS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\DefferedShader\Entity</Filter>
+    </FxCompile>
+    <FxCompile Include="CharacterVS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\DefferedShader\Character</Filter>
+    </FxCompile>
+    <FxCompile Include="CharacterPS.hlsl">
+      <Filter>소스 파일\World\WorldShaderFIle\DefferedShader\Character</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

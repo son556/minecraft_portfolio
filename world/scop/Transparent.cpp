@@ -13,6 +13,7 @@
 #include "SamplerState.h"
 #include "TestCam.h"
 #include "BlendState.h"
+#include "Entity.h"
 
 Transparent::Transparent(MapUtils* minfo)
 {
@@ -165,6 +166,11 @@ void Transparent::render(
 			}
 		}
 	}
+	float y = entity->getCharacterPos().y;
+	if (water_up_flag && y > WATER_HEIGHT)
+		entity->characterRenderTP(type, depth_srv, this->sampler_state);
+	else if (water_up_flag == false && y <= WATER_HEIGHT)
+		entity->characterRenderTP(type, depth_srv, this->sampler_state);
 	context->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(this->prev_ds_state.Get(), this->prev_ref);
 }

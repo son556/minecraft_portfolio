@@ -69,10 +69,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     Terrain terrain(12, 12, hWnd, w_width, w_height, 1, 8); // 짝수 단위로만
     float h = terrain.getHeight(0.5, 0.5) + 0.5;
-    cam->movePos(1.5, h, 1.5);
-    cam->setDir(vec3(0, 0, 1));
+    /*cam->movePos(1.5, h, 1.5);
+    cam->setDir(vec3(0, 0, 1));*/
     entity = make_shared<Entity>();
-    entity->setCharacter(vec3(1.5, h - 0.5, 0.5), vec3(0, 0, 0));
+    entity->setCharacter(vec3(1.5, h - 0.5, 0.5), 
+        vec3(0, XMConvertToRadians(0), 0));
+    cam->setDir(vec3(0, 0, -1));
+    cam->update(entity->getCharacterPos(), entity->getCharacterDir());
+    entity->update(cam->getDir());
 
     terrain.setSightChunk(1);
     // test code
@@ -98,8 +102,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             if (lb_flag) {
                 /*terrain.testClickLightBlock(cam->getPos(),
                     cam->getDir());*/
-                /*vec3 p = cam->getPos();
-                cout << p.x << ' ' << p.y << ' ' << p.z << endl;*/
                 terrain.putBlock(cam->getPos(),
                     cam->getDir(), -3 + tp_idx);
                 tp_idx++;
@@ -113,7 +115,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             }
             Time::update();
             delta_time = Time::DeltaTime();
-            cam->update();
+            entity->update(cam->getDir());
+            cam->update(entity->getCharacterPos(), entity->getCharacterDir());
             // entity update 해줄것
             terrain.userPositionCheck(cam->getPos().x,
                 cam->getPos().z);

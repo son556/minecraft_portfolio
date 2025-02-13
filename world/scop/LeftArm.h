@@ -11,6 +11,7 @@ public:
 	~LeftArm() = default;
 	shared_ptr<Buffer<VertexPTN>>& getVertexBuffer();
 	Mat getWorld();
+	void update(Mat const& o_pos, Mat const& o_rot);
 
 private:
 	LeftArm() = delete;
@@ -18,8 +19,6 @@ private:
 	LeftArm& operator=(LeftArm const&) = delete;
 
 private:
-	Mat ori_pos;
-	Mat ori_rot;
 	Mat world;
 	Mat basic_mat;
 
