@@ -19,7 +19,8 @@ public:
 	void characterRenderTP( // 캐릭터는 반투명으로 렌더링
 		CamType type,
 		ComPtr<ID3D11ShaderResourceView> depth_srv,
-		shared_ptr<SamplerState> sampler_tp
+		shared_ptr<SamplerState> sampler_tp,
+		bool water_up_flag
 	);
 	void shadowRender(
 		CamType type,

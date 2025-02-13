@@ -39,6 +39,12 @@ Character::Character(Mat pos, Mat rot) : pos(pos), rot(rot)
 		d_graphic->getContext(),
 		this->mvp
 	);
+	vec4 tmp;
+	this->constant_buffer_water = make_shared<ConstantBuffer>(
+		device,
+		d_graphic->getContext(),
+		tmp
+	);
 	vector<uint32> indices;
 	Parts::makeIndices(indices);
 	this->i_buffer = make_shared<Buffer<uint32>>(
@@ -71,12 +77,17 @@ Character::Character(Mat pos, Mat rot) : pos(pos), rot(rot)
 void Character::render(
 	CamType type,
 	ComPtr<ID3D11ShaderResourceView> depth_srv,
-	shared_ptr<SamplerState> sampler_tp
+	shared_ptr<SamplerState> sampler_tp,
+	bool water_up_flag
 )
 {
 	this->mvp.view = cam->getMVP(type).view.Transpose();
 	this->mvp.proj = cam->getMVP(type).proj.Transpose();
+	vec4 tmp = vec4(water_up_flag, WATER_HEIGHT, 0, 0);
+	this->constant_buffer_water->update(tmp);
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
+	context->PSSetConstantBuffers(0, 1,
+		this->constant_buffer_water->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(1, 1, depth_srv.GetAddressOf());
 	context->PSSetSamplers(1, 1, sampler_tp->getComPtr().GetAddressOf());
 	this->setPipe(context);
@@ -242,9 +253,9 @@ void Character::update(vec3 const& dir)
 		move_dir += vec3(this->dir.x, 0, this->dir.z);
 	if (GetAsyncKeyState('S') & 0x8000)
 		move_dir -= vec3(this->dir.x, 0, this->dir.z);
-	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+	if (GetAsyncKeyState('E') & 0x8000)
 		move_dir -= up_dir;
-	if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
+	if (GetAsyncKeyState('Q') & 0x8000)
 		move_dir += up_dir;
 	move_dir = XMVector3Normalize(move_dir) * 3 * delta_time;
 	this->c_pos += move_dir;

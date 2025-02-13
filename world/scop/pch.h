@@ -104,10 +104,12 @@ enum class CamType {
 class TestCam;
 class DeferredGraphics;
 class Entity;
+class Terrain;
 
 extern shared_ptr<TestCam> cam;
 extern shared_ptr<DeferredGraphics> d_graphic;
 extern shared_ptr<Entity> entity;
+extern Terrain* p_terrain;
 
 extern HWND hWnd;
 extern bool under_water;

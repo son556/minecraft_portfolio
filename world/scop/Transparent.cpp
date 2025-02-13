@@ -166,11 +166,7 @@ void Transparent::render(
 			}
 		}
 	}
-	float y = entity->getCharacterPos().y;
-	if (water_up_flag && y > WATER_HEIGHT)
-		entity->characterRenderTP(type, depth_srv, this->sampler_state);
-	else if (water_up_flag == false && y <= WATER_HEIGHT)
-		entity->characterRenderTP(type, depth_srv, this->sampler_state);
+	entity->characterRenderTP(type, depth_srv, this->sampler_state, water_up_flag);
 	context->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(this->prev_ds_state.Get(), this->prev_ref);
 }

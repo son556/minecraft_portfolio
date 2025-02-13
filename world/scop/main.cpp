@@ -17,6 +17,7 @@
 shared_ptr<DeferredGraphics> d_graphic;
 shared_ptr<TestCam> cam;
 shared_ptr<Entity> entity;
+Terrain* p_terrain = nullptr;
 HWND hWnd;
 bool under_water = false; // 물 속에 있는 지
 bool in_water = false;
@@ -68,9 +69,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SCOP));
 
     Terrain terrain(12, 12, hWnd, w_width, w_height, 1, 8); // 짝수 단위로만
+    p_terrain = &terrain;
     float h = terrain.getHeight(0.5, 0.5) + 0.5;
-    /*cam->movePos(1.5, h, 1.5);
-    cam->setDir(vec3(0, 0, 1));*/
     entity = make_shared<Entity>();
     entity->setCharacter(vec3(1.5, h - 0.5, 0.5), 
         vec3(0, XMConvertToRadians(0), 0));

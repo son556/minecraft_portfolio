@@ -73,10 +73,11 @@ void Entity::render(CamType type)
 void Entity::characterRenderTP(
 	CamType type,
 	ComPtr<ID3D11ShaderResourceView> depth_srv,
-	shared_ptr<SamplerState> sampler_tp
+	shared_ptr<SamplerState> sampler_tp,
+	bool water_up_flag
 )
 {
-	this->character->render(type, depth_srv, sampler_tp);
+	this->character->render(type, depth_srv, sampler_tp, water_up_flag);
 }
 
 void Entity::shadowRender(

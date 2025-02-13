@@ -1,6 +1,7 @@
 struct PS_INPUT
 {
     float4 pos : SV_Position;
+    float4 world_pos : WORLD_POSITION;
     float4 view_pos : VIEW_POSITION;
     float4 clip_pos : CLIP_POSITION;
     float2 uv : TEXCOORD;
@@ -10,6 +11,11 @@ Texture2D charcater_color_tex : register(t0);
 Texture2D tex_depth : register(t1);
 SamplerState sampler_0 : register(s0);
 SamplerState sampler_1 : register(s1);
+
+cbuffer constant_buffer : register(b0)
+{
+    float2 flag_WaterHeight;
+};
 
 struct PS_OUTPUT
 {
@@ -35,6 +41,11 @@ float4 accum_0(PS_INPUT input, float4 color)
 PS_OUTPUT main(PS_INPUT input)
 {
     PS_OUTPUT output;
+    
+    if (flag_WaterHeight.x && input.world_pos.y < flag_WaterHeight.y)
+        discard;
+    else if (flag_WaterHeight.x == 0 && input.world_pos.y >= flag_WaterHeight.y)
+        discard;
     
     float2 texcoord;
     float3 ndc_p = input.clip_pos.xyz / input.clip_pos.w;

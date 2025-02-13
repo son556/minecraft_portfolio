@@ -24,7 +24,8 @@ public:
 	void render(
 		CamType type,
 		ComPtr<ID3D11ShaderResourceView> depth_srv,
-		shared_ptr<SamplerState> sampler_tp
+		shared_ptr<SamplerState> sampler_tp,
+		bool water_up_flag
 	);
 	vec3 const& getPos();
 	vec3 const& getDir();
@@ -56,6 +57,7 @@ private:
 	MVP mvp;
 	MVP shadow_mvp;
 	shared_ptr<ConstantBuffer> constant_buffer;
+	shared_ptr<ConstantBuffer> constant_buffer_water;
 	shared_ptr<Buffer<uint32>> i_buffer;
 
 private:

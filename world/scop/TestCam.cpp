@@ -141,16 +141,9 @@ void TestCam::setCursorInClient(HWND hwnd)
 void TestCam::update(vec3 const& character_pos, vec3 const& character_dir)
 {
 	vec3 reset_pos = -2 * character_dir + character_pos;
-	float up_down = 0;
-	if (GetAsyncKeyState('Q') & 0x8000)
-		up_down += 1;
-	if (GetAsyncKeyState('E') & 0x8000)
-		up_down -= 1;
-	up_down *= 0.03f;
 	this->pos.x = reset_pos.x;
 	this->pos.z = reset_pos.z;
-	this->pos.y = max(reset_pos.y + 1.125, this->pos.y + up_down);
-	this->pos.y = min(this->pos.y, reset_pos.y + 2.5);
+	this->pos.y = reset_pos.y + 2.5;
 	this->mvp.view = XMMatrixLookToLH(this->pos, this->dir, vec3(0, 1, 0));
 	MVP tmvp;
 	tmvp.view = this->mvp.view.Transpose();
