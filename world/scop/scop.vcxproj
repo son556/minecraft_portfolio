@@ -154,6 +154,7 @@
     <ClInclude Include="CascadeShadow.h" />
     <ClInclude Include="CaveShadow.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="Composite.h" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="CubeMap.h" />
@@ -240,6 +241,7 @@
     <ClCompile Include="CascadeShadow.cpp" />
     <ClCompile Include="CaveShadow.cpp" />
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Composite.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="CubeMap.cpp" />

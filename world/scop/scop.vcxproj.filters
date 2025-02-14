@@ -612,6 +612,9 @@
     <ClInclude Include="Parts.h">
       <Filter>소스 파일\World\Entity\Parts</Filter>
     </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>소스 파일\World\Entity\Collision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -856,6 +859,9 @@
     </ClCompile>
     <ClCompile Include="Parts.cpp">
       <Filter>소스 파일\World\Entity\Parts</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>소스 파일\World\Entity\Collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

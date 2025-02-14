@@ -15,6 +15,7 @@ class VertexShader;
 class InputLayout;
 class PixelShader;
 class SamplerState;
+class Collision;
 
 class Character
 {
@@ -73,5 +74,6 @@ private:
 	shared_ptr<Body> body;
 	shared_ptr<RightLeg> right_leg;
 	shared_ptr<LeftLeg> left_leg;
+	shared_ptr<Collision> aabb_collision;
 };
 

@@ -55,7 +55,7 @@ PS_OUTPUT main(PS_INPUT input)
     if (ndc_p.z > std_z + 0.00001)
         discard;
     float4 color = charcater_color_tex.Sample(sampler_0, input.uv);
-    color.a = 0.72;
+    color.a = 0.42;
     
     output.accum = accum_0(input, color);
     output.reveal = color.a;

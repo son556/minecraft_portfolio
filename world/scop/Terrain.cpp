@@ -222,20 +222,14 @@ void Terrain::deleteBlock(vec3 const& ray_pos, vec3 const& ray_dir)
 	}
 }
 
-pair<int, int> Terrain::getBlock(float x, float y, float z)
+WorldIndex Terrain::getBlock(float x, float y, float z)
 {
-	WorldIndex widx = this->m_manager->m_info.getBlockIndex(x, y, z);
-	pair<int, int> block_info(0, 0);
-	if (widx.flag) {
-		block_info.first = this->m_manager->m_info.findBlock(widx.c_idx, widx.b_idx);
-		block_info.second = this->m_manager->m_info.findLight(
-			widx.c_idx,
-			widx.b_idx.x,
-			widx.b_idx.y,
-			widx.b_idx.z
-		);
-	}
-	return block_info;
+	return this->m_manager->m_info.getBlockIndex(x, y, z);
+}
+
+WorldIndex Terrain::getBlock(vec3 world_pos)
+{
+	return this->m_manager->m_info.getBlockIndex(world_pos.x, world_pos.y, world_pos.z);
 }
 
 void Terrain::setSightChunk(int cnt)
@@ -262,34 +256,11 @@ void Terrain::testClickLightBlock(
 {
 	WorldIndex widx = this->m_manager->m_info.pickBlock(ray_pos, ray_dir);
 	if (widx.flag) {
-		WorldIndex add_idx;
 		Index2& cidx = widx.c_idx;
 		Index3& bidx = widx.b_idx;
-		vec3 const& pos = widx.pos;
-		int dir_flag = -1;
-		if (widx.dir == 0) {
-			if (ray_pos.y > pos.y && pos.y + 1 < 256)
-				add_idx = this->m_manager->m_info.getBlockIndex(pos.x, pos.y + 1, pos.z);
-			else if (ray_pos.y < pos.y && pos.y - 1 > -1)
-				add_idx = this->m_manager->m_info.getBlockIndex(pos.x, pos.y - 1, pos.z);
-		}
-		else if (widx.dir == 1) {
-			if (ray_pos.z < pos.z)
-				add_idx = this->m_manager->m_info.getBlockIndex(pos.x, pos.y, pos.z - 1);
-			else
-				add_idx = this->m_manager->m_info.getBlockIndex(pos.x, pos.y, pos.z + 1);
-		}
-		else {
-			if (ray_pos.x < pos.x)
-				add_idx = this->m_manager->m_info.getBlockIndex(pos.x - 1, pos.y, pos.z);
-			else
-				add_idx = this->m_manager->m_info.getBlockIndex(pos.x + 1, pos.y, pos.z);
-		}
-		cidx = add_idx.c_idx;
-		bidx = add_idx.b_idx;
 		cout << "chunk idx: " << cidx.y << ' ' << cidx.x << endl;
 		cout << "block idx: " << bidx.x << ' ' << bidx.y << ' ' << bidx.z << endl;
-		int light = this->m_manager->m_info.findLight(cidx, bidx);
-		cout << "block light: " << light << endl << endl;
+		widx = this->m_manager->m_info.getBlockIndex(widx.pos.x, widx.pos.y, widx.pos.z);
+		cout << "test block idx: " << bidx.x << ' ' << bidx.y << ' ' << bidx.z << endl << endl;
 	}
 }

@@ -64,6 +64,7 @@ bool MapUtils::inChunkBoundary(Index3 const& bidx)
 	return false;
 }
 
+
 WorldIndex MapUtils::getBlockIndex(float x, float y, float z) const
 {
 	WorldIndex ans;
@@ -78,6 +79,7 @@ WorldIndex MapUtils::getBlockIndex(float x, float y, float z) const
 	Index2 pos = this->chunks[c_idx.y][c_idx.x]->chunk_pos;
 	int ex = pos.x + 16;
 	int ez = pos.y - 16;
+	ans.flag = false;
 	if (x < pos.x || x > ex || z > pos.y || z < ez || y < 0 || y > 255)
 		return ans;
 	ans.c_idx = c_idx;
@@ -89,6 +91,8 @@ WorldIndex MapUtils::getBlockIndex(float x, float y, float z) const
 	iz = static_cast<int>(pos.y - iz);
 	ans.b_idx = Index3(ix, iy, iz);
 	ans.flag = true;
+	ans.pos = vec3(pos.x, 0, pos.y) + vec3(ans.b_idx.x, ans.b_idx.y, -ans.b_idx.z);
+	ans.block_type = this->findBlock(ans.c_idx, ans.b_idx);
 	return ans;
 }
 
@@ -241,7 +245,7 @@ WorldIndex MapUtils::pickBlock(vec3 r_pos, vec3 r_dir)
 		if (ans.flag) {
 			int b = this->findBlock(ans.c_idx, ans.b_idx);
 			if (b && b != BlockType::WATER) {
-				ans.pos = vec3(x, y, z);
+				ans.pos = vec3(x, y, z); // block position
 				return ans;
 			}
 		}

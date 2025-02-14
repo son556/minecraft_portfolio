@@ -17,6 +17,7 @@
 #include "SamplerState.h"
 #include "InputLayout.h"
 #include "InputLayouts.h"
+#include "Collision.h"
 
 Character::Character(Mat pos, Mat rot) : pos(pos), rot(rot)
 {
@@ -34,6 +35,8 @@ Character::Character(Mat pos, Mat rot) : pos(pos), rot(rot)
 	this->right_leg = make_shared<RightLeg>(pos, rot);
 	this->body = make_shared<Body>(pos, rot);
 	this->head = make_shared<Head>(pos, rot);
+	this->aabb_collision = make_shared<Collision>(this->c_pos + vec3(0, 1, 0), 
+		vec3(0.5, 2, 0.5));
 	this->constant_buffer = make_shared<ConstantBuffer>(
 		device,
 		d_graphic->getContext(),
