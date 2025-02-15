@@ -38,12 +38,22 @@ public:
 	shared_ptr<ConstantBuffer>& getConstantBuffer(CamType type);
 	Mat getReflection();
 
+	/**
+	 * @brief 자유시점인 경우 true를 반환합니다.
+	 * 
+	 */
+	bool getFreeCamFlag();
 private:
 	TestCam() = delete;
 	TestCam(TestCam const&) = delete;
 	TestCam& operator=(TestCam const) = delete;
 
 private:
+	/**
+	 * @brief 카메라를 자유시점으로 움직이게 합니다.
+	 * 
+	 */
+	void update();
 	double ndcToDegree(double ndc);
 
 private:
@@ -52,6 +62,7 @@ private:
 	float cam_near;
 	float cam_far;
 	float fov;
+	bool free_cam = false;
 	vec3 pos;
 	vec3 dir;
 	MVP mvp;

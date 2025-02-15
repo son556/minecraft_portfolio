@@ -240,6 +240,9 @@ vec3 const& Character::getDir()
 
 void Character::update(vec3 const& dir)
 {
+	if (cam->getFreeCamFlag())
+		return;
+
 	vec3 new_dir = XMVector3Normalize(vec3(dir.x, 0, dir.z));
 	this->dir = new_dir;
 	float theta = atan2(-new_dir.x, -new_dir.z);

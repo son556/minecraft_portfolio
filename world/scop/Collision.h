@@ -49,6 +49,16 @@ private:
 	Collision() = delete;
 	Collision(Collision const&) = delete;
 	Collision& operator=(Collision const&) = delete;
+	vec3 intersectionRayAndPlane(
+		vec3 const& r_pos,
+		vec3 const& r_dir,
+		vec3 const& p_pos,
+		vec3 const& p_dir
+	);
+	vec3 rayMarching(vec3 const& start, vec3 const& end, vec3 const& dir);
+
+private:
+
 
 private:
 	AABB_Box aabb_box;

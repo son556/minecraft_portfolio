@@ -92,19 +92,37 @@ vec3 Collision::checkCollision(vec3 const& dir, float speed)
 		f_box.down[i] = vec3(down_v.x, down_v.y, down_v.z);
 	}
 
-	// 검사해야 할 block들 찾기
+	// 충돌 검사;
 	vec3 min_v = widx.pos - vec3(0, 0, 1);
 	vec3 max_v = widx.pos + vec3(1, 0, 0);
 	vec3 center = (min_v + max_v) * 0.5;
-	vector<WorldIndex> colliable_block;
-	if (future_pos.x > center.x) {
-		colliable_block.push_back(p_terrain->getBlock(center + vec3(1, 0, 0)));
-		if (future_pos.y > center.y) {
-			colliable_block.push_back(p_terrain->getBlock(center + vec3(0, 0, 1)));
-			colliable_block.push_back(p_terrain->getBlock(center + vec3(1, 0, 1)));
-		}
-	} 
+	vec3 m_dir = vec3(0, 0, 0);
 
 	return new_dir;
+}
+
+vec3 Collision::intersectionRayAndPlane(
+	vec3 const& r_pos, 
+	vec3 const& r_dir, 
+	vec3 const& p_pos, 
+	vec3 const& p_dir
+)
+{
+	vec3 res;
+	float t;
+	t = (p_pos.Dot(p_dir) - r_pos.Dot(p_dir)) / p_dir.Dot(r_dir);
+	res = r_pos + t * r_dir;
+	return res;
+}
+
+vec3 Collision::rayMarching(vec3 const& start, vec3 const& end, vec3 const& dir)
+{
+	vec3 ans = dir;
+	vec3 st = start;
+
+	float max_x, max_y, max_z;
+	float dx = 0, dy = 0, dz = 0;
+	vec3 first, second;
+	return ans;
 }
 
