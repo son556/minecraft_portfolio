@@ -162,6 +162,12 @@ void TestCam::update()
 
 void TestCam::update(vec3 const& character_pos, vec3 const& character_dir)
 {
+	static bool pre_shift = false;
+	bool current_shift = GetAsyncKeyState(VK_SHIFT) & 0x8000;
+	if (current_shift && !pre_shift)
+		this->free_cam ^= 1;
+	pre_shift = current_shift;
+
 	if (this->free_cam)
 		this->update();
 	else {
@@ -171,9 +177,6 @@ void TestCam::update(vec3 const& character_pos, vec3 const& character_dir)
 		this->pos.y = reset_pos.y + 2.5;
 		this->mvp.view = XMMatrixLookToLH(this->pos, this->dir, vec3(0, 1, 0));
 	}
-
-	if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
-		this->free_cam ^= 1;
 	MVP tmvp;
 	tmvp.view = this->mvp.view.Transpose();
 	tmvp.proj = this->mvp.proj.Transpose();
@@ -295,6 +298,11 @@ Mat TestCam::getReflection()
 bool TestCam::getFreeCamFlag()
 {
 	return this->free_cam;
+}
+
+void TestCam::set3rdView()
+{
+	this->free_cam ^= 1;
 }
 
 vec3 TestCam::getPos()

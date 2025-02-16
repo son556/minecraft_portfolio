@@ -43,6 +43,12 @@ public:
 	 * 
 	 */
 	bool getFreeCamFlag();
+
+	/**
+	 * @brief 3인칭 시점 설정.
+	 * 
+	 */
+	void set3rdView();
 private:
 	TestCam() = delete;
 	TestCam(TestCam const&) = delete;
