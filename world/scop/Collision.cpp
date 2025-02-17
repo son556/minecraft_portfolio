@@ -98,9 +98,13 @@ float Collision::fmin(float x, float y, float z) {
 	return ans;
 }
 
-vec3 Collision::calcCollision(vec3 const& down_pos, vec3 const& dir)
+vec3 Collision::calcCollision(
+	vec3 const& down_pos, 
+	vec3 const& prev_pos,
+	vec3 const& dir
+)
 {
-	vec3 ans_dir = dir;
+	vec3 ans_dir = down_pos;
 	vec3 check_pos = down_pos;
 	WorldIndex widx;
 	vec3 min_v = down_pos + vec3(-this->size_x * 0.5f, 0.f, -this->size_z * 0.5f);
@@ -110,13 +114,15 @@ vec3 Collision::calcCollision(vec3 const& down_pos, vec3 const& dir)
 		{-1, 0, 0}, {0, 0, 0}, {1, 0, 0},
 		{-1, 0, -1}, {0, 0, -1}, {1, 0, -1}
 	};
-
+	bool flag_x = false;
+	bool flag_y = false;
+	bool flag_z = false;
 	// y 축 충돌 체크
-	if (ans_dir.y > 0)
+	if (dir.y > 0)
 		check_pos = down_pos + vec3(0, this->size_y, 0);
-	else if (ans_dir.y < 0)
-		check_pos = down_pos + vec3(0, -1, 0);
-	if (ans_dir.y) {
+	else if (dir.y < 0)
+		check_pos = down_pos + vec3(0, -0.001, 0);
+	if (dir.y) {
 		for (int i = 0; i < move.size(); i++) {
 			widx = p_terrain->getBlock(check_pos + move[i]);
 			if (widx.flag && widx.block_type &&
@@ -130,51 +136,19 @@ vec3 Collision::calcCollision(vec3 const& down_pos, vec3 const& dir)
 					max_v.z > b_min.z &&
 					min_v.z < b_max.z;
 				if (flag) {
-					ans_dir.y = 0;
+					flag_y = true;
 					break;
 				}
 			}
 		}
 	}
 
-	// x 축 충돌 체크
-	if (ans_dir.x) {
-		for (int i = 0; i < move.size(); i++) {
-			widx = p_terrain->getBlock(check_pos + move[i]);
-			if (widx.flag && widx.block_type &&
-				widx.block_type != BlockType::WATER) {
-				vec3 b_min = widx.pos + vec3(0, 0, -1);
-				vec3 b_max = widx.pos + vec3(1, 1, 0);
-				bool flag = max_v.x > b_min.x &&
-					min_v.x < b_max.x &&
-					max_v.y > b_min.y &&
-					min_v.y < b_max.y &&
-					max_v.z > b_min.z &&
-					min_v.z < b_max.z;
-				if (flag) {
-					ans_dir.x = 0;
-					break;
-				}
-			}
-
-			widx = p_terrain->getBlock(check_pos + move[i] + vec3(0, 1, 0));
-			if (widx.flag && widx.block_type &&
-				widx.block_type != BlockType::WATER) {
-				vec3 b_min = widx.pos + vec3(0, 0, -1);
-				vec3 b_max = widx.pos + vec3(1, 1, 0);
-				bool flag = max_v.x > b_min.x &&
-					min_v.x < b_max.x &&
-					max_v.y > b_min.y &&
-					min_v.y < b_max.y &&
-					max_v.z > b_min.z &&
-					min_v.z < b_max.z;
-				if (flag) {
-					ans_dir.x = 0;
-					break;
-				}
-			}
-		}
-	}
+	if (flag_y)
+		ans_dir.y = prev_pos.y;
+	if (flag_x)
+		ans_dir.x = prev_pos.x;
+	if (flag_z)
+		ans_dir.z = prev_pos.z;
 
 	return ans_dir;
 }
@@ -188,11 +162,13 @@ vec3 Collision::rayCheck(
 	bool res;
 	bool prev_res;
 	vec3 check_pos = ray_start + vec3(0, -this->size_y * 0.5, 0);
+	vec3 prev_pos = check_pos;
 	for (int i = 0; i < move.size(); i++) {
 		check_pos += dir * move[i];
 		if (this->detectCollison(check_pos)) {
-			return this->calcCollision(check_pos, dir);
+			return this->calcCollision(check_pos, prev_pos, dir);
 		}
+		prev_pos = check_pos;
 	}
 	return dir;
 }
@@ -368,7 +344,7 @@ vec3 Collision::rayMarching(vec3 const& start, vec3 const& end, vec3 const& dir)
 	WorldIndex widx = p_terrain->getBlock(pos);
 	if (widx.flag && len < f_len) {
 		if (widx.block_type && widx.block_type != BlockType::WATER)
-			return this->calcCollision(pos, dir);
+			return this->calcCollision(pos, start + vec3(0, -this->size_y * 0.5, 0), dir);
 	}
 	while (len < f_len) {
 		if (max_x < max_y) {
@@ -410,7 +386,8 @@ vec3 Collision::rayMarching(vec3 const& start, vec3 const& end, vec3 const& dir)
 	vec3 ep = end + vec3(0, -this->size_y * 0.5, 0);
 	bool res = this->detectCollison(ep);
 	if (res) {
-		return this->calcCollision(end + vec3(0, -this->size_y * 0.5, 0), dir);
+		return this->calcCollision(end + vec3(0, -this->size_y * 0.5, 0), 
+			start + vec3(0, -this->size_y * 0.5, 0), dir);
 	}
 	return ans;
 }

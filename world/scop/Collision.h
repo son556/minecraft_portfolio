@@ -67,14 +67,12 @@ public: // test
 	vec3 rayMarching(vec3 const& start, vec3 const& end, vec3 const& dir);
 	float fmin(float x, float y, float z);
 
-	/**
-	 * @brief 충돌 후 방향 계산.
-	 * 
-	 * \param pos 블록의 아래 위치
-	 * \param dir 이동 방향
-	 * \return 
-	 */
-	vec3 calcCollision(vec3 const& down_pos, vec3 const& dir);
+
+	vec3 calcCollision(
+		vec3 const& down_pos, 
+		vec3 const& prev_pos,
+		vec3 const& dir
+	);
 
 	
 	vec3 rayCheck(

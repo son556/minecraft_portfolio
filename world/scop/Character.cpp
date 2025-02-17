@@ -253,24 +253,26 @@ void Character::update(vec3 const& dir)
 	vec3 up_dir = this->dir.Cross(right_dir);
 	vec3 move_dir = vec3(0, 0, 0);
 	if (GetAsyncKeyState('A') & 0x8000)
-		move_dir -= vec3(right_dir.x, 0, right_dir.z);
+		move_dir -= XMVector3Normalize(vec3(right_dir.x, 0, right_dir.z));
 	if (GetAsyncKeyState('D') & 0x8000)
-		move_dir += vec3(right_dir.x, 0, right_dir.z);
+		move_dir += XMVector3Normalize(vec3(right_dir.x, 0, right_dir.z));
 	if (GetAsyncKeyState('W') & 0x8000)
-		move_dir += vec3(this->dir.x, 0, this->dir.z);
+		move_dir += XMVector3Normalize(vec3(this->dir.x, 0, this->dir.z));
 	if (GetAsyncKeyState('S') & 0x8000)
-		move_dir -= vec3(this->dir.x, 0, this->dir.z);
+		move_dir -= XMVector3Normalize(vec3(this->dir.x, 0, this->dir.z));
 	if (GetAsyncKeyState('E') & 0x8000)
-		move_dir -= up_dir;
+		move_dir.y -= 1;
 	if (GetAsyncKeyState('Q') & 0x8000)
-		move_dir += up_dir;
+		move_dir.y += 1;
 	move_dir = XMVector3Normalize(move_dir);
-
-	//move_dir = this->aabb_collision->checkCollision(move_dir, 3);
-
-	this->c_pos += move_dir * 3 * delta_time;
+	
+	vec3 p_dir = move_dir;
+	vec3 f_pos = this->c_pos + 3 * move_dir * delta_time;
+	this->c_pos = this->aabb_collision->calcCollision(f_pos, 
+		this->c_pos, move_dir);
 	this->pos = Mat::CreateTranslation(this->c_pos);
-	//this->aabb_collision->update(this->c_pos + vec3(0, 1, 0));
+	this->aabb_collision->update(this->c_pos + vec3(0, 1, 0));
+
 
 
 	this->head->update(this->pos, this->rot);
