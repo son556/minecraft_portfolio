@@ -198,6 +198,7 @@ namespace Block {
 			idx = type + 2;
 		else
 			idx = type + 1;
+
 		for (int i = dir * 4; i < dir * 4 + 4; i++) {
 			vertex.pos = pos[i] + vec3(x, y, z);
 			vertex.normal = normals[dir];

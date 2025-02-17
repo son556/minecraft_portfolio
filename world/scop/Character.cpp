@@ -27,6 +27,7 @@ Character::Character(Mat pos, Mat rot) : pos(pos), rot(rot)
 		L"./textures/zombie/TEXTURE/zombie.png"
 	);
 	this->c_pos = vec3(pos._41, pos._42, pos._43);
+	cout << "cpos: " << this->c_pos.x << ' ' << this->c_pos.y << ' ' << c_pos.z << endl;
 	vec4 d = XMVector4Transform(vec4(0, 0, -1, 0), rot);
 	this->dir = XMVector3Normalize(vec3(d.x, d.y, d.z));
 	this->left_arm = make_shared<LeftArm>(pos, rot);
@@ -263,9 +264,14 @@ void Character::update(vec3 const& dir)
 		move_dir -= up_dir;
 	if (GetAsyncKeyState('Q') & 0x8000)
 		move_dir += up_dir;
-	move_dir = XMVector3Normalize(move_dir) * 3 * delta_time;
-	this->c_pos += move_dir;
+	move_dir = XMVector3Normalize(move_dir);
+
+	//move_dir = this->aabb_collision->checkCollision(move_dir, 3);
+
+	this->c_pos += move_dir * 3 * delta_time;
 	this->pos = Mat::CreateTranslation(this->c_pos);
+	//this->aabb_collision->update(this->c_pos + vec3(0, 1, 0));
+
 
 	this->head->update(this->pos, this->rot);
 	this->body->update(this->pos, this->rot);

@@ -258,9 +258,8 @@ void Terrain::testClickLightBlock(
 	if (widx.flag) {
 		Index2& cidx = widx.c_idx;
 		Index3& bidx = widx.b_idx;
+		cout << "block type: " << widx.block_type << endl;
 		cout << "chunk idx: " << cidx.y << ' ' << cidx.x << endl;
-		cout << "block idx: " << bidx.x << ' ' << bidx.y << ' ' << bidx.z << endl;
-		widx = this->m_manager->m_info.getBlockIndex(widx.pos.x, widx.pos.y, widx.pos.z);
-		cout << "test block idx: " << bidx.x << ' ' << bidx.y << ' ' << bidx.z << endl << endl;
+		cout << "block idx: " << bidx.x << ' ' << bidx.y << ' ' << bidx.z << endl << endl;
 	}
 }

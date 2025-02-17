@@ -82,6 +82,7 @@ WorldIndex MapUtils::getBlockIndex(float x, float y, float z) const
 	ans.flag = false;
 	if (x < pos.x || x > ex || z > pos.y || z < ez || y < 0 || y > 255)
 		return ans;
+	ans.flag = true;
 	ans.c_idx = c_idx;
 	int ix = static_cast<int>(floor(x) - pos.x);
 	int iy = static_cast<int>(floor(y));
@@ -90,7 +91,6 @@ WorldIndex MapUtils::getBlockIndex(float x, float y, float z) const
 		iz += 1;
 	iz = static_cast<int>(pos.y - iz);
 	ans.b_idx = Index3(ix, iy, iz);
-	ans.flag = true;
 	ans.pos = vec3(pos.x, 0, pos.y) + vec3(ans.b_idx.x, ans.b_idx.y, -ans.b_idx.z);
 	ans.block_type = this->findBlock(ans.c_idx, ans.b_idx);
 	return ans;
@@ -241,11 +241,13 @@ WorldIndex MapUtils::pickBlock(vec3 r_pos, vec3 r_dir)
 				ans.dir = 1;
 			}
 		}
+		int8 dir = ans.dir;
 		ans = this->getBlockIndex(x, y, z);
 		if (ans.flag) {
 			int b = this->findBlock(ans.c_idx, ans.b_idx);
 			if (b && b != BlockType::WATER) {
 				ans.pos = vec3(x, y, z); // block position
+				ans.dir = dir;
 				return ans;
 			}
 		}

@@ -14,6 +14,13 @@ public:
 	Entity();
 	~Entity() = default;
 	void setRTV(ComPtr<ID3D11DepthStencilView> dsv);
+
+	/**
+	 *
+	 * 
+	 * \param pos 캐릭터의 중앙 위치
+	 * \param radian_xyz 캐릭터 회전, 캐릭터 초기 방향(0, -1, 0)
+	 */
 	void setCharacter(vec3 pos, vec3 radian_xyz);
 	void render(CamType type);
 	void characterRenderTP( // 캐릭터는 반투명으로 렌더링

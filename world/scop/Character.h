@@ -49,7 +49,7 @@ private:
 	Character& operator=(Character const&) = delete;
 
 private:
-	vec3 c_pos;
+	vec3 c_pos; // 캐릭터 중앙 발 밑
 	vec3 dir;
 	vec3 up = vec3(0, 1, 0);
 	Mat pos;

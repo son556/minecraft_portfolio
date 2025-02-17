@@ -74,6 +74,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     entity = make_shared<Entity>();
     entity->setCharacter(vec3(1.5, h - 0.5, 0.5), 
         vec3(0, XMConvertToRadians(0), 0));
+    /*entity->setCharacter(vec3(1.43508, 26, -0.0622662),
+        vec3(0, XMConvertToRadians(0), 0));*/
     cam->setDir(vec3(0, 0, -1));
     cam->update(entity->getCharacterPos(), entity->getCharacterDir());
     entity->update(cam->getDir());

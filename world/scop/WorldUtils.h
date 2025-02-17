@@ -16,7 +16,7 @@ struct Index3 {
 	int y;
 	int z;
 	bool flag;
-	
+
 	Index3() : x(0), y(0), z(0), flag(false) {}
 	Index3(int x, int y, int z) : x(x), y(y), z(z), flag(true) {}
 	Index3(Index3 const& idx3) { *this = idx3; }
@@ -69,7 +69,7 @@ struct Index2 {
 	Index2() : x(0), y(0), flag(false) {}
 	Index2(int x, int y) : x(x), y(y), flag(true) {}
 	Index2(Index2 const& idx2) { *this = idx2; }
-	
+
 	Index2& operator=(Index2 const& idx2) {
 		this->x = idx2.x;
 		this->y = idx2.y;
@@ -137,14 +137,22 @@ struct WorldIndex {
 	vec3 pos;
 	int8 dir;
 	int block_type;
-	WorldIndex() { this->flag = false; }
+	WorldIndex() 
+		: c_idx(0, 0), b_idx(0, 0, 0), 
+		flag(false), pos(0, 0, 0), dir(0), block_type(0) {}
 	WorldIndex(Index2 const& cidx, Index3 const& bidx)
-		: c_idx(cidx), b_idx(bidx), flag(true) {}
-	WorldIndex(WorldIndex const& world) { *this = world; }
+		: c_idx(cidx), b_idx(bidx), flag(true), 
+		pos(0, 0,0), dir(0), block_type(0) {}
+	WorldIndex(WorldIndex const& world) 
+		: c_idx(world.c_idx), b_idx(world.b_idx), flag(world.flag), pos(world.pos), 
+		dir(world.dir), block_type(world.block_type) {}
 	WorldIndex& operator=(WorldIndex const& world) {
 		this->c_idx = world.c_idx;
 		this->b_idx = world.b_idx;
 		this->flag = world.flag;
+		this->dir = world.dir;
+		this->pos = world.pos;
+		this->block_type = world.block_type;
 		return *this;
 	}
 };
@@ -190,5 +198,3 @@ struct VertexPTN {
 	vec2 uv;
 	vec3 normal;
 };
-
-
