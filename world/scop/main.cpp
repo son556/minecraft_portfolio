@@ -112,7 +112,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 lb_flag = false;
             }
             if (rb_flag) {
-                terrain.testClickLightBlock(cam->getPos(), cam->getDir());
+                //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
                 terrain.deleteBlock(cam->getPos(), cam->getDir());
                 rb_flag = false;
             }

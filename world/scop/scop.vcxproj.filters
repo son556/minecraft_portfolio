@@ -358,6 +358,9 @@
     <Filter Include="소스 파일\World\WorldShaderFIle\DefferedShader\Character">
       <UniqueIdentifier>{0e08c997-d14b-45bc-990d-5f50642f92ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\World\Entity\Collision\CollisionUtils">
+      <UniqueIdentifier>{6375eafc-8812-4d6f-a04e-3659f0b55bfa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -615,6 +618,9 @@
     <ClInclude Include="Collision.h">
       <Filter>소스 파일\World\Entity\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="CollisionUtils.h">
+      <Filter>소스 파일\World\Entity\Collision\CollisionUtils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -862,6 +868,9 @@
     </ClCompile>
     <ClCompile Include="Collision.cpp">
       <Filter>소스 파일\World\Entity\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionUtils.cpp">
+      <Filter>소스 파일\World\Entity\Collision\CollisionUtils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

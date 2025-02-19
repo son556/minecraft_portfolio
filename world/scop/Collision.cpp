@@ -4,67 +4,15 @@
 
 #define STDZERO 0.00000001
 
-Collision::Collision(vec3 const& pos, vec3 size_xyz)
+Collision::Collision(vec3 const& pos, vec3 size_xyz) 
+	: c_utils(size_xyz), center_pos(pos), size_x(size_xyz.x), 
+	size_y(size_xyz.y), size_z(size_xyz.z)
 {
-	Mat move = Mat::CreateTranslation(pos);
-	center_pos = pos;
-	this->size_x = size_xyz.x;
-	this->size_y = size_xyz.y;
-	this->size_z = size_xyz.z;
-	for (int i = 0; i < 4; i++) {
-		vec4 up_v = 
-			vec4(this->aabb_box.up[i].x, this->aabb_box.up[i].y, 
-				this->aabb_box.up[i].z, 1);
-		vec4 mid_v = 
-			vec4(this->aabb_box.mid[i].x, this->aabb_box.mid[i].y,
-				this->aabb_box.mid[i].z, 1);
-		vec4 down_v =
-			vec4(this->aabb_box.down[i].x, this->aabb_box.down[i].y,
-				this->aabb_box.down[i].z, 1);
-		
-		up_v.x *= size_xyz.x;
-		up_v.y *= size_xyz.y;
-		up_v.z *= size_xyz.z;
-
-		mid_v.x *= size_xyz.x;
-		mid_v.y *= size_xyz.y;
-		mid_v.z *= size_xyz.z;
-		
-		down_v.x *= size_xyz.x;
-		down_v.y *= size_xyz.y;
-		down_v.z *= size_xyz.z;
-
-		up_v = XMVector4Transform(up_v, move);
-		mid_v = XMVector4Transform(mid_v, move);
-		down_v = XMVector4Transform(down_v, move);
-		this->aabb_box.up[i] = vec3(up_v.x, up_v.y, up_v.z);
-		this->aabb_box.mid[i] = vec3(mid_v.x, mid_v.y, mid_v.z);
-		this->aabb_box.down[i] = vec3(down_v.x, down_v.y, down_v.z);
-	}
 }
 
 void Collision::update(vec3 const& new_pos)
 {
-	Mat move = Mat::CreateTranslation(new_pos - this->center_pos);
 	this->center_pos = new_pos;
-	for (int i = 0; i < 4; i++) {
-		vec4 up_v =
-			vec4(this->aabb_box.up[i].x, this->aabb_box.up[i].y,
-				this->aabb_box.up[i].z, 1);
-		vec4 mid_v =
-			vec4(this->aabb_box.mid[i].x, this->aabb_box.mid[i].y,
-				this->aabb_box.mid[i].z, 1);
-		vec4 down_v =
-			vec4(this->aabb_box.down[i].x, this->aabb_box.down[i].y,
-				this->aabb_box.down[i].z, 1);
-
-		up_v = XMVector4Transform(up_v, move);
-		mid_v = XMVector4Transform(mid_v, move);
-		down_v = XMVector4Transform(down_v, move);
-		this->aabb_box.up[i] = vec3(up_v.x, up_v.y, up_v.z);
-		this->aabb_box.mid[i] = vec3(mid_v.x, mid_v.y, mid_v.z);
-		this->aabb_box.down[i] = vec3(down_v.x, down_v.y, down_v.z);
-	}
 }
 
 vec3 Collision::checkCollision(vec3 const& dir, float speed)
@@ -100,57 +48,21 @@ float Collision::fmin(float x, float y, float z) {
 
 vec3 Collision::calcCollision(
 	vec3 const& down_pos, 
-	vec3 const& prev_pos,
-	vec3 const& dir
+	vec3 const& dir,
+	float distance
 )
 {
-	vec3 ans_dir = down_pos;
-	vec3 check_pos = down_pos;
-	WorldIndex widx;
-	vec3 min_v = down_pos + vec3(-this->size_x * 0.5f, 0.f, -this->size_z * 0.5f);
-	vec3 max_v = down_pos + vec3(this->size_x * 0.5f, this->size_y, this->size_z * 0.5f);
-	static vector<vec3> move = {
-		{-1, 0, 1}, {0, 0, 1}, {1, 0, 1},
-		{-1, 0, 0}, {0, 0, 0}, {1, 0, 0},
-		{-1, 0, -1}, {0, 0, -1}, {1, 0, -1}
-	};
-	bool flag_x = false;
-	bool flag_y = false;
-	bool flag_z = false;
-	// y 축 충돌 체크
-	if (dir.y > 0)
-		check_pos = down_pos + vec3(0, this->size_y, 0);
-	else if (dir.y < 0)
-		check_pos = down_pos + vec3(0, -0.001, 0);
-	if (dir.y) {
-		for (int i = 0; i < move.size(); i++) {
-			widx = p_terrain->getBlock(check_pos + move[i]);
-			if (widx.flag && widx.block_type &&
-				widx.block_type != BlockType::WATER) {
-				vec3 b_min = widx.pos + vec3(0, 0, -1);
-				vec3 b_max = widx.pos + vec3(1, 1, 0);
-				bool flag = max_v.x > b_min.x &&
-					min_v.x < b_max.x &&
-					max_v.y > b_min.y &&
-					min_v.y < b_max.y &&
-					max_v.z > b_min.z &&
-					min_v.z < b_max.z;
-				if (flag) {
-					flag_y = true;
-					break;
-				}
-			}
-		}
+	vec3 ans;
+	ans = this->c_utils.calcCollisionY(down_pos, dir.y * distance);
+	if (abs(dir.z) > abs(dir.x)) {
+		ans = this->c_utils.calcCollisionZ(ans, dir.z * distance);
+		ans = this->c_utils.calcCollisionX(ans, dir.x * distance);
 	}
-
-	if (flag_y)
-		ans_dir.y = prev_pos.y;
-	if (flag_x)
-		ans_dir.x = prev_pos.x;
-	if (flag_z)
-		ans_dir.z = prev_pos.z;
-
-	return ans_dir;
+	else {
+		ans = this->c_utils.calcCollisionX(ans, dir.x * distance);
+		ans = this->c_utils.calcCollisionZ(ans, dir.z * distance);
+	}
+	return ans;
 }
 
 vec3 Collision::rayCheck(
@@ -166,7 +78,7 @@ vec3 Collision::rayCheck(
 	for (int i = 0; i < move.size(); i++) {
 		check_pos += dir * move[i];
 		if (this->detectCollison(check_pos)) {
-			return this->calcCollision(check_pos, prev_pos, dir);
+			return this->calcCollision(prev_pos, dir, move[i]);
 		}
 		prev_pos = check_pos;
 	}
@@ -344,7 +256,8 @@ vec3 Collision::rayMarching(vec3 const& start, vec3 const& end, vec3 const& dir)
 	WorldIndex widx = p_terrain->getBlock(pos);
 	if (widx.flag && len < f_len) {
 		if (widx.block_type && widx.block_type != BlockType::WATER)
-			return this->calcCollision(pos, start + vec3(0, -this->size_y * 0.5, 0), dir);
+			return this->calcCollision(start + vec3(0, -this->size_y * 0.5, 0), dir, 
+				fmin(max_x, max_y, max_z));
 	}
 	while (len < f_len) {
 		if (max_x < max_y) {
@@ -386,8 +299,8 @@ vec3 Collision::rayMarching(vec3 const& start, vec3 const& end, vec3 const& dir)
 	vec3 ep = end + vec3(0, -this->size_y * 0.5, 0);
 	bool res = this->detectCollison(ep);
 	if (res) {
-		return this->calcCollision(end + vec3(0, -this->size_y * 0.5, 0), 
-			start + vec3(0, -this->size_y * 0.5, 0), dir);
+		return this->calcCollision(start + vec3(0, -this->size_y * 0.5, 0), dir, 
+			(end - start).Length());
 	}
 	return ans;
 }

@@ -266,13 +266,11 @@ void Character::update(vec3 const& dir)
 		move_dir.y += 1;
 	move_dir = XMVector3Normalize(move_dir);
 	
-	vec3 p_dir = move_dir;
-	vec3 f_pos = this->c_pos + 3 * move_dir * delta_time;
-	this->c_pos = this->aabb_collision->calcCollision(f_pos, 
-		this->c_pos, move_dir);
+	this->c_pos = this->aabb_collision->calcCollision(
+		this->c_pos, move_dir, 3 * delta_time);
+
 	this->pos = Mat::CreateTranslation(this->c_pos);
 	this->aabb_collision->update(this->c_pos + vec3(0, 1, 0));
-
 
 
 	this->head->update(this->pos, this->rot);

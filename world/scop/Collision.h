@@ -1,41 +1,7 @@
 #pragma once
 
 #include "WorldUtils.h"
-
-/* aabb box index
-   0 -- 1
-   |	| // up
-   3 -- 2
-
-   0 -- 1
-   |	| // down
-   3 -- 2
-*/
-
-struct AABB_Box
-{
-	vector<vec3> up = { 
-		{ -0.5, 0.5, 0.5 },
-		{ 0.5, 0.5, 0.5 },
-		{ 0.5, 0.5, -0.5 },
-		{ -0.5, 0.5, -0.5 } 
-	};
-
-	vector<vec3> mid = {
-		{ -0.5, 0, 0.5 },
-		{ 0.5, 0, 0.5 },
-		{ 0.5, 0, -0.5 },
-		{ -0.5, 0, -0.5 }
-	};
-
-	vector<vec3> down = { 
-		{ -0.5, -0.5, 0.5 },
-		{ 0.5, -0.5, 0.5 },
-		{ 0.5, -0.5, -0.5 },
-		{ -0.5, -0.5, -0.5 } 
-	};
-};
-
+#include "CollisionUtils.h"
 
 class Collision
 {
@@ -67,14 +33,12 @@ public: // test
 	vec3 rayMarching(vec3 const& start, vec3 const& end, vec3 const& dir);
 	float fmin(float x, float y, float z);
 
-
 	vec3 calcCollision(
 		vec3 const& down_pos, 
-		vec3 const& prev_pos,
-		vec3 const& dir
+		vec3 const& dir,
+		float distance
 	);
 
-	
 	vec3 rayCheck(
 		vec3 const& ray_start,
 		vector<float>& move,
@@ -89,10 +53,11 @@ public: // test
 	 */
 	bool detectCollison(vec3 const& pos_down);
 private:
-	AABB_Box aabb_box;
+	CollisionUtils c_utils;
 	vec3 center_pos;
 	float size_x;
 	float size_y;
 	float size_z;
+
 };
 
