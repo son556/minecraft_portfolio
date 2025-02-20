@@ -621,6 +621,9 @@
     <ClInclude Include="CollisionUtils.h">
       <Filter>소스 파일\World\Entity\Collision\CollisionUtils</Filter>
     </ClInclude>
+    <ClInclude Include="SweptAABB.h">
+      <Filter>소스 파일\World\Entity\Collision\CollisionUtils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -870,6 +873,9 @@
       <Filter>소스 파일\World\Entity\Collision</Filter>
     </ClCompile>
     <ClCompile Include="CollisionUtils.cpp">
+      <Filter>소스 파일\World\Entity\Collision\CollisionUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="SweptAABB.cpp">
       <Filter>소스 파일\World\Entity\Collision\CollisionUtils</Filter>
     </ClCompile>
   </ItemGroup>

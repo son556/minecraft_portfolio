@@ -96,7 +96,18 @@ vec3 CollisionUtils::calcCollisionX(vec3 const& now_pos_down, float move_x)
 					bool flag;
 					ans = this->calcCollisionY(ans, abs(b_max.y - ans.y), &flag);
 					if (flag == false)
-						ans = now_pos_down;
+						return now_pos_down;
+					check_pos.y = ans.y;
+					for (int j = 0; j < calc_move.size(); j++) {
+						widx = p_terrain->getBlock(check_pos + calc_move[j]);
+						if (widx.flag && widx.block_type &&
+							widx.block_type != BlockType::WATER) {
+							b_min = widx.pos + vec3(0, 0, -1);
+							b_max = widx.pos + vec3(1, 1, 0);
+							if (this->detectAABB(min_v, max_v, b_min, b_max))
+								return now_pos_down;
+						}
+					}
 				}
 				else
 					ans.x = now_pos_down.x;
@@ -142,7 +153,18 @@ vec3 CollisionUtils::calcCollisionZ(vec3 const& now_pos_down, float move_z)
 					bool flag;
 					ans = this->calcCollisionY(ans, b_max.y - ans.y, &flag);
 					if (flag == false)
-						ans = now_pos_down;
+						return now_pos_down;
+					check_pos.y = ans.y;
+					for (int j = 0; j < calc_move.size(); j++) {
+						widx = p_terrain->getBlock(check_pos + calc_move[j]);
+						if (widx.flag && widx.block_type &&
+							widx.block_type != BlockType::WATER) {
+							b_min = widx.pos + vec3(0, 0, -1);
+							b_max = widx.pos + vec3(1, 1, 0);
+							if (this->detectAABB(min_v, max_v, b_min, b_max))
+								return now_pos_down;
+						}
+					}
 				}
 				else
 					ans.z = now_pos_down.z;

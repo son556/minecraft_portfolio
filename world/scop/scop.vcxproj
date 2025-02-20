@@ -212,6 +212,7 @@
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="Sun.h" />
     <ClInclude Include="SunMoon.h" />
+    <ClInclude Include="SweptAABB.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainSystem.h" />
     <ClInclude Include="TestCam.h" />
@@ -301,6 +302,7 @@
     <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="Sun.cpp" />
     <ClCompile Include="SunMoon.cpp" />
+    <ClCompile Include="SweptAABB.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainSystem.cpp" />
     <ClCompile Include="TestCam.cpp" />

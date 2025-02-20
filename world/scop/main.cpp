@@ -72,10 +72,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     p_terrain = &terrain;
     float h = terrain.getHeight(0.5, 0.5) + 0.5;
     entity = make_shared<Entity>();
-    entity->setCharacter(vec3(1.5, h - 0.5, 0.5), 
-        vec3(0, XMConvertToRadians(0), 0));
-    /*entity->setCharacter(vec3(1.43508, 26, -0.0622662),
-        vec3(0, XMConvertToRadians(0), 0));*/
+
+    /*
+  b pos: -10.5 17 20.5
+p: -11.7895 17 21.0718
+    */
+    vec3 sp = vec3(-7.58921, 17, 18.8209);
+    //entity->setCharacter(vec3(1.5, h - 0.5, 0.5), vec3(0, XMConvertToRadians(0), 0));
+    //entity->setCharacter(vec3(-10.5, 17, 20.5), vec3(0, XMConvertToRadians(0), 0));
+    entity->setCharacter(sp, vec3(0, XMConvertToRadians(0), 0));
     cam->setDir(vec3(0, 0, -1));
     cam->update(entity->getCharacterPos(), entity->getCharacterDir());
     entity->update(cam->getDir());
@@ -112,7 +117,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 lb_flag = false;
             }
             if (rb_flag) {
-                //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
+                terrain.testClickLightBlock(cam->getPos(), cam->getDir());
+                //vec3 p = cam->getPos();
+                //cout << "cam pos: " << p.x << ' ' << p.y << ' ' << p.z << endl;
                 terrain.deleteBlock(cam->getPos(), cam->getDir());
                 rb_flag = false;
             }

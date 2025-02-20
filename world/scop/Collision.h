@@ -40,9 +40,9 @@ public: // test
 	);
 
 	vec3 rayCheck(
-		vec3 const& ray_start,
-		vector<float>& move,
-		vec3 const& dir
+		vec3 const& check_pos,
+		vec3 const& dir,
+		vec3 const& pos
 	);
 
 	/**
@@ -51,7 +51,7 @@ public: // test
 	 * \param pos_down 충돌 상자의 밑면 중앙 pos
 	 * \return 충돌시 true를 반환
 	 */
-	bool detectCollison(vec3 const& pos_down);
+	bool detectCollison(vec3 const& pos_down, WorldIndex *w_idx = nullptr);
 private:
 	CollisionUtils c_utils;
 	vec3 center_pos;

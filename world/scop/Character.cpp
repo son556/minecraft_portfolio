@@ -27,7 +27,6 @@ Character::Character(Mat pos, Mat rot) : pos(pos), rot(rot)
 		L"./textures/zombie/TEXTURE/zombie.png"
 	);
 	this->c_pos = vec3(pos._41, pos._42, pos._43);
-	cout << "cpos: " << this->c_pos.x << ' ' << this->c_pos.y << ' ' << c_pos.z << endl;
 	vec4 d = XMVector4Transform(vec4(0, 0, -1, 0), rot);
 	this->dir = XMVector3Normalize(vec3(d.x, d.y, d.z));
 	this->left_arm = make_shared<LeftArm>(pos, rot);
@@ -252,12 +251,14 @@ void Character::update(vec3 const& dir)
 	vec3 right_dir = vec3(0, 1, 0).Cross(this->dir);
 	vec3 up_dir = this->dir.Cross(right_dir);
 	vec3 move_dir = vec3(0, 0, 0);
+
 	if (GetAsyncKeyState('A') & 0x8000)
 		move_dir -= XMVector3Normalize(vec3(right_dir.x, 0, right_dir.z));
 	if (GetAsyncKeyState('D') & 0x8000)
 		move_dir += XMVector3Normalize(vec3(right_dir.x, 0, right_dir.z));
 	if (GetAsyncKeyState('W') & 0x8000)
 		move_dir += XMVector3Normalize(vec3(this->dir.x, 0, this->dir.z));
+	//a = p;
 	if (GetAsyncKeyState('S') & 0x8000)
 		move_dir -= XMVector3Normalize(vec3(this->dir.x, 0, this->dir.z));
 	if (GetAsyncKeyState('E') & 0x8000)
@@ -266,9 +267,18 @@ void Character::update(vec3 const& dir)
 		move_dir.y += 1;
 	move_dir = XMVector3Normalize(move_dir);
 	
-	this->c_pos = this->aabb_collision->calcCollision(
-		this->c_pos, move_dir, 3 * delta_time);
-
+	/*this->c_pos = this->aabb_collision->calcCollision(
+		this->c_pos, move_dir, 3 * delta_time);*/
+	static float speed = 3;
+	static bool flag = false;
+	bool pc = GetAsyncKeyState(VK_CONTROL) & 0x8000;
+	if (pc && flag == false) {
+		speed = 30000;
+	}
+	flag = pc;
+	//this->c_pos = this->aabb_collision->checkCollision(move_dir, speed);
+	this->c_pos = this->aabb_collision->calcCollision(this->c_pos, move_dir, 
+		speed * delta_time);
 	this->pos = Mat::CreateTranslation(this->c_pos);
 	this->aabb_collision->update(this->c_pos + vec3(0, 1, 0));
 
