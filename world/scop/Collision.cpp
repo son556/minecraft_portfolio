@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Collision.h"
 #include "Terrain.h"
+#include "SweptAABB.h"
 
 #define STDZERO 0.00000001
 
@@ -23,7 +24,7 @@ vec3 Collision::checkCollision(vec3 const& dir, float speed)
 	vec3 start = this->center_pos + vec3(0, -0.5 * this->size_y, 0);
 	vec3 future_pos = start + speed * delta_time * dir;
 	
-	vec3 new_pos = this->rayMarching(start, future_pos, dir);
+	vec3 new_pos = this->rayMarching(start, future_pos, dir, speed);
 	return new_pos;
 }
 
@@ -66,35 +67,29 @@ vec3 Collision::calcCollision(
 	return ans;
 }
 
-vec3 Collision::rayCheck(
-	vec3 const& check_pos, // 충돌 상자의 가운데 아래
+bool Collision::detectCollison(
+	vec3 const& pos_down,
 	vec3 const& dir,
-	vec3 const& pos
-)
+	vector<WorldIndex>* blocks)
 {
-	// TODO swept aabb 이용하여 시간 + 충돌 위치 구하기
-	// 결과 반환
-	return pos;
-}
-
-bool Collision::detectCollison(vec3 const& pos_down, WorldIndex* w_idx)
-{
-	static vector<vec3> move_check = {
+	static const vector<vec3> move_check = {
 		{-1, 0, 1}, {0, 0, 1}, {1, 0, 1},
 		{-1, 0, 0}, {0, 0, 0}, {1, 0, 0},
 		{-1, 0, -1}, {0, 0, -1}, {1, 0, -1},
 
 		{-1, 1, 1}, {0, 1, 1}, {1, 1, 1},
 		{-1, 1, 0}, {0, 1, 0}, {1, 1, 0},
-		{-1, 1, -1}, {0, 1, -1}, {1, 1, -1},
-
-		{-1, -1, 1}, {0, -1, 1}, {1, -1, 1},
-		{-1, -1, 0}, {0, -1, 0}, {1, -1, 0},
-		{-1, -1, -1}, {0, -1, -1}, {1, -1, -1},
-
+		{-1, 1, -1}, {0, 1, -1}, {1, 1, -1}
+	};
+	static const vector<vec3> move_check_up = {
 		{-1, 2, 1}, {0, 2, 1}, {1, 2, 1},
 		{-1, 2, 0}, {0, 2, 0}, {1, 2, 0},
 		{-1, 2, -1}, {0, 2, -1}, {1, 2, -1}
+	};
+	static const vector<vec3> move_check_down = {
+		{-1, -1, 1}, {0, -1, 1}, {1, -1, 1},
+		{-1, -1, 0}, {0, -1, 0}, {1, -1, 0},
+		{-1, -1, -1}, {0, -1, -1}, {1, -1, -1}
 	};
 	vec3 pos;
 	WorldIndex widx;
@@ -115,21 +110,140 @@ bool Collision::detectCollison(vec3 const& pos_down, WorldIndex* w_idx)
 				max_v.z > b_min.z &&
 				min_v.z < b_max.z;
 			if (flag) {
-				if (w_idx) {
-					float v = (widx.pos + vec3(0.5, 0.5, -0.5) - pos_down).Length();
-					if (volume > v) {
-						*w_idx = widx;
-						volume = v;
-					}
-				}
+				if (blocks)
+					blocks->push_back(widx);
 				return true;
+			}
+		}
+	}
+	if (dir.y > 0) {
+		for (int i = 0; i < move_check_up.size(); i++) {
+			pos = pos_down + move_check_up[i];
+			widx = p_terrain->getBlock(pos);
+			if (widx.flag && widx.block_type && widx.block_type != BlockType::WATER) {
+				vec3 b_min = widx.pos + vec3(0, 0, -1);
+				vec3 b_max = widx.pos + vec3(1, 1, 0);
+				bool flag = max_v.x > b_min.x &&
+					min_v.x < b_max.x &&
+					max_v.y > b_min.y &&
+					min_v.y < b_max.y &&
+					max_v.z > b_min.z &&
+					min_v.z < b_max.z;
+				if (flag) {
+					if (blocks)
+						blocks->push_back(widx);
+					return true;
+				}
+			}
+		}
+	}
+	if (dir.y < 0) {
+		for (int i = 0; i < move_check_down.size(); i++) {
+			pos = pos_down + move_check_down[i];
+			widx = p_terrain->getBlock(pos);
+			if (widx.flag && widx.block_type && widx.block_type != BlockType::WATER) {
+				vec3 b_min = widx.pos + vec3(0, 0, -1);
+				vec3 b_max = widx.pos + vec3(1, 1, 0);
+				bool flag = max_v.x > b_min.x &&
+					min_v.x < b_max.x &&
+					max_v.y > b_min.y &&
+					min_v.y < b_max.y &&
+					max_v.z > b_min.z &&
+					min_v.z < b_max.z;
+				if (flag) {
+					if (blocks)
+						blocks->push_back(widx);
+					return true;
+				}
 			}
 		}
 	}
 	return false;
 }
 
-vec3 Collision::rayMarching(vec3 const& start, vec3 const& end, vec3 const& dir)
+vec3 Collision::findFirstCollision(
+	vec3 const& start,
+	vec3 const& end_pos, 
+	vector<WorldIndex>& blocks, 
+	vec3 const& velocity,
+	vec3 const& dir
+)
+{
+	Box obj, other;
+	obj.top_left_up = start + vec3(-this->size_x * 0.5, this->size_y, this->size_z * 0.5);
+	obj.size_x = this->size_x;
+	obj.size_y = this->size_y;
+	obj.size_z = this->size_z;
+	obj.velocity = velocity;
+
+	other.size_x = 1;
+	other.size_y = 1;
+	other.size_z = 1;
+
+	float m_time = 1;
+	float tmp_time = 0;
+	int idx = 0;
+	for (int i = 0; i < blocks.size(); i++) {
+		other.top_left_up = blocks[i].pos + vec3(0, 1, 0);
+		tmp_time = SweptAABB::sweptAABB(obj, other);
+		if (m_time > tmp_time) {
+			idx = i;
+			m_time = tmp_time;
+		}
+	}
+
+	vec3 np = start + velocity * m_time;
+	blocks.clear();
+	if (this->detectCollison(np, dir, &blocks)) {
+		while (this->detectCollison(np, dir, &blocks)) {
+			for (int i = 0; i < blocks.size(); i++) {
+				other.top_left_up = blocks[i].pos + vec3(0, 1, 0);
+				tmp_time = SweptAABB::sweptAABB(obj, other);
+				if (m_time > tmp_time) {
+					idx = i;
+					m_time = tmp_time;
+				}
+			}
+			np = start + velocity * m_time;
+			blocks.erase(blocks.begin() + idx);
+			if (blocks.size() == 0)
+				break;
+		}
+		return np;
+	}
+
+	float len = (end_pos - np).Length();
+	vec3 res = this->calcCollision(np, dir, len);
+	return res;
+}
+
+
+vec3 selectPos(vec3 const& r_start, vec3 const& x, vec3 const& y, vec3 const& z) {
+	float l_x = (x - r_start).Length();
+	float l_y = (y - r_start).Length();
+	float l_z = (z - r_start).Length();
+	vec3 res;
+	if (l_x < l_y) {
+		if (l_x < l_z)
+			res = x;
+		else
+			res = z;
+	}
+	else {
+		if (l_y < l_z)
+			res = y;
+		else
+			res = z;
+	}
+	return res;
+}
+
+vec3 Collision::rayMarching(
+	vec3 const& start, 
+	vec3 const& end, 
+	vec3 const& dir,
+	float speed
+)
 {
 	// 1. x y z index 찾기
 	vec3 ans = start;
@@ -252,57 +366,50 @@ vec3 Collision::rayMarching(vec3 const& start, vec3 const& end, vec3 const& dir)
 	vec3 pos = ans + fmin(max_x, max_y, max_z) * dir;
 	float len = (end - start).Length();
 	float p_len = (pos - start).Length();
-	vector<vec3> check_move = {
-		{-this->size_x * 0.5f, 0, this->size_z * 0.5f},
-		{this->size_x * 0.5f, 0, this->size_z * 0.5f},
-		{-this->size_x * 0.5f, 0, -this->size_z * 0.5f},
-		{this->size_x * 0.5f, 0, this->size_z * 0.5f},
-
-		{-this->size_x * 0.5f, 1, this->size_z * 0.5f},
-		{this->size_x * 0.5f, 1, this->size_z * 0.5f},
-		{-this->size_x * 0.5f, 1, -this->size_z * 0.5f},
-		{this->size_x * 0.5f, 1, this->size_z * 0.5f}
-	};
-	p_len = 0;
-	while (p_len < len) {
+	vector<WorldIndex> blocks;
+	vec3 v = dir * speed;
+	vec3 pos_x = ans + dir * max_x;
+	vec3 pos_y = ans + dir * max_y;
+	vec3 pos_z = ans + dir * max_z;
+	while (p_len < len && pos.y < 256 && pos.y >= 0) {
 		if (max_x < max_y) {
 			if (max_x < max_z) {
 				x += step_x;
 				max_x += delta_x;
-				p_len += delta_x;
+				pos_x += delta_x * dir;
 			}
 			else {
 				z += step_z;
 				max_z += delta_z;
-				p_len += delta_z;
+				pos_z += delta_z * dir;
 			}
 		}
 		else {
 			if (max_y < max_z) {
 				y += step_y;
 				max_y += delta_y;
-				p_len += delta_y;
+				pos_y += delta_y * dir;
 			}
 			else {
 				z += step_z;
 				max_z += delta_z;
-				p_len += delta_z;
+				pos_z += delta_z * dir;
 			}
 		}
-		WorldIndex widx;
-		vec3 xyz = vec3(x, y, z);
-		widx = p_terrain->getBlock(xyz);
-		for (int i = 0; i < check_move.size(); i++) {
-			vec3 check = xyz + check_move[i];
-			widx = p_terrain->getBlock(check);
-			if (widx.flag && widx.block_type && widx.block_type != BlockType::WATER) {
-				pos = check - check_move[i];
-				return this->rayCheck(check, dir, pos);
-			}
+
+		p_len = (pos - start).Length();
+		blocks.clear();
+		if (p_len < len && this->detectCollison(pos, dir, &blocks)) {
+			return this->findFirstCollision(start, pos, blocks, v, dir);
 		}
+		pos = selectPos(ans, pos_x, pos_y, pos_z);
 	}
 
-	ans = this->calcCollision(ans, dir, len);
+	blocks.clear();
+	if (this->detectCollison(end, dir, &blocks)) {
+		return this->findFirstCollision(start, end, blocks, v, dir);
+	}
+	ans = this->calcCollision(start, dir, len);
 	return ans;
 }
 

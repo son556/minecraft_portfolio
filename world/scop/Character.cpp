@@ -256,9 +256,13 @@ void Character::update(vec3 const& dir)
 		move_dir -= XMVector3Normalize(vec3(right_dir.x, 0, right_dir.z));
 	if (GetAsyncKeyState('D') & 0x8000)
 		move_dir += XMVector3Normalize(vec3(right_dir.x, 0, right_dir.z));
-	if (GetAsyncKeyState('W') & 0x8000)
+
+	static bool pw = false;
+	bool w = GetAsyncKeyState('W') & 0x8000;
+	if (w)
 		move_dir += XMVector3Normalize(vec3(this->dir.x, 0, this->dir.z));
-	//a = p;
+	pw = w;
+	
 	if (GetAsyncKeyState('S') & 0x8000)
 		move_dir -= XMVector3Normalize(vec3(this->dir.x, 0, this->dir.z));
 	if (GetAsyncKeyState('E') & 0x8000)
@@ -273,12 +277,11 @@ void Character::update(vec3 const& dir)
 	static bool flag = false;
 	bool pc = GetAsyncKeyState(VK_CONTROL) & 0x8000;
 	if (pc && flag == false) {
-		speed = 30000;
+		cout << "change speed" << endl;
+		speed = INT_MAX;
 	}
 	flag = pc;
-	//this->c_pos = this->aabb_collision->checkCollision(move_dir, speed);
-	this->c_pos = this->aabb_collision->calcCollision(this->c_pos, move_dir, 
-		speed * delta_time);
+	this->c_pos = this->aabb_collision->checkCollision(move_dir, speed);
 	this->pos = Mat::CreateTranslation(this->c_pos);
 	this->aabb_collision->update(this->c_pos + vec3(0, 1, 0));
 

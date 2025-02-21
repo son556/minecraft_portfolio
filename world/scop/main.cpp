@@ -74,12 +74,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     entity = make_shared<Entity>();
 
     /*
-  b pos: -10.5 17 20.5
-p: -11.7895 17 21.0718
+  p: -10.8386 17 19.922
+bp: -10.5 17.5 19.5
     */
     vec3 sp = vec3(-7.58921, 17, 18.8209);
     //entity->setCharacter(vec3(1.5, h - 0.5, 0.5), vec3(0, XMConvertToRadians(0), 0));
-    //entity->setCharacter(vec3(-10.5, 17, 20.5), vec3(0, XMConvertToRadians(0), 0));
+    //entity->setCharacter(vec3(-10.8386, 17, 19.922), vec3(0, XMConvertToRadians(0), 0));
     entity->setCharacter(sp, vec3(0, XMConvertToRadians(0), 0));
     cam->setDir(vec3(0, 0, -1));
     cam->update(entity->getCharacterPos(), entity->getCharacterDir());
@@ -209,7 +209,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_COMMAND:
         {
-            cout << "hello\n";
             int wmId = LOWORD(wParam);
             // 메뉴 선택을 구문 분석합니다:
             switch (wmId)

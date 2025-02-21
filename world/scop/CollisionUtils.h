@@ -10,8 +10,6 @@ public:
 		bool* flag = nullptr);
 	vec3 calcCollisionX(vec3 const& now_pos_down, float move_x);
 	vec3 calcCollisionZ(vec3 const& now_pos_down, float move_z);
-
-private:
 	bool detectAABB(
 		vec3 const& min_a,
 		vec3 const& max_a,
