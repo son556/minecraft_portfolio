@@ -40,6 +40,7 @@ public:
 	ComPtr<ID3D11ShaderResourceView> getSRVNormal();
 	vec3 const& getCharacterPos();
 	vec3 const& getCharacterDir();
+	bool checkAABBWithEntity(vec3 const& block_pos);
 	void update(vec3 const& cam_dir);
 
 private:

@@ -80,26 +80,6 @@ void TestCam::onMouseMove(HWND hWnd, int mouse_x, int mouse_y)
 		y = -1.f;
 	if (y > 1.f)
 		y = 1.f;
-	// 각도로 
-	/*{
-		double y_degree = ndcToDegree(x);
-		double x_degree = ndcToDegree(-y);
-		this->dir = vec3::Transform(this->dir,
-			Mat::CreateRotationY(XMConvertToRadians(y_degree)) *
-			Mat::CreateRotationX(XMConvertToRadians(x_degree)));
-	}*/
-	
-	// 역행렬으로 
-	/*{
-		vec4 pos = vec4(x, y, 0, 1) * this->cam_near;
-		vec4 ppos = vec4(x, y, 1, 1) * this->cam_far;
-		Mat r_mat = (this->mvp.view * this->mvp.proj).Invert();
-		pos = vec4::Transform(pos, r_mat);
-		ppos = vec4::Transform(ppos, r_mat);
-		vec4 ddir = ppos - pos;
-		this->dir = vec3(ddir.x, ddir.y, ddir.z);
-		this->dir.Normalize();
-	}*/
 
 	// vec3
 	{

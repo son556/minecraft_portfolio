@@ -47,7 +47,7 @@ vec3 CollisionUtils::calcCollisionY(vec3 const& now_pos_down, float move_y, bool
 					ans.y = now_pos_down.y;
 				else {
 					*flag = false;
-					ans = now_pos_down;
+					ans.y = now_pos_down.y;
 				}
 				return ans;
 			}
@@ -63,7 +63,7 @@ vec3 CollisionUtils::calcCollisionY(vec3 const& now_pos_down, float move_y, bool
 						ans.y = now_pos_down.y;
 					else {
 						*flag = false;
-						ans = now_pos_down;
+						ans.y = now_pos_down.y;
 					}
 					return ans;
 				}
@@ -97,7 +97,7 @@ vec3 CollisionUtils::calcCollisionX(vec3 const& now_pos_down, float move_x)
 					ans = this->calcCollisionY(ans, abs(b_max.y - ans.y), &flag);
 					if (flag == false)
 						return now_pos_down;
-					check_pos.y = ans.y;
+					check_pos.y = b_max.y;
 					for (int j = 0; j < calc_move.size(); j++) {
 						widx = p_terrain->getBlock(check_pos + calc_move[j]);
 						if (widx.flag && widx.block_type &&
@@ -154,7 +154,7 @@ vec3 CollisionUtils::calcCollisionZ(vec3 const& now_pos_down, float move_z)
 					ans = this->calcCollisionY(ans, b_max.y - ans.y, &flag);
 					if (flag == false)
 						return now_pos_down;
-					check_pos.y = ans.y;
+					check_pos.y = b_max.y;
 					for (int j = 0; j < calc_move.size(); j++) {
 						widx = p_terrain->getBlock(check_pos + calc_move[j]);
 						if (widx.flag && widx.block_type &&
@@ -203,3 +203,4 @@ bool CollisionUtils::detectAABB(
 		max_a.z > min_b.z &&
 		min_a.z < max_b.z);
 }
+

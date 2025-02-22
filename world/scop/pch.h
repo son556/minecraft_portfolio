@@ -118,3 +118,12 @@ extern float delta_time;
 extern bool in_water;
 extern int w_width;
 extern int w_height;
+
+
+inline void printVec3(string const& name, vec3 const& v) {
+	cout << name << " : " << v.x << ' ' << v.y << ' ' << v.z << endl;
+}
+
+inline void printVec4(string const& name, vec4 const& v) {
+	cout << name << " : " << v.x << ' ' << v.y << ' ' << v.z << endl;
+}

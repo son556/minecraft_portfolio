@@ -109,15 +109,16 @@ bp: -10.5 17.5 19.5
             if (lb_flag) {
                 /*terrain.testClickLightBlock(cam->getPos(),
                     cam->getDir());*/
+                int block = -3 + tp_idx;
                 terrain.putBlock(cam->getPos(),
-                    cam->getDir(), -3 + tp_idx);
+                    cam->getDir(), 1);
                 tp_idx++;
                 if (tp_idx == 3)
                     tp_idx = 0;
                 lb_flag = false;
             }
             if (rb_flag) {
-                terrain.testClickLightBlock(cam->getPos(), cam->getDir());
+                //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
                 //vec3 p = cam->getPos();
                 //cout << "cam pos: " << p.x << ' ' << p.y << ' ' << p.z << endl;
                 terrain.deleteBlock(cam->getPos(), cam->getDir());
@@ -127,7 +128,6 @@ bp: -10.5 17.5 19.5
             delta_time = Time::DeltaTime();
             entity->update(cam->getDir());
             cam->update(entity->getCharacterPos(), entity->getCharacterDir());
-            // entity update 해줄것
             terrain.userPositionCheck(cam->getPos().x,
                 cam->getPos().z);
             terrain.Render();

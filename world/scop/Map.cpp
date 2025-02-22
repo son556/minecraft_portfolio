@@ -35,8 +35,6 @@ Map::Map(
 	this->terrainSetVerticesAndIndices();
 	finish = clock();
 	cout << "set vi(ms): " << static_cast<double>(finish - start) << endl;
-	/*Index2 tcidx = this->m_info.findChunkIndex(0, 16);
-	cout << "chunk idx: " << tcidx.x << ' ' << tcidx.y << endl;*/
 }
 
 

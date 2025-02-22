@@ -18,6 +18,7 @@
 #include "InputLayout.h"
 #include "InputLayouts.h"
 #include "Collision.h"
+#include "Terrain.h"
 
 Character::Character(Mat pos, Mat rot) : pos(pos), rot(rot)
 {
@@ -256,32 +257,48 @@ void Character::update(vec3 const& dir)
 		move_dir -= XMVector3Normalize(vec3(right_dir.x, 0, right_dir.z));
 	if (GetAsyncKeyState('D') & 0x8000)
 		move_dir += XMVector3Normalize(vec3(right_dir.x, 0, right_dir.z));
-
-	static bool pw = false;
-	bool w = GetAsyncKeyState('W') & 0x8000;
-	if (w)
+	if (GetAsyncKeyState('W') & 0x8000)
 		move_dir += XMVector3Normalize(vec3(this->dir.x, 0, this->dir.z));
-	pw = w;
-	
 	if (GetAsyncKeyState('S') & 0x8000)
 		move_dir -= XMVector3Normalize(vec3(this->dir.x, 0, this->dir.z));
 	if (GetAsyncKeyState('E') & 0x8000)
 		move_dir.y -= 1;
-	if (GetAsyncKeyState('Q') & 0x8000)
+	bool q = false;
+	if (GetAsyncKeyState('Q') & 0x8000) {
 		move_dir.y += 1;
-	move_dir = XMVector3Normalize(move_dir);
-	
-	/*this->c_pos = this->aabb_collision->calcCollision(
-		this->c_pos, move_dir, 3 * delta_time);*/
-	static float speed = 3;
-	static bool flag = false;
-	bool pc = GetAsyncKeyState(VK_CONTROL) & 0x8000;
-	if (pc && flag == false) {
-		cout << "change speed" << endl;
-		speed = INT_MAX;
+		q = true;
 	}
-	flag = pc;
-	this->c_pos = this->aabb_collision->checkCollision(move_dir, speed);
+
+	int space_flag = 0;
+	static bool pv = false;
+	bool bs = GetAsyncKeyState(VK_SPACE) & 0x8000;
+	if (bs && pv == false && 
+		this->aabb_collision->checkBottom(this->c_pos)) {
+		space_flag = 1;
+		pv = true;
+	}
+	else if (bs == false)
+		pv = false;
+
+	float speed = 3;
+	move_dir = XMVector3Normalize(move_dir);
+	move_dir *= speed;
+
+	static float gv = 0;
+	if (this->aabb_collision->checkBottom(this->c_pos + 
+		vec3(0, space_flag, 0)) == false && q == false) {
+		float g = 27;
+		if (space_flag)
+			gv = -sqrtf(2 * g) - 1;
+		gv += g * delta_time;
+		move_dir.y -= gv;
+	}
+	else
+		gv = 0;
+	speed = move_dir.Length();
+	move_dir = XMVector3Normalize(move_dir);
+	this->c_pos = this->aabb_collision->calcCollision(
+		this->c_pos, move_dir, speed * delta_time);
 	this->pos = Mat::CreateTranslation(this->c_pos);
 	this->aabb_collision->update(this->c_pos + vec3(0, 1, 0));
 

@@ -131,6 +131,21 @@ vec3 const& Entity::getCharacterDir()
 	return this->character->getDir();
 }
 
+bool Entity::checkAABBWithEntity(vec3 const& block_pos)
+{
+	vec3 pos = this->getCharacterPos();
+	vec3 max_a = pos + vec3(0.25, 2, 0.25);
+	vec3 min_a = pos + vec3(-0.25, 0, -0.25);
+	vec3 max_b = block_pos + vec3(1, 1, 0);
+	vec3 min_b = block_pos + vec3(0, 0, -1);
+	return (max_a.x > min_b.x &&
+		min_a.x < max_b.x &&
+		max_a.y > min_b.y &&
+		min_a.y < max_b.y &&
+		max_a.z > min_b.z &&
+		min_a.z < max_b.z);
+}
+
 void Entity::update(vec3 const& cam_dir)
 {
 	this->character->update(cam_dir);

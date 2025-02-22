@@ -5,6 +5,7 @@
 #include "Block.h"
 #include "TestCam.h"
 #include "DeferredGraphics.h"
+#include "Entity.h"
 
 Terrain::Terrain(
 	int size_w,
@@ -86,6 +87,9 @@ void Terrain::putBlock(
 			Index2 const& cpos = 
 				this->m_manager->m_info.chunks[cidx.y][cidx.x]->chunk_pos;
 			
+			if (entity->checkAABBWithEntity(add_idx.pos))// 캐릭터가 있으면 블록 안놓음
+				return;
+
 			if (type < 0) {
 				this->m_manager->m_info.addBlock(cidx, bidx, type);
 				Chunk& chunk = *(this->m_manager->m_info.chunks[cidx.y][cidx.x]);
