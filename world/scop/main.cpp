@@ -32,7 +32,9 @@ bool rb_flag = false;
 bool fix_flag = true;
 bool move_flag = true;
 bool move_check = false;
-// test
+bool correct_mouse = false;
+
+
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -73,15 +75,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     float h = terrain.getHeight(0.5, 0.5) + 0.5;
     entity = make_shared<Entity>();
 
-    /*
-  p: -10.8386 17 19.922
-bp: -10.5 17.5 19.5
-    */
     vec3 sp = vec3(-7.58921, 17, 18.8209);
-    //entity->setCharacter(vec3(1.5, h - 0.5, 0.5), vec3(0, XMConvertToRadians(0), 0));
-    //entity->setCharacter(vec3(-10.8386, 17, 19.922), vec3(0, XMConvertToRadians(0), 0));
     entity->setCharacter(sp, vec3(0, XMConvertToRadians(0), 0));
-    cam->setDir(vec3(0, 0, -1));
     cam->update(entity->getCharacterPos(), entity->getCharacterDir());
     entity->update(cam->getDir());
 
@@ -107,23 +102,21 @@ bp: -10.5 17.5 19.5
         else
         {
             if (lb_flag) {
-                /*terrain.testClickLightBlock(cam->getPos(),
-                    cam->getDir());*/
+                //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
                 int block = -3 + tp_idx;
-                terrain.putBlock(cam->getPos(),
-                    cam->getDir(), 1);
+                terrain.putBlock(cam->getPos(), cam->getDir(), 1);
                 tp_idx++;
                 if (tp_idx == 3)
                     tp_idx = 0;
                 lb_flag = false;
             }
             if (rb_flag) {
-                //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
                 //vec3 p = cam->getPos();
                 //cout << "cam pos: " << p.x << ' ' << p.y << ' ' << p.z << endl;
                 terrain.deleteBlock(cam->getPos(), cam->getDir());
                 rb_flag = false;
             }
+
             Time::update();
             delta_time = Time::DeltaTime();
             entity->update(cam->getDir());
@@ -256,6 +249,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEMOVE:
         {
         if (move_check && fix_flag) {
+            if (correct_mouse == false) {
+                correct_mouse = true;
+                break;
+            }
             RECT client_rect;
             GetClientRect(hWnd, &client_rect);
             POINT pt;
@@ -263,12 +260,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             ScreenToClient(hWnd, &pt);
             int centerX = (client_rect.right - client_rect.left) / 2;
             int centerY = (client_rect.bottom - client_rect.top) / 2;
-            if (pt.x == centerX && pt.y == centerY)
-            {
-                return 0; // 움직임을 무시
-            }
             cam->onMouseMove(hWnd, pt.x, pt.y);
             cam->setCursorInClient(hWnd);
+            correct_mouse = false;
         }
         }
         break;

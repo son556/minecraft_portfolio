@@ -72,14 +72,6 @@ void TestCam::onMouseMove(HWND hWnd, int mouse_x, int mouse_y)
 {
 	float x = mouse_x * 2.0 / this->w_width - 1.0;
 	float y = -mouse_y * 2.0 / this->w_height + 1.0;
-	if (x < -1.f)
-		x = -1.f;
-	if (x > 1.f)
-		x = 1.f;
-	if (y < -1.f)
-		y = -1.f;
-	if (y > 1.f)
-		y = 1.f;
 
 	// vec3
 	{

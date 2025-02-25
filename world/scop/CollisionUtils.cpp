@@ -116,7 +116,7 @@ vec3 CollisionUtils::calcCollisionX(vec3 const& now_pos_down, float move_x)
 		}
 	}
 
-	check_pos.y = max_v.y - 0.1;
+	check_pos.y = max_v.y - this->size_y * 0.5;
 	for (int i = 0; i < calc_move.size(); i++) {
 		widx = p_terrain->getBlock(check_pos + calc_move[i]);
 		if (widx.flag && widx.block_type &&
@@ -125,7 +125,21 @@ vec3 CollisionUtils::calcCollisionX(vec3 const& now_pos_down, float move_x)
 			b_max = widx.pos + vec3(1, 1, 0);
 			if (this->detectAABB(min_v, max_v, b_min, b_max)) {
 				ans.x = now_pos_down.x;
-				break;
+				return ans;
+			}
+		}
+	}
+
+	check_pos.y = max_v.y;
+	for (int i = 0; i < calc_move.size(); i++) {
+		widx = p_terrain->getBlock(check_pos + calc_move[i]);
+		if (widx.flag && widx.block_type &&
+			widx.block_type != BlockType::WATER) {
+			b_min = widx.pos + vec3(0, 0, -1);
+			b_max = widx.pos + vec3(1, 1, 0);
+			if (this->detectAABB(min_v, max_v, b_min, b_max)) {
+				ans.x = now_pos_down.x;
+				return ans;
 			}
 		}
 	}
@@ -142,6 +156,8 @@ vec3 CollisionUtils::calcCollisionZ(vec3 const& now_pos_down, float move_z)
 	vec3 max_v = ans + vec3(this->size_x * 0.5f, this->size_y, this->size_z * 0.5f);
 	vec3 b_min;
 	vec3 b_max;
+
+	// check foot
 	for (int i = 0; i < calc_move.size(); i++) {
 		widx = p_terrain->getBlock(check_pos + calc_move[i]);
 		if (widx.flag && widx.block_type &&
@@ -152,8 +168,10 @@ vec3 CollisionUtils::calcCollisionZ(vec3 const& now_pos_down, float move_z)
 				if (b_max.y - ans.y < 0.4) {
 					bool flag;
 					ans = this->calcCollisionY(ans, b_max.y - ans.y, &flag);
-					if (flag == false)
-						return now_pos_down;
+					if (flag == false) {
+						ans.z = now_pos_down.z;
+						return ans;
+					}
 					check_pos.y = b_max.y;
 					for (int j = 0; j < calc_move.size(); j++) {
 						widx = p_terrain->getBlock(check_pos + calc_move[j]);
@@ -173,7 +191,8 @@ vec3 CollisionUtils::calcCollisionZ(vec3 const& now_pos_down, float move_z)
 		}
 	}
 
-	check_pos.y = max_v.y - 0.1;
+	// check mid
+	check_pos.y = max_v.y - this->size_y * 0.5;
 	for (int i = 0; i < calc_move.size(); i++) {
 		widx = p_terrain->getBlock(check_pos + calc_move[i]);
 		if (widx.flag && widx.block_type &&
@@ -182,10 +201,26 @@ vec3 CollisionUtils::calcCollisionZ(vec3 const& now_pos_down, float move_z)
 			b_max = widx.pos + vec3(1, 1, 0);
 			if (this->detectAABB(min_v, max_v, b_min, b_max)) {
 				ans.z = now_pos_down.z;
-				break;
+				return ans;
 			}
 		}
 	}
+
+	// check head
+	check_pos.y = max_v.y;
+	for (int i = 0; i < calc_move.size(); i++) {
+		widx = p_terrain->getBlock(check_pos + calc_move[i]);
+		if (widx.flag && widx.block_type &&
+			widx.block_type != BlockType::WATER) {
+			b_min = widx.pos + vec3(0, 0, -1);
+			b_max = widx.pos + vec3(1, 1, 0);
+			if (this->detectAABB(min_v, max_v, b_min, b_max)) {
+				ans.z = now_pos_down.z;
+				return ans;
+			}
+		}
+	}
+
 	return ans;
 }
 
