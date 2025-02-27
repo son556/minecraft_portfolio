@@ -4,6 +4,8 @@
 #include "ConstantBuffer.h"
 #include "DeferredGraphics.h"
 
+#include "Entity.h" // tmp include
+
 TestCam::TestCam(
 	float width, 
 	float height, 
@@ -74,23 +76,22 @@ void TestCam::onMouseMove(HWND hWnd, int mouse_x, int mouse_y)
 	float y = -mouse_y * 2.0 / this->w_height + 1.0;
 
 	// vec3
+	vec3 new_dir;
 	{
 		vec3 npos = vec3(x, y, 0);
 		vec3 fpos = vec3(x, y, 1);
 		Mat invViewProj = (this->mvp.view * this->mvp.proj).Invert();
 		npos = vec3::Transform(npos, invViewProj);
 		fpos = vec3::Transform(fpos, invViewProj);
-		this->dir = fpos - npos;
-		this->dir.Normalize();
+		new_dir = fpos - npos;
+		new_dir.Normalize();
 	}
-	float t = this->dir.Cross(vec3(0, 1, 0)).Length();
-	if (t < 0.0000001 && t > -0.0000001) {
-		if (this->dir.y > 0)
-			this->dir = XMVector3Normalize(vec3(0, 1, 0.001));
-		else
-			this->dir = XMVector3Normalize(vec3(0, -1, 0.001));
-	}
-	this->mvp.view = XMMatrixLookToLH(this->pos, this->dir, vec3(0, 1, 0));
+	float t = new_dir.Cross(vec3(0, 1, 0)).Length();
+	if (t < 0.1)
+		return;
+	else
+		this->dir = new_dir;
+	this->mvp.view = XMMatrixLookToLH(this->pos, this->dir, this->up);
 }
 
 void TestCam::setCursorInClient(HWND hwnd)
@@ -142,6 +143,13 @@ void TestCam::update(vec3 const& character_pos, vec3 const& character_dir)
 
 	if (this->free_cam)
 		this->update();
+	else if (first_view) 
+	{
+		this->pos = character_pos;
+		this->pos += 0.15 * XMVector3Normalize(vec3(character_dir.x, 0, character_dir.z));
+		this->pos.y += 1.75;
+		this->mvp.view = XMMatrixLookToLH(this->pos, this->dir, vec3(0, 1, 0));
+	}
 	else {
 		vec3 reset_pos = -2 * character_dir + character_pos;
 		this->pos.x = reset_pos.x;

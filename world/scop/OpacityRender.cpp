@@ -190,10 +190,6 @@ void OpacityRender::render(
 	this->geo_render.setParallaxFlag(render_option.parallax_mapping);
 	this->geo_render.render(type, render_option.geo_opt);
 
-	// entity render
-	entity->setRTV(this->geo_render.getDSV());
-	entity->render(type);
-
 	// pbr render
 	this->pbr.setRTV();
 	this->setPBRResources();

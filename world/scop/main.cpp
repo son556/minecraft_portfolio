@@ -23,7 +23,6 @@ bool under_water = false; // 물 속에 있는 지
 bool in_water = false;
 float delta_time = 0;
 
-// test 용 전역변수
 vec3 dir;
 int w_width = 800;
 int w_height = 650;
@@ -33,7 +32,9 @@ bool fix_flag = true;
 bool move_flag = true;
 bool move_check = false;
 bool correct_mouse = false;
+bool first_view = false;
 
+int block_type = 0;
 
 
 // 전역 변수:
@@ -88,7 +89,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Time::initialize();
     cam->setCursorInClient(hWnd);
     move_check = true;
-    int tp_idx = 0;
     while (msg.message != WM_QUIT)
     {
         if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -103,18 +103,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         {
             if (lb_flag) {
                 //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
-                int block = -3 + tp_idx;
-                terrain.putBlock(cam->getPos(), cam->getDir(), 1);
-                tp_idx++;
-                if (tp_idx == 3)
-                    tp_idx = 0;
+                terrain.putBlock(cam->getPos(), cam->getDir(), block_type);
                 lb_flag = false;
+                // animation 추가
             }
             if (rb_flag) {
                 //vec3 p = cam->getPos();
                 //cout << "cam pos: " << p.x << ' ' << p.y << ' ' << p.z << endl;
                 terrain.deleteBlock(cam->getPos(), cam->getDir());
                 rb_flag = false;
+                // animation 추가
             }
 
             Time::update();
@@ -154,6 +152,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.lpszClassName  = L"SCOP";
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
+    wcex.hCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR1));
+
     return RegisterClassExW(&wcex);
 }
 
@@ -171,7 +171,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
     RECT windowRect = { 0, 0, w_width, w_height };
-    hWnd = CreateWindowW(L"SCOP", L"board", WS_OVERLAPPEDWINDOW,
+    hWnd = CreateWindowW(L"SCOP", L"board", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,
       CW_USEDEFAULT, 0, windowRect.right - windowRect.left, 
         windowRect.bottom - windowRect.top, nullptr, nullptr, hInstance, nullptr);
 
@@ -233,6 +233,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
             if (wParam == 13) {
                 fix_flag ^= 1;
+            }
+            if (wParam == 0x70) {
+                first_view ^= 1;
+            }
+            if (wParam >= 0x30 && wParam <= 0x31)
+            {
+                block_type = wParam - 0x30;
+            }
+            if (wParam >= 0x32 && wParam <= 0x34)
+            {
+                block_type = -static_cast<int>((wParam - 0x31));
             }
         }
         break;

@@ -95,6 +95,10 @@ void Character::render(
 	context->PSSetShaderResources(1, 1, depth_srv.GetAddressOf());
 	context->PSSetSamplers(1, 1, sampler_tp->getComPtr().GetAddressOf());
 	this->setPipe(context);
+	if (first_view) {
+		this->renderLeftArm(context);
+		return;
+	}
 	this->renderHead(context);
 	this->renderBody(context);
 	this->renderLeftArm(context);

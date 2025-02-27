@@ -71,6 +71,7 @@ private:
 	bool free_cam = false;
 	vec3 pos;
 	vec3 dir;
+	vec3 up = vec3(0, 1, 0);
 	MVP mvp;
 	MVP reflection_mvp;
 	Mat reflection_mat;

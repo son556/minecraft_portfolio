@@ -118,6 +118,7 @@ extern float delta_time;
 extern bool in_water;
 extern int w_width;
 extern int w_height;
+extern bool first_view;
 
 
 inline void printVec3(string const& name, vec3 const& v) {

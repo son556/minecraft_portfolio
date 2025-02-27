@@ -788,6 +788,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="cursor1.cur" />
     <None Include="SimpleMath.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
