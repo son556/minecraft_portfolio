@@ -34,7 +34,7 @@ bool move_check = false;
 bool correct_mouse = false;
 bool first_view = false;
 
-int block_type = 0;
+int block_type = 1;
 
 
 // 전역 변수:
@@ -237,7 +237,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             if (wParam == 0x70) {
                 first_view ^= 1;
             }
-            if (wParam >= 0x30 && wParam <= 0x31)
+            if (wParam == 0x31)
             {
                 block_type = wParam - 0x30;
             }
