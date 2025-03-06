@@ -12,6 +12,10 @@ public:
 	shared_ptr<Buffer<VertexPTN>>& getVertexBuffer();
 	Mat getWorld();
 	void update(Mat const& o_pos, Mat const& o_rot);
+	void setAnimationFlag();
+
+private:
+	void animationWalk();
 
 private:
 	RightArm() = delete;
@@ -23,6 +27,7 @@ private:
 	Mat basic_mat;
 
 private:
+	bool animation_flag;
 	shared_ptr<Buffer<VertexPTN>> v_buffer;
 };
 

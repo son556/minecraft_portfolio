@@ -47,33 +47,47 @@ void LeftArm::update(Mat const& o_pos, Mat const& o_rot)
 	else
 		this->basic_mat = Mat::CreateTranslation(vec3(-0.375, 1.125, 0));
 
-	if (animation_flag)
-		this->animation();
+	if (this->animation_flag) {
+		if (first_view)
+			this->animationFirstView();
+		else
+			this->animation();
+	}
+	if (this->animation_flag_walk)
+		this->animationWalk();
 	this->world = this->basic_mat * o_rot * o_pos;
 }
 
-void LeftArm::updateAnimation(bool animation_type)
+int LeftArm::getAnimationFlag()
 {
-	this->animation_flag = animation_type;
+	return this->animation_flag;
+}
+
+void LeftArm::setAnimationFlag()
+{
+	this->animation_flag = true;
+}
+
+void LeftArm::setAnimationFlagWalk()
+{
+	this->animation_flag_walk = true;
 }
 
 void LeftArm::animation()
 {
-	if (animation_flag == 0)
-		return;
-
-	vec3 s = XMVector3Normalize(vec3(0, -0.325, -0.25));
+	static const vec3 s = XMVector3Normalize(vec3(0, -0.325, -0.25));
+	static const float speed = -40;
+	static const vec3 up = vec3(0, 0, 1);
 	static float w = 0;
 	static float sin = 0;
 	static float dt = 0;
-	static const float speed = -40;
 
 	if (dt * -speed >= 360) {
 		this->v_buffer->update(this->vertices, d_graphic->getContext());
 		w = 0;
 		dt = 0;
 		sin = 0;
-		this->animation_flag = false;
+		this->animation_flag = 0;
 		return;
 	}
 	else if (dt) {
@@ -81,7 +95,6 @@ void LeftArm::animation()
 		SimpleMath::Quaternion d_q = vec4(0, -0.75, 0, 0);
 		SimpleMath::Quaternion q = vec4(s.x * sin, s.y * sin, s.z * sin, w);
 		SimpleMath::Quaternion q_conjugate = vec4(-s.x * sin, -s.y * sin, -s.z * sin, w);
-		static const vec3 up = vec3(0, 0, 1);
 
 		up_q = q * up_q * q_conjugate;
 		d_q = q * d_q * q_conjugate;
@@ -101,8 +114,69 @@ void LeftArm::animation()
 		else
 			this->basic_mat = t * this->basic_mat;
 	}
-	dt += delta_time * 10;
+	dt += delta_time * 30;
 	w = cosf(dt * XMConvertToRadians(speed) * 0.5);
 	sin = sinf(dt * XMConvertToRadians(speed) * 0.5);
+}
+
+void LeftArm::animationFirstView()
+{
+	static float dt = 0;
+	static const float speed = 30;
+	static float theta = 0;
+	static int dir = 1;
+	static bool flag = false;
+	static Mat rotX;
+
+	if (flag == false && dir == 1 && theta >= 60) {
+		dir = -1;
+	}
+	else if (flag == false && dir == -1 && theta <= -60) {
+		dir = 1;
+		flag = true;
+	}
+	else if (flag && theta > 0) {
+		dt = 0;
+		flag = false;
+		this->animation_flag = false;
+		return;
+	}
+	static const Mat move = Mat::CreateTranslation(vec3(0, -0.25, 0));
+	static const Mat r_move = Mat::CreateTranslation(vec3(0, 0.25, 0));
+	this->basic_mat = move * rotX * r_move * this->basic_mat;
+	dt += delta_time * dir;
+	theta = dt * speed * 20;
+	rotX = Mat::CreateRotationX(XMConvertToRadians(theta));
+}
+
+void LeftArm::animationWalk()
+{
+	static float dt = 0;
+	static const float speed = 30;
+	static float theta = 0;
+	static int dir = 1;
+	static bool flag = false;
+	static Mat rotX;
+
+	if (flag == false && dir == 1 && theta >= 60) {
+		dir = -1;
+	}
+	else if (flag == false && dir == -1 && theta <= -60) {
+		dir = 1;
+		flag = true;
+	}
+	else if (flag && theta > 0) {
+		dt = 0;
+		flag = false;
+		this->animation_flag_walk = false;
+		return;
+	}
+	static const Mat move = Mat::CreateTranslation(vec3(0, -0.25, 0));
+	static const Mat r_move = Mat::CreateTranslation(vec3(0, 0.25, 0));
+	if (this->animation_flag == false)
+		this->basic_mat = move * rotX * r_move * this->basic_mat;
+	dt += delta_time * dir;
+	theta = dt * speed * 20;
+	rotX = Mat::CreateRotationX(XMConvertToRadians(theta));
 }
 

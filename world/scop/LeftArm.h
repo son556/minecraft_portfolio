@@ -11,11 +11,15 @@ public:
 	~LeftArm() = default;
 	shared_ptr<Buffer<VertexPTN>>& getVertexBuffer();
 	Mat getWorld();
-	void updateAnimation(bool animation_type);
+	void setAnimationFlag();
+	void setAnimationFlagWalk();
 	void update(Mat const& o_pos, Mat const& o_rot);
+	int getAnimationFlag();
 
 private:
 	void animation();
+	void animationFirstView();
+	void animationWalk();
 	LeftArm() = delete;
 	LeftArm(LeftArm const&) = delete;
 	LeftArm& operator=(LeftArm const&) = delete;
@@ -23,7 +27,8 @@ private:
 private:
 	Mat world;
 	Mat basic_mat;
-	bool animation_flag;
+	int animation_flag = false;
+	bool animation_flag_walk = false;
 
 private:
 	vector<VertexPTN> vertices;
