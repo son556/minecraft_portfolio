@@ -42,6 +42,7 @@ public:
 	vec3 const& getCharacterDir();
 	bool checkAABBWithEntity(vec3 const& block_pos);
 	void update(vec3 const& cam_dir);
+	void setCharacterLeftArmAnimation();
 
 private:
 	Entity(Entity const&) = delete;

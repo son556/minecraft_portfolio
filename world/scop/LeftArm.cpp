@@ -8,14 +8,16 @@
 
 LeftArm::LeftArm(Mat const& o_pos, Mat const& o_rot)
 {
-	vector<VertexPTN> vertices;
-	Parts::humanVertices(vertices, 0.25, 0.75, 0.25, HumanParts::LEFTARM);
+	Parts::humanVertices(this->vertices, 0.25, 0.75, 0.25, HumanParts::LEFTARM);
 	this->v_buffer = make_shared<Buffer<VertexPTN>>(
 		d_graphic->getDevice(),
-		vertices.data(),
-		vertices.size(),
-		D3D11_BIND_VERTEX_BUFFER
+		this->vertices.data(),
+		this->vertices.size(),
+		D3D11_BIND_VERTEX_BUFFER,
+		true
 	);
+	this->ani_vertices = this->vertices;
+
 	this->basic_mat = Mat::CreateTranslation(vec3(-0.375, 1.125, 0));
 	this->world = this->basic_mat * o_rot * o_pos;
 	this->animation_flag = 0;
@@ -50,7 +52,7 @@ void LeftArm::update(Mat const& o_pos, Mat const& o_rot)
 	this->world = this->basic_mat * o_rot * o_pos;
 }
 
-void LeftArm::updateAnimation(int animation_type)
+void LeftArm::updateAnimation(bool animation_type)
 {
 	this->animation_flag = animation_type;
 }
@@ -59,25 +61,48 @@ void LeftArm::animation()
 {
 	if (animation_flag == 0)
 		return;
-	// 쿼터니언 사용법 + 구면 보간
-	/*SimpleMath::Quaternion quaternion;
-	quaternion.
-	Mat::CreateFromQuaternion()*/
-	vec3 s = XMVector3Normalize(vec3(1, -1, -1));
+
+	vec3 s = XMVector3Normalize(vec3(0, -0.325, -0.25));
 	static float w = 0;
+	static float sin = 0;
 	static float dt = 0;
-	static int tick = 0;
-	SimpleMath::Quaternion q = vec4(s.x, s.y, s.z, w);
-	dt += delta_time;
-	w = cosf(dt * XMConvertToRadians(3) * 0.5);
-	tick += 1;
-	Mat rot = SimpleMath::Matrix::CreateFromQuaternion(q);
-	this->basic_mat *= rot;
-	if (tick == 120) {
+	static const float speed = -40;
+
+	if (dt * -speed >= 360) {
+		this->v_buffer->update(this->vertices, d_graphic->getContext());
 		w = 0;
 		dt = 0;
-		tick = 0;
-		this->animation_flag = 0;
+		sin = 0;
+		this->animation_flag = false;
+		return;
 	}
+	else if (dt) {
+		SimpleMath::Quaternion up_q = vec4(0, 0, 0, 0);
+		SimpleMath::Quaternion d_q = vec4(0, -0.75, 0, 0);
+		SimpleMath::Quaternion q = vec4(s.x * sin, s.y * sin, s.z * sin, w);
+		SimpleMath::Quaternion q_conjugate = vec4(-s.x * sin, -s.y * sin, -s.z * sin, w);
+		static const vec3 up = vec3(0, 0, 1);
+
+		up_q = q * up_q * q_conjugate;
+		d_q = q * d_q * q_conjugate;
+		vec3 dir = XMVector3Normalize(vec3(d_q.x, d_q.y, d_q.z) - vec3(up_q.x, up_q.y, up_q.z));
+		vec3 right = XMVector3Normalize(up.Cross(dir));
+		right *= 0.125;
+		vec3 z_axis = XMVector3Normalize(dir.Cross(right));
+		z_axis *= 0.125;
+		vec3 c_up = vec3(up_q.x, up_q.y, up_q.z);
+		vec3 c_down = vec3(d_q.x, d_q.y, d_q.z);
+
+		Parts::updateLeftArmVertices(this->ani_vertices, right, z_axis, c_up, c_down);
+		this->v_buffer->update(this->ani_vertices, d_graphic->getContext());
+		Mat t = Mat::CreateTranslation(vec3(0, 0.375, 0));
+		if (first_view == false)
+			this->basic_mat = this->basic_mat * t;
+		else
+			this->basic_mat = t * this->basic_mat;
+	}
+	dt += delta_time * 10;
+	w = cosf(dt * XMConvertToRadians(speed) * 0.5);
+	sin = sinf(dt * XMConvertToRadians(speed) * 0.5);
 }
 

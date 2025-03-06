@@ -338,6 +338,51 @@ namespace Parts {
 			}
 		}
 	}
+
+	inline void updateLeftArmVertices(
+		vector<VertexPTN>& vertices,
+		vec3 const& x_move,
+		vec3 const& z_move,
+		vec3 const& up,
+		vec3 const& down
+	) {
+		vector<vec3> nbox = {
+			up + z_move - x_move,
+			up + z_move + x_move,
+			up - z_move + x_move,
+			up - z_move - x_move,
+
+			down + z_move - x_move,
+			down + z_move + x_move,
+			down - z_move + x_move,
+			down - z_move - x_move
+		};
+		vector<vec3> npos = {
+			// top
+			nbox[0], nbox[1], nbox[2], nbox[3],
+
+			// bottom
+			nbox[7], nbox[6], nbox[5], nbox[4],
+
+			// right
+			nbox[1], nbox[5], nbox[6], nbox[2],
+
+			// left
+			nbox[0], nbox[3], nbox[7], nbox[4],
+
+			// back
+			nbox[1], nbox[0], nbox[4], nbox[5],
+
+			// front
+			nbox[3], nbox[2], nbox[6], nbox[7]
+		};
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 4; j++) {
+				vertices[i * 4 + j].pos = npos[i * 4 + j];
+			}
+		}
+	}
+
 	inline void makeIndices(vector<uint32>& indices) {
 		indices.clear();
 		for (int i = 0; i < 36; i++) {

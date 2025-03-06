@@ -11,7 +11,7 @@ public:
 	~LeftArm() = default;
 	shared_ptr<Buffer<VertexPTN>>& getVertexBuffer();
 	Mat getWorld();
-	void updateAnimation(int animation_type);
+	void updateAnimation(bool animation_type);
 	void update(Mat const& o_pos, Mat const& o_rot);
 
 private:
@@ -23,9 +23,11 @@ private:
 private:
 	Mat world;
 	Mat basic_mat;
-	int animation_flag;
+	bool animation_flag;
 
 private:
+	vector<VertexPTN> vertices;
+	vector<VertexPTN> ani_vertices;
 	shared_ptr<Buffer<VertexPTN>> v_buffer;
 };
 

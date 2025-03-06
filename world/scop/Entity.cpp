@@ -150,3 +150,8 @@ void Entity::update(vec3 const& cam_dir)
 {
 	this->character->update(cam_dir);
 }
+
+void Entity::setCharacterLeftArmAnimation()
+{
+	this->character->setLeftArmAnimation();
+}

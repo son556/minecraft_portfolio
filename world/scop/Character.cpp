@@ -314,3 +314,8 @@ void Character::update(vec3 const& dir)
 	this->left_leg->update(this->pos, this->rot);
 	this->right_leg->update(this->pos, this->rot);
 }
+
+void Character::setLeftArmAnimation()
+{
+	this->left_arm->updateAnimation(true);
+}

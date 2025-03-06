@@ -31,6 +31,7 @@ public:
 	vec3 const& getPos();
 	vec3 const& getDir();
 	void update(vec3 const& dir);
+	void setLeftArmAnimation();
 
 private:
 	void renderHead(ComPtr<ID3D11DeviceContext>& context);

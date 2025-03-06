@@ -104,15 +104,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             if (lb_flag) {
                 //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
                 terrain.putBlock(cam->getPos(), cam->getDir(), block_type);
+                entity->setCharacterLeftArmAnimation();
                 lb_flag = false;
-                // animation 추가
             }
             if (rb_flag) {
                 //vec3 p = cam->getPos();
                 //cout << "cam pos: " << p.x << ' ' << p.y << ' ' << p.z << endl;
                 terrain.deleteBlock(cam->getPos(), cam->getDir());
+                entity->setCharacterLeftArmAnimation();
                 rb_flag = false;
-                // animation 추가
             }
 
             Time::update();
