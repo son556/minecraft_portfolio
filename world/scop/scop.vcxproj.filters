@@ -361,6 +361,15 @@
     <Filter Include="소스 파일\World\Entity\Collision\CollisionUtils">
       <UniqueIdentifier>{6375eafc-8812-4d6f-a04e-3659f0b55bfa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\CompositeRenderer">
+      <UniqueIdentifier>{f9fe6986-f538-4105-a1ec-b49f3d093091}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CompositeRenderer\CompositeShader">
+      <UniqueIdentifier>{b809711c-3283-4a6a-84ea-d3c8c5e2d064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\GUI">
+      <UniqueIdentifier>{5a17be71-a516-4522-a0e5-4eb385d97054}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -624,6 +633,9 @@
     <ClInclude Include="SweptAABB.h">
       <Filter>소스 파일\World\Entity\Collision\CollisionUtils</Filter>
     </ClInclude>
+    <ClInclude Include="CompositeRenderer.h">
+      <Filter>소스 파일\CompositeRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -878,6 +890,9 @@
     <ClCompile Include="SweptAABB.cpp">
       <Filter>소스 파일\World\Entity\Collision\CollisionUtils</Filter>
     </ClCompile>
+    <ClCompile Include="CompositeRenderer.cpp">
+      <Filter>소스 파일\CompositeRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="scop.rc">
@@ -1072,6 +1087,12 @@
     </FxCompile>
     <FxCompile Include="CharacterPS.hlsl">
       <Filter>소스 파일\World\WorldShaderFIle\DefferedShader\Character</Filter>
+    </FxCompile>
+    <FxCompile Include="CompositeRendererVS.hlsl">
+      <Filter>소스 파일\CompositeRenderer\CompositeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="CompositeRendererPS.hlsl">
+      <Filter>소스 파일\CompositeRenderer\CompositeShader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

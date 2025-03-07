@@ -10,8 +10,8 @@ public:
 		int width,
 		int height
 	);
-	ComPtr<ID3D11RenderTargetView> getRTV(int idx);
-	ComPtr<ID3D11ShaderResourceView> getSRV(int idx);
+	ComPtr<ID3D11RenderTargetView>& getRTV(int idx);
+	ComPtr<ID3D11ShaderResourceView>& getSRV(int idx);
 	int getCnt();
 private:
 

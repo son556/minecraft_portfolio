@@ -11,6 +11,7 @@
 #include "Time.h"
 #include "DeferredGraphics.h" 
 #include "Entity.h"
+#include "CompositeRenderer.h"
 
 #define MAX_LOADSTRING 100
 
@@ -72,6 +73,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SCOP));
 
     Terrain terrain(12, 12, hWnd, w_width, w_height, 1, 8); // 짝수 단위로만
+    CompositeRenderer composite_renderer;
+
     p_terrain = &terrain;
     float h = terrain.getHeight(0.5, 0.5) + 0.5;
     entity = make_shared<Entity>();
@@ -124,6 +127,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             terrain.userPositionCheck(cam->getPos().x,
                 cam->getPos().z);
             terrain.Render();
+            //composite_renderer.render(terrain.getSRV(), /*gui 결과*/);
         }
     }
     return (int) msg.wParam;

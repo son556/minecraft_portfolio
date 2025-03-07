@@ -37,6 +37,11 @@ void Terrain::Render()
 	this->m_manager->r_system.Render();
 }
 
+ComPtr<ID3D11ShaderResourceView>& Terrain::getSRV()
+{
+	return this->m_manager->r_system.getSRV();
+}
+
 void Terrain::putBlock(
 	vec3 const& ray_pos,
 	vec3 const& ray_dir,

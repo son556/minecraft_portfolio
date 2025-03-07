@@ -47,6 +47,7 @@ public: // test
 
 public:
 	void Render();
+	ComPtr<ID3D11ShaderResourceView>& getSRV();
 
 private:
 	shared_ptr<Map> m_manager;

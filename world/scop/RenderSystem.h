@@ -10,6 +10,7 @@ public:
 	RenderSystem(MapUtils* minfo);
 	~RenderSystem() = default;
 	void Render();
+	ComPtr<ID3D11ShaderResourceView>& getSRV();
 
 private:
 	RenderSystem() = delete;

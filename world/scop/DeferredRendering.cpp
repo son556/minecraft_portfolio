@@ -12,7 +12,6 @@
 #include "DeferredBuffer.h"
 #include "TestCam.h"
 
-#include "TestRender.h"
 #include "Entity.h"
 
 DeferredRendering::DeferredRendering(MapUtils* minfo)
@@ -60,8 +59,8 @@ DeferredRendering::DeferredRendering(MapUtils* minfo)
 		"main",
 		"ps_5_0"
 	);
-
-	this->tr = make_shared<TestRender>(this->m_info);
+	this->d_buffer = make_shared<DeferredBuffer>(1);
+	this->d_buffer->setRTVsAndSRVs(device, minfo->width, minfo->height);
 }
 
 void DeferredRendering::Render()
@@ -85,7 +84,11 @@ void DeferredRendering::Render()
 		this->renderAboveWater(context);
 
 	context->DrawIndexed(this->ibuffer->getCount(), 0, 0);
-	d_graphic->renderEnd();
+}
+
+ComPtr<ID3D11ShaderResourceView>& DeferredRendering::getSRV()
+{
+	return this->d_buffer->getSRV(0);
 }
 
 void DeferredRendering::renderUnderWater(ComPtr<ID3D11DeviceContext>& context)
@@ -112,7 +115,7 @@ void DeferredRendering::renderUnderWater(ComPtr<ID3D11DeviceContext>& context)
 	this->oit.render(CamType::NORMAL, false);
 
 	// result
-	d_graphic->renderBegin();
+	d_graphic->renderBegin(this->d_buffer.get());
 	this->setFinPipe();
 	context->PSSetShaderResources(0, 1,
 		this->oit.getSRV(false).GetAddressOf());
@@ -143,7 +146,7 @@ void DeferredRendering::renderAboveWater(ComPtr<ID3D11DeviceContext>& context)
 	this->oit.render(CamType::NORMAL, true);
 
 	// result
-	d_graphic->renderBegin();
+	d_graphic->renderBegin(this->d_buffer.get());
 	this->setFinPipe();
 	context->PSSetShaderResources(0, 1,
 		this->oit.getSRV(true).GetAddressOf());

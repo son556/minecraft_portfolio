@@ -63,13 +63,13 @@ void DeferredBuffer::setRTVsAndSRVs(
 	}
 }
 
-ComPtr<ID3D11RenderTargetView> DeferredBuffer::getRTV(int idx)
+ComPtr<ID3D11RenderTargetView>& DeferredBuffer::getRTV(int idx)
 {
 	return this->RTVs[idx];
 }
 
 
-ComPtr<ID3D11ShaderResourceView> DeferredBuffer::getSRV(int idx)
+ComPtr<ID3D11ShaderResourceView>& DeferredBuffer::getSRV(int idx)
 {
 	return this->SRVs[idx];
 }

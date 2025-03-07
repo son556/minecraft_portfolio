@@ -8,14 +8,13 @@ class MapUtils;
 template <typename T> class Buffer;
 class Wallpaper;
 
-class TestRender;
-
 class DeferredRendering
 {
 public:
 	DeferredRendering(MapUtils* minfo);
 	~DeferredRendering() = default;
 	void Render();
+	ComPtr<ID3D11ShaderResourceView>& getSRV();
 	
 private:
 	DeferredRendering() = delete;
@@ -45,8 +44,7 @@ private:
 	shared_ptr<PixelShader> fin_ps;
 	shared_ptr<InputLayout> fin_ia;
 
-
 private:
-	shared_ptr<TestRender> tr;
+	shared_ptr<DeferredBuffer> d_buffer;
 };
 

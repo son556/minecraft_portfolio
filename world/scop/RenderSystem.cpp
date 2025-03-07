@@ -13,3 +13,8 @@ void RenderSystem::Render()
 {
 	this->r_deff->Render();
 }
+
+ComPtr<ID3D11ShaderResourceView>& RenderSystem::getSRV()
+{
+	return this->r_deff->getSRV();
+}
