@@ -370,6 +370,15 @@
     <Filter Include="소스 파일\GUI">
       <UniqueIdentifier>{5a17be71-a516-4522-a0e5-4eb385d97054}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\GUI\Items">
+      <UniqueIdentifier>{4e27c9ae-d0b1-4c1f-9995-ca99fa79ee54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\GUI\Items\Opacity">
+      <UniqueIdentifier>{70d92854-c4ab-4673-822a-1d14c9761124}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\GUI\Items\Transparent">
+      <UniqueIdentifier>{36a4f9de-1c54-4f5a-90db-713219c582cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -636,6 +645,15 @@
     <ClInclude Include="CompositeRenderer.h">
       <Filter>소스 파일\CompositeRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="OBlockItem.h">
+      <Filter>소스 파일\GUI\Items\Opacity</Filter>
+    </ClInclude>
+    <ClInclude Include="TBlockItem.h">
+      <Filter>소스 파일\GUI\Items\Transparent</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI.h">
+      <Filter>소스 파일\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -892,6 +910,15 @@
     </ClCompile>
     <ClCompile Include="CompositeRenderer.cpp">
       <Filter>소스 파일\CompositeRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="OBlockItem.cpp">
+      <Filter>소스 파일\GUI\Items\Opacity</Filter>
+    </ClCompile>
+    <ClCompile Include="TBlockItem.cpp">
+      <Filter>소스 파일\GUI\Items\Transparent</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI.cpp">
+      <Filter>소스 파일\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

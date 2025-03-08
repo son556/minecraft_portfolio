@@ -169,6 +169,7 @@
     <ClInclude Include="Filter.h" />
     <ClInclude Include="GeometryShader.h" />
     <ClInclude Include="GeoRender.h" />
+    <ClInclude Include="GUI.h" />
     <ClInclude Include="Head.h" />
     <ClInclude Include="HullShader.h" />
     <ClInclude Include="InputLayouts.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputLayout.h" />
     <ClInclude Include="MapUtils.h" />
+    <ClInclude Include="OBlockItem.h" />
     <ClInclude Include="OIT.h" />
     <ClInclude Include="ParallaxMapping.h" />
     <ClInclude Include="Parts.h" />
@@ -214,6 +216,7 @@
     <ClInclude Include="Sun.h" />
     <ClInclude Include="SunMoon.h" />
     <ClInclude Include="SweptAABB.h" />
+    <ClInclude Include="TBlockItem.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainSystem.h" />
     <ClInclude Include="TestCam.h" />
@@ -259,6 +262,7 @@
     <ClCompile Include="Filter.cpp" />
     <ClCompile Include="GeometryShader.cpp" />
     <ClCompile Include="GeoRender.cpp" />
+    <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Head.cpp" />
     <ClCompile Include="HullShader.cpp" />
     <ClCompile Include="InputLayouts.cpp" />
@@ -276,6 +280,7 @@
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="MapUtils.cpp" />
+    <ClCompile Include="OBlockItem.cpp" />
     <ClCompile Include="OIT.cpp" />
     <ClCompile Include="ParallaxMapping.cpp" />
     <ClCompile Include="Parts.cpp" />
@@ -305,6 +310,7 @@
     <ClCompile Include="Sun.cpp" />
     <ClCompile Include="SunMoon.cpp" />
     <ClCompile Include="SweptAABB.cpp" />
+    <ClCompile Include="TBlockItem.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainSystem.cpp" />
     <ClCompile Include="TestCam.cpp" />
