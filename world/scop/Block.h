@@ -440,4 +440,37 @@ namespace Block {
 		indices.push_back(2);
 		indices.push_back(3);
 	}
+
+	inline void makeBox(
+		float w,
+		float h,
+		vector<VertexDefer>& vertices,
+		vector<uint32>& indices
+	) {
+		static const vector<vec3> sample_pos = {
+			// front
+			{-1.f, -1.f, 0.f},
+			{-1.f, +1.f, 0.f},
+			{+1.f, +1.f, 0.f},
+			{+1.f, -1.f, 0.f},
+		};
+		static const vector<vec2> sample_uv = {
+			{0.f, 1.f},
+			{0.f, 0.f},
+			{1.f, 0.f},
+			{1.f, 1.f},
+		};
+		VertexDefer v_deff;
+		for (int i = 0; i < 4; i++) {
+			v_deff.pos = sample_pos[i] * vec3(w, h, 1);
+			v_deff.uv = sample_uv[i];
+			vertices.push_back(v_deff);
+		}
+		indices.push_back(0);
+		indices.push_back(1);
+		indices.push_back(2);
+		indices.push_back(0);
+		indices.push_back(2);
+		indices.push_back(3);
+	}
 }

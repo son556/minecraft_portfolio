@@ -47,7 +47,7 @@ CompositeRenderer::CompositeRenderer()
 	);
 	this->pixel_shader = make_shared<PixelShader>(
 		device,
-		L"CompositeRenderPS.hlsl",
+		L"CompositeRendererPS.hlsl",
 		"main",
 		"ps_5_0"
 	);

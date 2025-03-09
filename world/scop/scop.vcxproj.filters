@@ -379,6 +379,21 @@
     <Filter Include="소스 파일\GUI\Items\Transparent">
       <UniqueIdentifier>{36a4f9de-1c54-4f5a-90db-713219c582cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\GUI\GUIResources">
+      <UniqueIdentifier>{430cd8ee-67d5-4811-9653-da9a811c4f5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\GUI\GUIEvent">
+      <UniqueIdentifier>{fefecb39-2df9-4e8d-85ee-5c0e09c2f3b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\GUI\GUIRender">
+      <UniqueIdentifier>{a36e1f43-1e2f-4e17-a598-38430bc31db5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\GUI\Items\ItemResources">
+      <UniqueIdentifier>{a03deb53-e3e4-4dad-b7d0-edb04b82192f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\GUI\GUIshader">
+      <UniqueIdentifier>{9c21d6b2-179f-448c-8428-6dfd2a49f8e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -654,6 +669,18 @@
     <ClInclude Include="GUI.h">
       <Filter>소스 파일\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="GUIResources.h">
+      <Filter>소스 파일\GUI\GUIResources</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIRender.h">
+      <Filter>소스 파일\GUI\GUIRender</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIManager.h">
+      <Filter>소스 파일\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemResources.h">
+      <Filter>소스 파일\GUI\Items\ItemResources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -920,6 +947,18 @@
     <ClCompile Include="GUI.cpp">
       <Filter>소스 파일\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="GUIResources.cpp">
+      <Filter>소스 파일\GUI\GUIResources</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIRender.cpp">
+      <Filter>소스 파일\GUI\GUIRender</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIManager.cpp">
+      <Filter>소스 파일\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemResources.cpp">
+      <Filter>소스 파일\GUI\Items\ItemResources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="scop.rc">
@@ -1120,6 +1159,18 @@
     </FxCompile>
     <FxCompile Include="CompositeRendererPS.hlsl">
       <Filter>소스 파일\CompositeRenderer\CompositeShader</Filter>
+    </FxCompile>
+    <FxCompile Include="GUIRenderColorPS.hlsl">
+      <Filter>소스 파일\GUI\GUIshader</Filter>
+    </FxCompile>
+    <FxCompile Include="GUIRenderColorVS.hlsl">
+      <Filter>소스 파일\GUI\GUIshader</Filter>
+    </FxCompile>
+    <FxCompile Include="GUIRenderPS.hlsl">
+      <Filter>소스 파일\GUI\GUIshader</Filter>
+    </FxCompile>
+    <FxCompile Include="GUIRenderVS.hlsl">
+      <Filter>소스 파일\GUI\GUIshader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
