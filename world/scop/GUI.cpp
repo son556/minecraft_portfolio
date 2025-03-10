@@ -4,6 +4,7 @@
 #include "Block.h"
 #include "DeferredGraphics.h"
 #include "Texture.h"
+#include "ConstantBuffer.h"
 
 GUI::GUI(float w, float h, string gui_name)
 {
@@ -18,6 +19,12 @@ GUI::GUI(float w, float h, string gui_name)
 		device, indices.data(), indices.size(),
 		D3D11_BIND_INDEX_BUFFER);
 	this->gui_name = gui_name;
+	Mat tmp;
+	this->constant_buffer = make_shared<ConstantBuffer>(
+		device,
+		d_graphic->getContext(),
+		tmp
+	);
 }
 
 void GUI::setGUIBuffer(ComPtr<ID3D11DeviceContext> const& context)
@@ -39,15 +46,20 @@ void GUI::setOpacityItemBuffer(
 	int idx
 )
 {
-	shared_ptr<Buffer<VertexDefer>>& v_buff = this->opacity_items[idx].getVertexBuffer();
-	shared_ptr<Buffer<uint32>>& i_buff = this->opacity_items[idx].getIndexBuffer();
+	shared_ptr<Buffer<VertexDefer>> const& v_buff = 
+		this->opacity_items[idx].getVertexBuffer();
+	shared_ptr<Buffer<uint32>> const& i_buff = 
+		this->opacity_items[idx].getIndexBuffer();
 	uint32 stride = v_buff->getStride();
 	uint32 offset = v_buff->getOffset();
+	Mat world = this->opacity_items[idx].getWorldMatrix().Transpose();
+	this->constant_buffer->update(world);
 
 	context->IASetVertexBuffers(0, 1, 
 		v_buff->getComPtr().GetAddressOf(), &stride, &offset);
 	context->IASetIndexBuffer(i_buff->getComPtr().Get(),
 		DXGI_FORMAT_R32_UINT, 0);
+	context->VSSetConstantBuffers(0, 1, this->constant_buffer->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(0, 1,
 		this->opacity_items[idx].getTexture()->getComPtr().GetAddressOf());
 }
@@ -57,13 +69,25 @@ void GUI::setTransParencyBuffer(
 	int idx
 )
 {
-	/*shared_ptr<Buffer<VertexDefer>>& v_buff = this->tp_items[idx].getVertexBuffer();
-	shared_ptr<Buffer<uint32>>& i_buff = this->tp_items[idx].getIndexBuffer();
+	shared_ptr<Buffer<VertexColor>> const& v_buff = this->tp_items[idx].getVertexBuffer();
+	shared_ptr<Buffer<uint32>> const& i_buff = this->tp_items[idx].getIndexBuffer();
 	uint32 stride = v_buff->getStride();
 	uint32 offset = v_buff->getOffset();
+
+	Mat world = this->tp_items[idx].getWorldMatrix().Transpose();
+	this->constant_buffer->update(world);
 
 	context->IASetVertexBuffers(0, 1,
 		v_buff->getComPtr().GetAddressOf(), &stride, &offset);
 	context->IASetIndexBuffer(i_buff->getComPtr().Get(),
-		DXGI_FORMAT_R32_UINT, 0);*/
+		DXGI_FORMAT_R32_UINT, 0);
+	context->VSSetConstantBuffers(0, 1, this->constant_buffer->getComPtr().GetAddressOf());
 }
+
+int GUI::getItemArraySize(bool op_tp)
+{
+	if (op_tp)
+		return this->opacity_items.size();
+	return this->tp_items.size();
+}
+

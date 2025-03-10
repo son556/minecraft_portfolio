@@ -9,9 +9,9 @@ class OBlockItem
 public:
 	OBlockItem(string const& item_name);
 	void setPos(vec3 const& pos);
-	Mat& getWorldMatrix();
-	shared_ptr<Buffer<VertexDefer>>& getVertexBuffer();
-	shared_ptr<Buffer<uint32>>& getIndexBuffer();
+	Mat const& getWorldMatrix();
+	shared_ptr<Buffer<VertexDefer>> const& getVertexBuffer();
+	shared_ptr<Buffer<uint32>> const& getIndexBuffer();
 	shared_ptr<Texture>const& getTexture();
 
 private:

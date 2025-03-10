@@ -6,6 +6,7 @@
 
 template<typename T> class Buffer;
 struct VertexDefer;
+class ConstantBuffer;
 
 class GUI
 {
@@ -20,6 +21,7 @@ public:
 		ComPtr<ID3D11DeviceContext> const& context,
 		int idx
 	);
+	int getItemArraySize(bool op_tp);
 	~GUI() = default;
 
 private:
@@ -28,6 +30,7 @@ private:
 	GUI& operator=(GUI const&) = delete;
 
 private:
+	shared_ptr<ConstantBuffer> constant_buffer;
 	shared_ptr<Buffer<VertexDefer>> v_buffer;
 	shared_ptr<Buffer<uint32>> i_buffer;
 	string gui_name;

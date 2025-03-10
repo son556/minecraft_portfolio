@@ -6,6 +6,7 @@ class PixelShader;
 class RasterizerState;
 class SamplerState;
 class GUI;
+class DeferredBuffer;
 
 class GUIRender
 {
@@ -23,9 +24,11 @@ private:
 	);
 
 private:
-	D3D11_BLEND_DESC blend_desc;
+	ComPtr<ID3D11BlendState> blend_state;
+	ComPtr<ID3D11DepthStencilState> depth_stencil_state;
 
 private:
+	shared_ptr<DeferredBuffer> deferred_buffer;
 	shared_ptr<InputLayout> input_layout;
 	shared_ptr<VertexShader> vertex_shader;
 	shared_ptr<RasterizerState> rasterizer_state;

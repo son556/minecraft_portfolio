@@ -8,27 +8,33 @@
 #include "PixelShader.h"
 #include "SamplerState.h"
 #include "GUI.h"
+#include "DeferredBuffer.h"
 
 
 GUIRender::GUIRender()
 {
 	ComPtr<ID3D11Device> const& device = d_graphic->getDevice();
 	
-	ZeroMemory(&blend_desc, sizeof(this->blend_desc));
-	this->blend_desc.AlphaToCoverageEnable = false;
-	this->blend_desc.IndependentBlendEnable = false;
+	this->deferred_buffer = make_shared<DeferredBuffer>(1);
+	this->deferred_buffer->setRTVsAndSRVs(device, w_width, w_height);
 
-	this->blend_desc.RenderTarget[0].BlendEnable = true;
-	this->blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	this->blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	this->blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	D3D11_BLEND_DESC blend_desc;
+	ZeroMemory(&blend_desc, sizeof(blend_desc));
+	blend_desc.AlphaToCoverageEnable = false;
+	blend_desc.IndependentBlendEnable = false;
 
-	this->blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-	this->blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
-	this->blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	this->blend_desc.RenderTarget[0].RenderTargetWriteMask =
+	blend_desc.RenderTarget[0].BlendEnable = true;
+	blend_desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+
+	blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+	blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blend_desc.RenderTarget[0].RenderTargetWriteMask =
 		D3D11_COLOR_WRITE_ENABLE_ALL;
-	
+	device->CreateBlendState(&blend_desc, this->blend_state.GetAddressOf());
+
 	this->vertex_shader = make_shared<VertexShader>(device, L"GUIRenderVS.hlsl",
 		"main", "vs_5_0");
 	this->input_layout = make_shared<InputLayout>(
@@ -55,11 +61,50 @@ GUIRender::GUIRender()
 		InputLayouts::layout_pc.size(),
 		this->vertex_shader_color->getBlob()
 	);
+
+	D3D11_DEPTH_STENCIL_DESC depth_stencil_desc;
+	ZeroMemory(&depth_stencil_desc, sizeof(depth_stencil_desc));
+	depth_stencil_desc.DepthEnable = false;
+	depth_stencil_desc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+	depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depth_stencil_desc.StencilEnable = false;
+
+	device->CreateDepthStencilState(&depth_stencil_desc,
+		this->depth_stencil_state.GetAddressOf());
 }
 
 void GUIRender::render(GUI* gui)
 {
 	ComPtr<ID3D11DeviceContext> const& context = d_graphic->getContext();
+
+	d_graphic->renderBegin(this->deferred_buffer.get());
+	
+	// gui render
+	this->setPipe(context, false);
+	gui->setGUIBuffer(context);
+	context->DrawIndexed(6, 0, 0);
+
+	// gui opacity item render
+	int cnt = gui->getItemArraySize(true);
+	for (int i = 0; i < cnt; i++) {
+		gui->setOpacityItemBuffer(context, i);
+		context->DrawIndexed(6, 0, 0);
+	}
+
+	// gui transparent item render
+	this->setPipe(context, true);
+	cnt = gui->getItemArraySize(false);
+	for (int i = 0; i < cnt; i++) {
+		gui->setTransParencyBuffer(context, i);
+		context->DrawIndexed(6, 0, 0);
+	}
+
+	context->OMSetBlendState(
+		nullptr,
+		nullptr,
+		0xFFFFFFFF
+	);
+	context->OMSetDepthStencilState(nullptr, 0);
 }
 
 void GUIRender::setPipe(
@@ -84,6 +129,11 @@ void GUIRender::setPipe(
 			nullptr,
 			0
 		);
+		context->OMSetBlendState(
+			this->blend_state.Get(),
+			nullptr,
+			0xFFFFFFFF
+		);
 	}
 	else {
 		context->IASetInputLayout(this->input_layout->getComPtr().Get());
@@ -99,4 +149,5 @@ void GUIRender::setPipe(
 		);
 		context->PSSetSamplers(0, 1, this->sampler_state->getComPtr().GetAddressOf());
 	}
+	context->OMSetDepthStencilState(this->depth_stencil_state.Get(), 0);
 }
