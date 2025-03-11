@@ -163,10 +163,6 @@ Texture::Texture(
 	);
 }
 
-Texture::~Texture()
-{
-}
-
 ComPtr<ID3D11ShaderResourceView> Texture::getComPtr() const
 {
 	return this->sharder_resource_view;

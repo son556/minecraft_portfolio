@@ -64,6 +64,7 @@ void CompositeRenderer::render(
 	d_graphic->renderBegin();
 	context->PSSetShaderResources(0, 1, game_srv.GetAddressOf());
 	context->PSSetShaderResources(1, 1, gui_srv.GetAddressOf());
+	context->DrawIndexed(this->i_buff->getCount(), 0, 0);
 	d_graphic->renderEnd();
 }
 
@@ -72,6 +73,7 @@ void CompositeRenderer::setPipe(ComPtr<ID3D11DeviceContext> const& context)
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 	);
+	context->IASetInputLayout(this->input_layout->getComPtr().Get());
 	uint32 stride = this->v_buff->getStride();
 	uint32 offset = this->v_buff->getOffset();
 	context->IASetVertexBuffers(0, 1,

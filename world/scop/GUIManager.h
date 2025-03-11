@@ -1,12 +1,22 @@
 #pragma once
 
-class DeferredBuffer;
+#include "GUI.h"
+#include "GUIRender.h"
 
 class GUIManager
 {
 public:
+	GUIManager();
+	~GUIManager() = default;
+	void render();
+	ComPtr<ID3D11ShaderResourceView> const& getSRV();
 
 private:
-	shared_ptr<DeferredBuffer> d_buffer;
+	GUIManager(GUIManager const&) = delete;
+	GUIManager& operator=(GUIManager const&) = delete;
+
+private:
+	map<string, shared_ptr<GUI>> gui_book;
+	GUIRender gui_render;
 };
 

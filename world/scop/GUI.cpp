@@ -25,6 +25,12 @@ GUI::GUI(float w, float h, string gui_name)
 		d_graphic->getContext(),
 		tmp
 	);
+	vec4 t = vec4(1, 1, 1, 1);
+	this->gui_gamma_buffer = make_shared<ConstantBuffer>(
+		device,
+		d_graphic->getContext(),
+		t
+	);
 }
 
 void GUI::setGUIBuffer(ComPtr<ID3D11DeviceContext> const& context)
@@ -37,8 +43,14 @@ void GUI::setGUIBuffer(ComPtr<ID3D11DeviceContext> const& context)
 	context->IASetIndexBuffer(
 		this->i_buffer->getComPtr().Get(),
 		DXGI_FORMAT_R32_UINT, 0);
+	this->constant_buffer->update(Mat::Identity);
+	context->VSSetConstantBuffers(0, 1, this->constant_buffer->getComPtr().GetAddressOf());
 	shared_ptr<Texture> const& texture = GUIResources::getTexture(this->gui_name);
 	context->PSSetShaderResources(0, 1, texture->getComPtr().GetAddressOf());
+	vec4 ttp = vec4(1, 1, 1, 1);
+	this->gui_gamma_buffer->update(ttp);
+	context->PSSetConstantBuffers(0, 1, 
+		this->gui_gamma_buffer->getComPtr().GetAddressOf());
 }
 
 void GUI::setOpacityItemBuffer(
@@ -62,6 +74,10 @@ void GUI::setOpacityItemBuffer(
 	context->VSSetConstantBuffers(0, 1, this->constant_buffer->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(0, 1,
 		this->opacity_items[idx].getTexture()->getComPtr().GetAddressOf());
+	vec4 ttp = vec4(0, 0, 0, 0);
+	this->gui_gamma_buffer->update(ttp);
+	context->PSSetConstantBuffers(0, 1,
+		this->gui_gamma_buffer->getComPtr().GetAddressOf());
 }
 
 void GUI::setTransParencyBuffer(
@@ -89,5 +105,23 @@ int GUI::getItemArraySize(bool op_tp)
 	if (op_tp)
 		return this->opacity_items.size();
 	return this->tp_items.size();
+}
+
+void GUI::moveOPItem(int idx, vec3 const& new_pos)
+{
+	if (idx >= this->opacity_items.size()) {
+		cerr << "Wrong opacity item index!!" << endl;
+		assert(false);
+	}
+	this->opacity_items[idx].setPos(new_pos);
+}
+
+void GUI::moveTPItem(int idx, vec3 const& new_pos)
+{
+	if (idx >= this->tp_items.size()) {
+		cerr << "Wrong transparent item index!!" << endl;
+		assert(false);
+	}
+	this->tp_items[idx].setPos(new_pos);
 }
 

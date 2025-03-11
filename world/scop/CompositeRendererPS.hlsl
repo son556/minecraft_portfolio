@@ -14,5 +14,6 @@ float4 main(PS_INPUT input) : SV_TARGET
     float4 color = composite_renderer_gui_tex.Sample(sampler0, input.uv);
     if (color.r == 0 && color.g == 0 && color.b == 0)
         color = composite_renderer_terrain_tex.Sample(sampler0, input.uv);
+    color.w = 1;
 	return color;
 }

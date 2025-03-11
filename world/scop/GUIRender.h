@@ -14,6 +14,7 @@ public:
 	GUIRender();
 	~GUIRender() = default;
 	void render(GUI* gui);
+	ComPtr<ID3D11ShaderResourceView> const& getSRV();
 
 private:
 	GUIRender(GUIRender const&) = delete;

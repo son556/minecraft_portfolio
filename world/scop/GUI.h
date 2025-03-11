@@ -22,6 +22,8 @@ public:
 		int idx
 	);
 	int getItemArraySize(bool op_tp);
+	void moveOPItem(int idx, vec3 const& new_pos);
+	void moveTPItem(int idx, vec3 const& new_pos);
 	~GUI() = default;
 
 private:
@@ -34,6 +36,7 @@ private:
 	shared_ptr<Buffer<VertexDefer>> v_buffer;
 	shared_ptr<Buffer<uint32>> i_buffer;
 	string gui_name;
+	shared_ptr<ConstantBuffer> gui_gamma_buffer;
 
 private:
 	vector<OBlockItem> opacity_items;

@@ -17,10 +17,13 @@ public:
 		const wchar_t* filename,
 		bool isCubeMap
 	);
-	Texture(Texture const&) = delete;
-	~Texture();
-	Texture& operator=(Texture const&) = delete;
+	~Texture() = default;
 	ComPtr<ID3D11ShaderResourceView> getComPtr() const;
+	
+private:
+	Texture(Texture const&) = delete;
+	Texture& operator=(Texture const&) = delete;
+
 private:
 	ComPtr<ID3D11Device> device;
 	ComPtr<ID3D11ShaderResourceView> sharder_resource_view;

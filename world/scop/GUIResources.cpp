@@ -10,6 +10,7 @@ map<string, shared_ptr<Texture>> GUIResources::gui_resources;
 void GUIResources::initialize()
 {
 	ComPtr<ID3D11Device> const& device = d_graphic->getDevice();
+	ComPtr<ID3D11DeviceContext> const& context = d_graphic->getContext();
 	gui_resources.insert(make_pair("widgets", make_shared<Texture>(
 		device,
 		L"./textures/gui/widgets.png")));

@@ -71,6 +71,8 @@ GUIRender::GUIRender()
 
 	device->CreateDepthStencilState(&depth_stencil_desc,
 		this->depth_stencil_state.GetAddressOf());
+
+	this->sampler_state = make_shared<SamplerState>(device);
 }
 
 void GUIRender::render(GUI* gui)
@@ -92,18 +94,19 @@ void GUIRender::render(GUI* gui)
 	}
 
 	// gui transparent item render
-	this->setPipe(context, true);
 	cnt = gui->getItemArraySize(false);
-	for (int i = 0; i < cnt; i++) {
-		gui->setTransParencyBuffer(context, i);
-		context->DrawIndexed(6, 0, 0);
+	if (cnt) {
+		this->setPipe(context, true);
+		for (int i = 0; i < cnt; i++) {
+			gui->setTransParencyBuffer(context, i);
+			context->DrawIndexed(6, 0, 0);
+		}
+		context->OMSetBlendState(
+			nullptr,
+			nullptr,
+			0xFFFFFFFF
+		);
 	}
-
-	context->OMSetBlendState(
-		nullptr,
-		nullptr,
-		0xFFFFFFFF
-	);
 	context->OMSetDepthStencilState(nullptr, 0);
 }
 
@@ -150,4 +153,9 @@ void GUIRender::setPipe(
 		context->PSSetSamplers(0, 1, this->sampler_state->getComPtr().GetAddressOf());
 	}
 	context->OMSetDepthStencilState(this->depth_stencil_state.Get(), 0);
+}
+
+ComPtr<ID3D11ShaderResourceView> const& GUIRender::getSRV()
+{
+	return this->deferred_buffer->getSRV(0);
 }
