@@ -24,6 +24,7 @@ public:
 	int getItemArraySize(bool op_tp);
 	void moveOPItem(int idx, vec3 const& new_pos);
 	void moveTPItem(int idx, vec3 const& new_pos);
+	void moveGUIPos(vec3 const& new_pos);
 	~GUI() = default;
 
 private:
@@ -39,6 +40,7 @@ private:
 	shared_ptr<ConstantBuffer> gui_gamma_buffer;
 
 private:
+	Mat gui_world = Mat::Identity;
 	vector<OBlockItem> opacity_items;
 	vector<TBlockItem> tp_items;
 };

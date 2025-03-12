@@ -130,7 +130,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 cam->getPos().z);
             terrain.Render();
             gui_manager.render();
-            composite_renderer.render(terrain.getSRV(), gui_manager.getSRV());
+            composite_renderer.render(terrain.getSRV(), nullptr);
+            //composite_renderer.render(terrain.getSRV(), gui_manager.getSRV());
         }
     }
     return (int) msg.wParam;

@@ -43,7 +43,7 @@ void GUI::setGUIBuffer(ComPtr<ID3D11DeviceContext> const& context)
 	context->IASetIndexBuffer(
 		this->i_buffer->getComPtr().Get(),
 		DXGI_FORMAT_R32_UINT, 0);
-	this->constant_buffer->update(Mat::Identity);
+	this->constant_buffer->update(this->gui_world.Transpose());
 	context->VSSetConstantBuffers(0, 1, this->constant_buffer->getComPtr().GetAddressOf());
 	shared_ptr<Texture> const& texture = GUIResources::getTexture(this->gui_name);
 	context->PSSetShaderResources(0, 1, texture->getComPtr().GetAddressOf());
@@ -123,5 +123,10 @@ void GUI::moveTPItem(int idx, vec3 const& new_pos)
 		assert(false);
 	}
 	this->tp_items[idx].setPos(new_pos);
+}
+
+void GUI::moveGUIPos(vec3 const& new_pos)
+{
+	this->gui_world = Mat::CreateTranslation(new_pos);
 }
 

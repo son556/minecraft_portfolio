@@ -7,11 +7,11 @@ GUIManager::GUIManager()
 {
 	GUIResources::initialize();
 	ItemResources::initializeItemResources();
-	float w = 0.8f;
-	float r = 133.f / 194.f;
+	float w = 0.7f;
+	float r = 1.f;
 	this->gui_book.insert(make_pair(static_cast<string>("tab_items"), 
 		make_shared<GUI>(w, w * r, "tab_items")));
-
+	this->gui_book["tab_items"]->moveGUIPos(vec3(0, 0.2, 0));
 }
 
 void GUIManager::render()

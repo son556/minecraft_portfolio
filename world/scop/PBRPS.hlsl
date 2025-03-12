@@ -6,6 +6,8 @@ TextureCube irradiance_tex : register(t4);
 TextureCube specular_tex : register(t5);
 Texture2D brdf_tex : register(t6);
 
+// 블록 면의 normal을 가져와서 normal_tex와 조합해야 할 듯
+
 SamplerState linear_sampler : register(s0);
 SamplerState clamp_sampler : register(s1);
 
@@ -50,6 +52,8 @@ float3 diffuseIBL(
     
     float3 irradiance = irradiance_tex.Sample(linear_sampler,
         normal_w).rgb;
+    
+    irradiance = pow(irradiance, 1.0 / 2.2);
     return kd * albedo * irradiance;
 }
 
@@ -66,6 +70,7 @@ float3 specularIBL(
     
     float3 specular_irr = specular_tex.SampleLevel(linear_sampler,
         reflect(-pixel_to_eye, normal_w), roughness * 10.f).rgb;
+    
     float3 F0 = lerp(Fdielectric, albedo, mettalic);
     
     return (F0 * specularBRDF.x + specularBRDF.y) *
@@ -124,7 +129,7 @@ PS_OUTPUT main(PS_INPUT input)
         output.direct_light = float4(0, 0, 0, 0);
         return output;
     }
-    normal = normalize(normal);
+    
     float3 pixel_to_eye = normalize(eye_pos.xyz - pos);
     float ao = rma_tex.Sample(linear_sampler, input.uv).b;
     float metallic = rma_tex.Sample(linear_sampler, input.uv).g;
@@ -157,6 +162,7 @@ PS_OUTPUT main(PS_INPUT input)
     float3 specualr_brdf = (F * D * G) / max(1e-5, 4.0 * NdotI * NdotO);
     float3 radiance = 1.0f;
     direct_light = (diffuse_brdf + specualr_brdf) * radiance * NdotI;
+    
     output.ambient_light = float4(ambient_light, 1);
     output.direct_light = float4(direct_light, 1);
     

@@ -67,7 +67,7 @@ GeoRender::GeoRender(MapUtils* minfo)
 			device,
 			context,
 			path_color,
-			0, true // temp
+			0, true
 		);
 	vector<wstring> path_normal = {
 		L"./textures/pbr/test_sample/grass_path_top_n.png",

@@ -16,10 +16,7 @@ SamplerState sampler0 : register(s0);
 
 float3 LinearToneMapping(float3 color)
 {
-    float3 invGamma = float3(1, 1, 1) / 2.2f;
-
-    color = clamp(color, 0., 1.);
-    color = pow(color, invGamma);
+    color = pow(color, 1.0 / 2.2);
     return color;
 }
 
@@ -33,6 +30,7 @@ float4 main(PS_INPUT input) : SV_TARGET
     float3 a_color = 
         ambient_color.Sample(sampler0, input.uv).rgb;
     a_color = LinearToneMapping(a_color);
+    
     float4 d_c = 
         directional_color.Sample(sampler0, input.uv);
     float3 d_color = d_c.rgb;
@@ -48,7 +46,6 @@ float4 main(PS_INPUT input) : SV_TARGET
     }
     
     float4 ssao = ssao_map.Sample(sampler0, input.uv);
-    color = clamp(color, 0.0, 1000.0);
     color = float4(a_color.xyz * ssao.r * cave_shadow + d_color.xyz * sp, 1);
     return color;
 }
