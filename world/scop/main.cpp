@@ -35,6 +35,7 @@ bool move_flag = true;
 bool move_check = false;
 bool correct_mouse = false;
 bool first_view = false;
+bool item_ui = false;
 
 int block_type = 1;
 
@@ -130,8 +131,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 cam->getPos().z);
             terrain.Render();
             gui_manager.render();
-            composite_renderer.render(terrain.getSRV(), nullptr);
-            //composite_renderer.render(terrain.getSRV(), gui_manager.getSRV());
+            if (item_ui == false) // temp
+                composite_renderer.render(terrain.getSRV(), nullptr);
+            else
+                composite_renderer.render(terrain.getSRV(), gui_manager.getSRV());
         }
     }
     return (int) msg.wParam;
@@ -239,7 +242,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             if (wParam == 27) {
                 // ESC 키가 눌렸을 때 프로그램 종료
-                DestroyWindow(hWnd);
+                if (item_ui)
+                    item_ui = false;
+                else
+                    DestroyWindow(hWnd);
             }
             if (wParam == 13) {
                 fix_flag ^= 1;
@@ -255,6 +261,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 block_type = -static_cast<int>((wParam - 0x31));
             }
+            if (wParam == 0x49)
+            {
+                item_ui ^= 1;
+            }
         }
         break;
     case WM_LBUTTONDOWN:
@@ -269,7 +279,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_MOUSEMOVE:
         {
-        if (move_check && fix_flag) {
+        if (move_check && fix_flag && item_ui == false) {
             if (correct_mouse == false) {
                 correct_mouse = true;
                 break;
