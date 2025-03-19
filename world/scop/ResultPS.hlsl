@@ -16,8 +16,16 @@ SamplerState sampler0 : register(s0);
 
 float3 LinearToneMapping(float3 color)
 {
-    color = pow(color, 1.0 / 2.2);
-    return color;
+    const float gamma = 2.2;
+    const float exposure = 1.0;
+    float3 hdrColor = color;
+  
+    // Exposure tone mapping
+    float3 mapped = float3(1.0, 1.0, 1.0) - exp(-hdrColor * exposure);
+    // Gamma correction 
+    mapped = pow(mapped, 1.0 / gamma);
+  
+    return mapped;
 }
 
 float4 main(PS_INPUT input) : SV_TARGET

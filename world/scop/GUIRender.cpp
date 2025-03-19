@@ -7,7 +7,7 @@
 #include "RasterizerState.h"
 #include "PixelShader.h"
 #include "SamplerState.h"
-#include "GUI.h"
+#include "TabItems.h"
 #include "DeferredBuffer.h"
 
 
@@ -75,11 +75,11 @@ GUIRender::GUIRender()
 	this->sampler_state = make_shared<SamplerState>(device);
 }
 
-void GUIRender::render(GUI* gui)
+void GUIRender::render(GUI* gui, bool rtv_reset)
 {
 	ComPtr<ID3D11DeviceContext> const& context = d_graphic->getContext();
 
-	d_graphic->renderBegin(this->deferred_buffer.get());
+	d_graphic->renderBegin(this->deferred_buffer.get(), nullptr, rtv_reset);
 	
 	// gui render
 	this->setPipe(context, false);
@@ -87,26 +87,33 @@ void GUIRender::render(GUI* gui)
 	context->DrawIndexed(6, 0, 0);
 
 	// gui opacity item render
-	int cnt = gui->getItemArraySize(true);
+	int cnt = gui->getItemArraySize();
 	for (int i = 0; i < cnt; i++) {
-		gui->setOpacityItemBuffer(context, i);
-		context->DrawIndexed(6, 0, 0);
+		shared_ptr<BlockItem> const& block = gui->getItem(i);
+		if (block == nullptr)
+			continue;
+		if (block->getBlockFlag() == false) {
+			gui->setOpacityItemBuffer(context, i);
+			context->DrawIndexed(6, 0, 0);
+		}
 	}
 
 	// gui transparent item render
-	cnt = gui->getItemArraySize(false);
-	if (cnt) {
-		this->setPipe(context, true);
-		for (int i = 0; i < cnt; i++) {
+	this->setPipe(context, true);
+	for (int i = 0; i < cnt; i++) {
+		shared_ptr<BlockItem> const& block = gui->getItem(i);
+		if (block == nullptr)
+			continue;
+		if (block->getBlockFlag()) {
 			gui->setTransParencyBuffer(context, i);
 			context->DrawIndexed(6, 0, 0);
 		}
-		context->OMSetBlendState(
-			nullptr,
-			nullptr,
-			0xFFFFFFFF
-		);
 	}
+	context->OMSetBlendState(
+		nullptr,
+		nullptr,
+		0xFFFFFFFF
+	);
 	context->OMSetDepthStencilState(nullptr, 0);
 }
 

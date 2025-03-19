@@ -394,6 +394,12 @@
     <Filter Include="소스 파일\GUI\GUIshader">
       <UniqueIdentifier>{9c21d6b2-179f-448c-8428-6dfd2a49f8e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\GUI\Inventory">
+      <UniqueIdentifier>{e311b459-39a1-43ed-b281-3791595e88a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\GUI\TabItems">
+      <UniqueIdentifier>{fb2bb4db-76e9-447f-be24-72a9d747bf9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -681,6 +687,15 @@
     <ClInclude Include="ItemResources.h">
       <Filter>소스 파일\GUI\Items\ItemResources</Filter>
     </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>소스 파일\GUI\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockItem.h">
+      <Filter>소스 파일\GUI\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="TabItems.h">
+      <Filter>소스 파일\GUI\TabItems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -958,6 +973,15 @@
     </ClCompile>
     <ClCompile Include="ItemResources.cpp">
       <Filter>소스 파일\GUI\Items\ItemResources</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>소스 파일\GUI\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockItem.cpp">
+      <Filter>소스 파일\GUI\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="TabItems.cpp">
+      <Filter>소스 파일\GUI\TabItems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

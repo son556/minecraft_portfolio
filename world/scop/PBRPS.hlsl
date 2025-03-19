@@ -123,6 +123,7 @@ PS_OUTPUT main(PS_INPUT input)
     float3 pos = world_pos_tex.Sample(linear_sampler, input.uv).xyz;
     float3 normal = normal_tex.Sample(linear_sampler, input.uv).xyz;
     float3 albedo = color_tex.Sample(linear_sampler, input.uv).rgb;
+    
     if (normal.x == 0 && normal.y == 0 && normal.z == 0)
     {
         output.ambient_light = float4(albedo, 1);

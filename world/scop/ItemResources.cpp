@@ -3,27 +3,18 @@
 #include "Texture.h"
 #include "DeferredGraphics.h"
 
-map<string, shared_ptr<Texture>>ItemResources::item_textures;
+vector<shared_ptr<Texture>> ItemResources::item_textures;
 
 void ItemResources::initializeItemResources()
 {
 	ComPtr<ID3D11Device> const& device = d_graphic->getDevice();
-	item_textures.insert(make_pair("grass", make_shared<Texture>(
-		device,
-		L"./textures/pbr/test_sample/packed_mud.png" // temp
-	)));
-	item_textures.insert(make_pair("oak_log", make_shared<Texture>(
-		device,
-		L"./textures/pbr/oak_tree/oak_log.png")));
+
+	item_textures.push_back(make_shared<Texture>(device,
+		L"./textures/pbr/test_sample/packed_mud.png"));
 }
 
-shared_ptr<Texture>& ItemResources::getTexture(string str)
+shared_ptr<Texture>& ItemResources::getTexture(BlockType block_type)
 {
-	map<string, shared_ptr<Texture>>::iterator it;
-	it = item_textures.find(str);
-	if (it == item_textures.end()) {
-		cout << "no item texture" << endl;
-		assert(false);
-	}
-	return it->second;
+	int idx = static_cast<int>(block_type) - 1;
+	return item_textures[idx];
 }

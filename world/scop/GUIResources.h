@@ -2,11 +2,17 @@
 
 class Texture;
 
+enum class GUITexture {
+	TAB_ITEMS,
+	INVENTORY,
+	SELECT_ITEM
+};
+
 class GUIResources
 {
 public:
 	static void initialize();
-	static shared_ptr<Texture> const& getTexture(string str);
+	static shared_ptr<Texture> const& getTexture(GUITexture tex_id);
 
 private:
 	~GUIResources() = delete;
@@ -15,6 +21,6 @@ private:
 	GUIResources& operator=(GUIResources const&) = delete;
 
 private:
-	static map<string, shared_ptr<Texture>> gui_resources;
+	static shared_ptr<Texture> gui_resources[3];
 };
 

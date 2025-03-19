@@ -2,24 +2,36 @@
 #include "GUIManager.h"
 #include "GUIResources.h"
 #include "ItemResources.h"
+#include "TabItems.h"
+#include "Inventory.h"
 
 GUIManager::GUIManager()
 {
 	GUIResources::initialize();
 	ItemResources::initializeItemResources();
-	float w = 0.7f;
+	float w = 0.8f;
 	float r = 1.f;
-	this->gui_book.insert(make_pair(static_cast<string>("tab_items"), 
-		make_shared<GUI>(w, w * r, "tab_items")));
-	this->gui_book["tab_items"]->moveGUIPos(vec3(0, 0.2, 0));
+	int idx = static_cast<int>(GUITexture::TAB_ITEMS);
+	this->gui_arr.resize(2);
+	this->gui_arr[idx] = make_shared<TabItems>(w, w * r);
+	this->gui_arr[idx]->moveGUIPos(vec3(0, 0.2, 0));
+
+	w = 0.3f;
+	idx = static_cast<int>(GUITexture::INVENTORY);
+	this->gui_arr[idx] = make_shared<Inventory>(w, 0.1);
+	this->gui_arr[idx]->moveGUIPos(vec3(0, -0.9, 0));
+}
+
+void GUIManager::render(GUITexture idx)
+{
+	this->render();
+	this->gui_render.render(this->gui_arr[static_cast<int>(idx)].get(), false);
 }
 
 void GUIManager::render()
 {
-	// temp
-	map<string, shared_ptr<GUI>>::iterator it;
-	for (it = this->gui_book.begin(); it != this->gui_book.end(); it++)
-		this->gui_render.render(it->second.get());
+	this->gui_render.render(
+		this->gui_arr[static_cast<int>(GUITexture::INVENTORY)].get(), true);
 }
 
 ComPtr<ID3D11ShaderResourceView> const& GUIManager::getSRV()

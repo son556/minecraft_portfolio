@@ -13,7 +13,7 @@ class GUIRender
 public:
 	GUIRender();
 	~GUIRender() = default;
-	void render(GUI* gui);
+	void render(GUI* gui, bool rtv_reset);
 	ComPtr<ID3D11ShaderResourceView> const& getSRV();
 
 private:

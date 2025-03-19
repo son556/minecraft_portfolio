@@ -3,7 +3,7 @@
 #include "Texture.h"
 #include "DeferredGraphics.h"
 
-map<string, shared_ptr<Texture>> GUIResources::gui_resources;
+shared_ptr<Texture> GUIResources::gui_resources[3];
 
 
 
@@ -11,28 +11,19 @@ void GUIResources::initialize()
 {
 	ComPtr<ID3D11Device> const& device = d_graphic->getDevice();
 	ComPtr<ID3D11DeviceContext> const& context = d_graphic->getContext();
-	gui_resources.insert(make_pair("widgets", make_shared<Texture>(
-		device,
-		L"./textures/gui/widgets.png")));
-	gui_resources.insert(make_pair("minecraft", make_shared<Texture>(
-		device,
-		L"./textures/gui/minecraft.png")));
-	gui_resources.insert(make_pair("tab_button", make_shared<Texture>(
-		device,
-		L"./textures/gui/tab_button.png")));
-	gui_resources.insert(make_pair("tab_items", make_shared<Texture>(
-		device, L"./textures/gui/tab_items.png")));
+	gui_resources[0] = make_shared<Texture>(
+		device, L"./textures/gui/tab_items.png");
+
+	gui_resources[1] = make_shared<Texture>(
+		device, L"./textures/gui/inventory.png");
+	
+	gui_resources[2] = make_shared<Texture>(
+		device, L"./textures/gui/select_item.png");
 }
 
-shared_ptr<Texture> const& GUIResources::getTexture(string str)
+shared_ptr<Texture> const& GUIResources::getTexture(GUITexture tex_id)
 {
-	map<string, shared_ptr<Texture>>::iterator it;
-	it = gui_resources.find(str);
-	if (it == gui_resources.end()) {
-		cout << "no gui texture" << endl;
-		assert(false);
-	}
-	return it->second;
+	return gui_resources[static_cast<int>(tex_id)];
 }
 
 

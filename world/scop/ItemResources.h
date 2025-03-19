@@ -5,7 +5,7 @@ class ItemResources
 {
 public:
 	static void initializeItemResources();
-	static shared_ptr<Texture>& getTexture(string str);
+	static shared_ptr<Texture>& getTexture(BlockType block_type);
 
 private:
 	ItemResources() = delete;
@@ -14,6 +14,6 @@ private:
 	ItemResources& operator=(ItemResources const&) = delete;
 
 private:
-	static map<string, shared_ptr<Texture>> item_textures;
+	static vector<shared_ptr<Texture>> item_textures;
 };
 

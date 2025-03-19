@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="BlendState.h" />
     <ClInclude Include="Block.h" />
+    <ClInclude Include="BlockItem.h" />
     <ClInclude Include="Blur.h" />
     <ClInclude Include="Body.h" />
     <ClInclude Include="CascadeShadow.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="Head.h" />
     <ClInclude Include="HullShader.h" />
     <ClInclude Include="InputLayouts.h" />
+    <ClInclude Include="Inventory.h" />
     <ClInclude Include="ItemResources.h" />
     <ClInclude Include="LeftArm.h" />
     <ClInclude Include="LeftLeg.h" />
@@ -220,6 +222,7 @@
     <ClInclude Include="Sun.h" />
     <ClInclude Include="SunMoon.h" />
     <ClInclude Include="SweptAABB.h" />
+    <ClInclude Include="TabItems.h" />
     <ClInclude Include="TBlockItem.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainSystem.h" />
@@ -246,6 +249,7 @@
   <ItemGroup>
     <ClCompile Include="BlendState.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="BlockItem.cpp" />
     <ClCompile Include="Blur.cpp" />
     <ClCompile Include="Body.cpp" />
     <ClCompile Include="CascadeShadow.cpp" />
@@ -273,6 +277,7 @@
     <ClCompile Include="Head.cpp" />
     <ClCompile Include="HullShader.cpp" />
     <ClCompile Include="InputLayouts.cpp" />
+    <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="ItemResources.cpp" />
     <ClCompile Include="LeftArm.cpp" />
     <ClCompile Include="LeftLeg.cpp" />
@@ -318,6 +323,7 @@
     <ClCompile Include="Sun.cpp" />
     <ClCompile Include="SunMoon.cpp" />
     <ClCompile Include="SweptAABB.cpp" />
+    <ClCompile Include="TabItems.cpp" />
     <ClCompile Include="TBlockItem.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainSystem.cpp" />

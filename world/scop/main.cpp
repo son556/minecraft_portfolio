@@ -109,9 +109,22 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         {
             if (lb_flag) {
                 //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
-                terrain.putBlock(cam->getPos(), cam->getDir(), block_type);
-                if (cam->getFreeCamFlag() == false)
-                    entity->setCharacterLeftArmAnimation();
+                // 임시용
+                if (item_ui) {
+                    RECT client_rect;
+                    GetClientRect(hWnd, &client_rect);
+                    POINT pt;
+                    GetCursorPos(&pt);
+                    ScreenToClient(hWnd, &pt);
+                    float nx = pt.x / static_cast<float>(w_width) * 2.f - 1.f;
+                    float ny = pt.y / static_cast<float>(w_height) * 2.f - 1.f;
+                    cout << "x: " << nx << ", y: " << ny << endl;
+                }
+                else {
+                    terrain.putBlock(cam->getPos(), cam->getDir(), block_type);
+                    if (cam->getFreeCamFlag() == false)
+                        entity->setCharacterLeftArmAnimation();
+                }
                 lb_flag = false;
             }
             if (rb_flag) {
@@ -130,11 +143,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             terrain.userPositionCheck(cam->getPos().x,
                 cam->getPos().z);
             terrain.Render();
-            gui_manager.render();
-            if (item_ui == false) // temp
-                composite_renderer.render(terrain.getSRV(), nullptr);
+            if (item_ui)
+                gui_manager.render(GUITexture::TAB_ITEMS);
             else
-                composite_renderer.render(terrain.getSRV(), gui_manager.getSRV());
+                gui_manager.render();
+            composite_renderer.render(terrain.getSRV(), gui_manager.getSRV());
         }
     }
     return (int) msg.wParam;
@@ -289,8 +302,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             POINT pt;
             GetCursorPos(&pt);
             ScreenToClient(hWnd, &pt);
-            int centerX = (client_rect.right - client_rect.left) / 2;
-            int centerY = (client_rect.bottom - client_rect.top) / 2;
             cam->onMouseMove(hWnd, pt.x, pt.y);
             cam->setCursorInClient(hWnd);
             correct_mouse = false;
