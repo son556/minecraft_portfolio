@@ -8,7 +8,7 @@ bool BlockItem::getBlockFlag()
 
 void BlockItem::setInfo(bool tp_flag)
 {
-	this->tp_flag;
+	this->tp_flag = tp_flag;
 }
 
 void BlockItem::copyFrom(BlockItem const& other)

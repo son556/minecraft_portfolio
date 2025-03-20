@@ -33,16 +33,27 @@ TabItems::TabItems(float w, float h)
 		this->items[i] = nullptr;
 
 	this->items[0] = make_shared<OBlockItem>();
-	dynamic_pointer_cast<OBlockItem>(this->items[0])->setInfo(BlockType::GRASS, false);
+	shared_ptr<OBlockItem>&& o_item = dynamic_pointer_cast<OBlockItem>(this->items[0]);
+	o_item->setInfo(BlockType::GRASS, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0, this->items_y_0, 0));
+
 	this->items[1] = make_shared<TBlockItem>();
-	dynamic_pointer_cast<TBlockItem>(this->items[1])->
-		setInfo(BlockType::TRANSPARENCY_RED, vec4(1, 0, 0, 0.3), true);
+	shared_ptr<TBlockItem>&& t_item = dynamic_pointer_cast<TBlockItem>(this->items[1]);
+	t_item->setInfo(BlockType::TRANSPARENCY_RED, 
+		vec4(1, 0, 0, 0.3), true, this->tbw_size, this->tbh_size);
+	t_item->setPos(vec3(this->items_x_0 + this->gap_width, this->items_y_0, 0));
+	
 	this->items[2] = make_shared<TBlockItem>();
-	dynamic_pointer_cast<TBlockItem>(this->items[2])->
-		setInfo(BlockType::TRANSPARENCY_BLUE, vec4(0, 0, 1, 0.3), true);
+	t_item = dynamic_pointer_cast<TBlockItem>(this->items[2]);
+	t_item->setInfo(BlockType::TRANSPARENCY_BLUE, vec4(0, 0, 1, 0.3), 
+				true, this->tbw_size, this->tbh_size);
+	t_item->setPos(vec3(this->items_x_0 + 2 * this->gap_width, this->items_y_0, 0));
+
 	this->items[3] = make_shared<TBlockItem>();
-	dynamic_pointer_cast<TBlockItem>(this->items[3])->
-		setInfo(BlockType::TRANSPARENCY_GREEN, vec4(0, 1, 0, 0.3), true);
+	t_item = dynamic_pointer_cast<TBlockItem>(this->items[3]);
+	t_item->setInfo(BlockType::TRANSPARENCY_GREEN, vec4(0, 1, 0, 0.3), 
+		true, this->tbw_size, this->tbh_size);
+	t_item->setPos(vec3(this->items_x_0 + 3 * this->gap_width, this->items_y_0, 0));
 }
 
 void TabItems::setGUIBuffer(ComPtr<ID3D11DeviceContext> const& context)
@@ -63,7 +74,7 @@ void TabItems::setGUIBuffer(ComPtr<ID3D11DeviceContext> const& context)
 
 void TabItems::setOpacityItemBuffer(ComPtr<ID3D11DeviceContext> const& context, int idx)
 {
-	if (this->items.size() >= idx || this->items[idx]->getBlockFlag())
+	if (this->items.size() <= idx || this->items[idx]->getBlockFlag())
 		return;
 	shared_ptr<OBlockItem> const& o_item =
 		dynamic_pointer_cast<OBlockItem>(this->items[idx]);
@@ -87,7 +98,7 @@ void TabItems::setOpacityItemBuffer(ComPtr<ID3D11DeviceContext> const& context, 
 
 void TabItems::setTransParencyBuffer(ComPtr<ID3D11DeviceContext> const& context, int idx)
 {
-	if (this->items.size() >= idx || this->items[idx]->getBlockFlag() == false)
+	if (this->items.size() <= idx || this->items[idx]->getBlockFlag() == false)
 		return;
 
 	shared_ptr<TBlockItem> const& t_item = dynamic_pointer_cast<TBlockItem>(this->items[idx]);
@@ -133,5 +144,9 @@ void TabItems::moveItem(int idx, vec3 const& new_pos)
 	// 아이템창 칸 안에 들어와 있는 지 확인해야 함
 
 	int new_idx;
+}
+
+void TabItems::optRender()
+{
 }
 

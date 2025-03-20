@@ -11,6 +11,8 @@ public:
 	void render(GUITexture idx);
 	void render();
 	ComPtr<ID3D11ShaderResourceView> const& getSRV();
+	BlockType getInventoryBlock(int idx);
+	void selectInventoryItem(int idx);
 
 private:
 	GUIManager(GUIManager const&) = delete;

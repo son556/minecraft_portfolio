@@ -7,6 +7,12 @@
 #include "Texture.h"
 #include "OBlockItem.h"
 #include "TBlockItem.h"
+#include "InputLayout.h"
+#include "InputLayouts.h"
+#include "VertexShader.h"
+#include "RasterizerState.h"
+#include "PixelShader.h"
+#include "SamplerState.h"
 
 Inventory::Inventory(float w, float h)
 {
@@ -30,6 +36,61 @@ Inventory::Inventory(float w, float h)
 	for (int i = 0; i < 3; i++)
 		this->items[i] = nullptr;
 
+	this->items[0] = make_shared<OBlockItem>();
+	shared_ptr<OBlockItem>&& o_item = dynamic_pointer_cast<OBlockItem>(this->items[0]);
+	o_item->setInfo(BlockType::GRASS, false);
+	o_item->setPos(vec3(-0.2, -0.9, 0));
+
+	this->items[1] = make_shared<TBlockItem>();
+	shared_ptr<TBlockItem>&& t_item = dynamic_pointer_cast<TBlockItem>(this->items[1]);
+	t_item->setInfo(BlockType::TRANSPARENCY_RED, vec4(1, 0, 0, 0.3), true);
+	t_item->setPos(vec3(0, -0.9, 0));
+
+	this->items[2] = make_shared<TBlockItem>();
+	t_item = dynamic_pointer_cast<TBlockItem>(this->items[2]);
+	t_item->setInfo(BlockType::TRANSPARENCY_GREEN, vec4(0, 1, 0, 0.3), true);
+	t_item->setPos(vec3(0.2, -0.9, 0));
+
+	vertices.clear();
+	indices.clear();
+	Block::makeBox(h, h, vertices, indices);
+	this->opt_v_buffer = make_shared<Buffer<VertexDefer>>(
+		device,
+		vertices.data(),
+		vertices.size(),
+		D3D11_BIND_VERTEX_BUFFER
+	);
+	this->opt_vertex_shader = make_shared<VertexShader>(
+		device,
+		L"InventoryOptVS.hlsl",
+		"main",
+		"vs_5_0"
+	);
+	this->input_layout = make_shared<InputLayout>(
+		device,
+		InputLayouts::layout_pt.data(),
+		InputLayouts::layout_pt.size(),
+		this->opt_vertex_shader->getBlob()
+	);
+	this->opt_pixel_shader = make_shared<PixelShader>(
+		device,
+		L"InventoryOptPS.hlsl",
+		"main",
+		"ps_5_0"
+	);
+	this->sampler_state = make_shared<SamplerState>(device);
+	this->opt_rasterizer_state = make_shared<RasterizerState>(
+		device,
+		D3D11_FILL_SOLID,
+		D3D11_CULL_NONE
+	);
+
+	Mat a = Mat::CreateTranslation(vec3(-0.2, -0.9, 0)).Transpose();
+	this->constant_opt_buffer = make_shared<ConstantBuffer>(
+		device,
+		d_graphic->getContext(),
+		a
+	);
 }
 
 void Inventory::setGUIBuffer(ComPtr<ID3D11DeviceContext> const& context)
@@ -51,7 +112,7 @@ void Inventory::setGUIBuffer(ComPtr<ID3D11DeviceContext> const& context)
 
 void Inventory::setOpacityItemBuffer(ComPtr<ID3D11DeviceContext> const& context, int idx)
 {
-	if (this->items.size() >= idx || this->items[idx]->getBlockFlag())
+	if (this->items.size() <= idx || this->items[idx]->getBlockFlag())
 		return;
 	shared_ptr<OBlockItem> const& o_item =
 		dynamic_pointer_cast<OBlockItem>(this->items[idx]);
@@ -78,7 +139,7 @@ void Inventory::setTransParencyBuffer(
 	int idx
 )
 {
-	if (this->items.size() >= idx || this->items[idx]->getBlockFlag() == false)
+	if (this->items.size() <= idx || this->items[idx]->getBlockFlag() == false)
 		return;
 
 	shared_ptr<TBlockItem> const& t_item = dynamic_pointer_cast<TBlockItem>(this->items[idx]);
@@ -125,7 +186,50 @@ void Inventory::moveGUIPos(vec3 const& new_pos)
 	this->gui_world = Mat::CreateTranslation(new_pos);
 }
 
+void Inventory::optRender()
+{
+	ComPtr<ID3D11DeviceContext> const& context = d_graphic->getContext();
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	uint32 stride = this->opt_v_buffer->getStride();
+	uint32 offset = this->opt_v_buffer->getOffset();
+	context->IASetVertexBuffers(0, 1,
+		this->opt_v_buffer->getComPtr().GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(
+		this->i_buffer->getComPtr().Get(),
+		DXGI_FORMAT_R32_UINT,
+		0
+	);
+	context->IASetInputLayout(this->input_layout->getComPtr().Get());
+	context->VSSetShader(
+		this->opt_vertex_shader->getComPtr().Get(),
+		nullptr,
+		0
+	);
+	context->VSSetConstantBuffers(0, 1, 
+		this->constant_opt_buffer->getComPtr().GetAddressOf());
+	context->RSSetState(this->opt_rasterizer_state->getComPtr().Get());
+	context->PSSetShader(this->opt_pixel_shader->getComPtr().Get(), nullptr, 0);
+	context->PSSetSamplers(0, 1, this->sampler_state->getComPtr().GetAddressOf());
+	context->PSSetShaderResources(0, 1,
+		GUIResources::getTexture(GUITexture::SELECT_ITEM)->getComPtr().GetAddressOf());
+	context->DrawIndexed(6, 0, 0);
+}
+
 BlockType Inventory::getBlockType(int idx)
 {
+	if (this->items[idx] == nullptr)
+		return BlockType::AIR;
 	return this->items[idx]->getBlockType();
+}
+
+void Inventory::selectItem(int idx)
+{
+	Mat m = Mat::Identity;
+	if (idx == 0)
+		m = Mat::CreateTranslation(vec3(-0.2, -0.9, 0)).Transpose();
+	else if (idx == 1)
+		m = Mat::CreateTranslation(vec3(0, -0.9, 0)).Transpose();
+	else if (idx == 2)
+		m = Mat::CreateTranslation(vec3(0.2, -0.9, 0)).Transpose();
+	this->constant_opt_buffer->update(m);
 }

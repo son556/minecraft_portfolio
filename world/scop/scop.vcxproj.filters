@@ -400,6 +400,9 @@
     <Filter Include="소스 파일\GUI\TabItems">
       <UniqueIdentifier>{fb2bb4db-76e9-447f-be24-72a9d747bf9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\GUI\Inventory\InventoryShader">
+      <UniqueIdentifier>{4d2cea04-07ff-49a9-8a0b-0ca0e5e5c831}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -1195,6 +1198,12 @@
     </FxCompile>
     <FxCompile Include="GUIRenderVS.hlsl">
       <Filter>소스 파일\GUI\GUIshader</Filter>
+    </FxCompile>
+    <FxCompile Include="InventoryOptVS.hlsl">
+      <Filter>소스 파일\GUI\Inventory\InventoryShader</Filter>
+    </FxCompile>
+    <FxCompile Include="InventoryOptPS.hlsl">
+      <Filter>소스 파일\GUI\Inventory\InventoryShader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

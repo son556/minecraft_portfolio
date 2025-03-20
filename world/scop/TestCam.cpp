@@ -70,10 +70,18 @@ double TestCam::ndcToDegree(double ndc)
 }
 
 
-void TestCam::onMouseMove(HWND hWnd, int mouse_x, int mouse_y)
+void TestCam::onMouseMove(HWND hWnd)
 {
-	float x = mouse_x * 2.0 / this->w_width - 1.0;
-	float y = -mouse_y * 2.0 / this->w_height + 1.0;
+	RECT client_rect;
+	GetClientRect(hWnd, &client_rect);
+	POINT pt;
+	GetCursorPos(&pt);
+	ScreenToClient(hWnd, &pt);
+	float h = client_rect.bottom - client_rect.top;
+	float w = client_rect.right - client_rect.left;
+
+	float x = pt.x * 2.0 / w - 1.0;
+	float y = -pt.y * 2.0 / h + 1.0;
 
 	// vec3
 	vec3 new_dir;

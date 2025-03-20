@@ -36,9 +36,7 @@ bool move_check = false;
 bool correct_mouse = false;
 bool first_view = false;
 bool item_ui = false;
-
 int block_type = 1;
-
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -107,23 +105,32 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
+            gui_manager.selectInventoryItem(block_type - 1);
             if (lb_flag) {
                 //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
                 // 임시용
                 if (item_ui) {
                     RECT client_rect;
                     GetClientRect(hWnd, &client_rect);
+                    float h = client_rect.bottom - client_rect.top;
+                    float w = client_rect.right - client_rect.left;
                     POINT pt;
                     GetCursorPos(&pt);
                     ScreenToClient(hWnd, &pt);
-                    float nx = pt.x / static_cast<float>(w_width) * 2.f - 1.f;
-                    float ny = pt.y / static_cast<float>(w_height) * 2.f - 1.f;
+                    float mx = pt.x;
+                    float my = pt.y;
+                    float nx = pt.x * 2.f / w - 1.f;
+                    float ny = -pt.y * 2.f / h + 1.f;
+                    cout << "pt: " << pt.x << ", " << pt.y << endl;
                     cout << "x: " << nx << ", y: " << ny << endl;
                 }
                 else {
-                    terrain.putBlock(cam->getPos(), cam->getDir(), block_type);
-                    if (cam->getFreeCamFlag() == false)
-                        entity->setCharacterLeftArmAnimation();
+                    int b_type = gui_manager.getInventoryBlock(block_type - 1);
+                    if (b_type) {
+                        terrain.putBlock(cam->getPos(), cam->getDir(), b_type);
+                        if (cam->getFreeCamFlag() == false)
+                            entity->setCharacterLeftArmAnimation();
+                    }
                 }
                 lb_flag = false;
             }
@@ -260,21 +267,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 else
                     DestroyWindow(hWnd);
             }
-            if (wParam == 13) {
+            else if (wParam == 13) {
                 fix_flag ^= 1;
             }
-            if (wParam == 0x70) {
+            else if (wParam == 0x70) {
                 first_view ^= 1;
             }
-            if (wParam == 0x31)
+            else if (wParam >= 0x31 && wParam <= 0x33)
             {
                 block_type = wParam - 0x30;
             }
-            if (wParam >= 0x32 && wParam <= 0x34)
-            {
-                block_type = -static_cast<int>((wParam - 0x31));
-            }
-            if (wParam == 0x49)
+            else if (wParam == 0x49)
             {
                 item_ui ^= 1;
             }
@@ -297,12 +300,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 correct_mouse = true;
                 break;
             }
-            RECT client_rect;
-            GetClientRect(hWnd, &client_rect);
-            POINT pt;
-            GetCursorPos(&pt);
-            ScreenToClient(hWnd, &pt);
-            cam->onMouseMove(hWnd, pt.x, pt.y);
+            cam->onMouseMove(hWnd);
             cam->setCursorInClient(hWnd);
             correct_mouse = false;
         }

@@ -28,8 +28,8 @@ GUIRender::GUIRender()
 	blend_desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	blend_desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 
-	blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-	blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	blend_desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blend_desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 	blend_desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	blend_desc.RenderTarget[0].RenderTargetWriteMask =
 		D3D11_COLOR_WRITE_ENABLE_ALL;
@@ -85,8 +85,12 @@ void GUIRender::render(GUI* gui, bool rtv_reset)
 	this->setPipe(context, false);
 	gui->setGUIBuffer(context);
 	context->DrawIndexed(6, 0, 0);
+	
+	// gui 추가사항 render
+	gui->optRender();
 
 	// gui opacity item render
+	this->setPipe(context, false);
 	int cnt = gui->getItemArraySize();
 	for (int i = 0; i < cnt; i++) {
 		shared_ptr<BlockItem> const& block = gui->getItem(i);

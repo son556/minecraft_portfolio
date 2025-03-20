@@ -33,5 +33,11 @@ public:
 	 */
 	virtual void moveItem(int idx, vec3 const& new_pos) abstract;
 	virtual void moveGUIPos(vec3 const& new_pos) abstract;
+
+	/**
+	 * gui 에 추가적인 랜더링이 필요한 경우 추가사항을 렌더링 해줍니다.
+	 * 
+	 */
+	virtual void optRender() abstract;
 };
 

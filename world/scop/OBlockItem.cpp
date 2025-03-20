@@ -31,14 +31,18 @@ shared_ptr<Texture> const& OBlockItem::getTexture()
 	return ItemResources::getTexture(this->item_type);
 }
 
-void OBlockItem::setInfo(BlockType const& item_type, bool tp_flag)
+void OBlockItem::setInfo(BlockType const& item_type, bool tp_flag, 
+	float w_size, float h_size)
 {
 	BlockItem::setInfo(tp_flag);
 	this->item_type = item_type;
 	ComPtr<ID3D11Device> const& device = d_graphic->getDevice();
 	vector<VertexDefer> vertices;
 	vector<uint32> indices;
-	Block::makeBox(0.04, vertices, indices);
+	if (w_size == -1)
+		Block::makeBox(0.07, vertices, indices);
+	else
+		Block::makeBox(w_size, h_size, vertices, indices);
 	this->v_buffer = make_shared<Buffer<VertexDefer>>(device,
 		vertices.data(), vertices.size(), D3D11_BIND_VERTEX_BUFFER);
 	this->i_buffer = make_shared<Buffer<uint32>>(device,

@@ -2,6 +2,12 @@
 
 #include "GUI.h"
 
+class InputLayout;
+class VertexShader;
+class PixelShader;
+class RasterizerState;
+class SamplerState;
+
 class Inventory : public GUI
 {
 public:
@@ -28,8 +34,11 @@ public:
 	 */
 	virtual void moveItem(int idx, vec3 const& new_pos) override;
 	virtual void moveGUIPos(vec3 const& new_pos) override;
-
+	virtual void optRender() override;
+	
 	BlockType getBlockType(int idx);
+	void selectItem(int idx);
+
 private:
 	Inventory() = delete;
 	Inventory& operator=(Inventory const&) = delete;
@@ -43,5 +52,16 @@ private:
 private:
 	Mat gui_world = Mat::Identity;
 	vector<shared_ptr<BlockItem>> items;
+
+private:
+	shared_ptr<ConstantBuffer> constant_opt_buffer;
+	shared_ptr<Buffer<VertexDefer>> opt_v_buffer;
+
+private:
+	shared_ptr<InputLayout> input_layout;
+	shared_ptr<VertexShader> opt_vertex_shader;
+	shared_ptr<PixelShader> opt_pixel_shader;
+	shared_ptr<SamplerState> sampler_state;
+	shared_ptr<RasterizerState> opt_rasterizer_state;
 };
 
