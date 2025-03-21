@@ -49,6 +49,9 @@ public:
 	 * 
 	 */
 	void set3rdView();
+
+	pair<float, float> getCursorNDCPos(HWND hwnd);
+
 private:
 	TestCam() = delete;
 	TestCam(TestCam const&) = delete;

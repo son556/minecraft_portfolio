@@ -16,6 +16,27 @@ public:
 	bool getBlockFlag();
 	BlockItem& operator=(BlockItem const& other);
 	virtual BlockType getBlockType() abstract;
+	virtual void setPos(vec3 const& pos) abstract;
+
+	/**
+	 * ndc x y 좌표를 반환합니다.
+	 * 
+	 * \return 
+	 */
+	virtual pair<float, float> const& getPosXY() abstract;
+
+	/**
+	 * 마우스에 선택되어 마우스를 따라 움직이는 상태인지 확인.
+	 * 
+	 * \return 마우스를 따라 움직이면 true, 아니면 false
+	 */
+	virtual bool checkFreeMove() abstract;
+
+	/**
+	 * 마우스 따라 움직이는 상태 설정.
+	 * 마우스를 따라움직이는 상태면 true 아니면 false
+	 */
+	virtual void setFreeMove(bool free_move_flag) abstract;
 
 protected:
 	void setInfo(bool tp_flag);

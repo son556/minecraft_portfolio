@@ -31,7 +31,6 @@ int w_height = 650;
 bool lb_flag = false;
 bool rb_flag = false;
 bool fix_flag = true;
-bool move_flag = true;
 bool move_check = false;
 bool correct_mouse = false;
 bool first_view = false;
@@ -108,38 +107,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             gui_manager.selectInventoryItem(block_type - 1);
             if (lb_flag) {
                 //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
-                // 임시용
-                if (item_ui) {
-                    RECT client_rect;
-                    GetClientRect(hWnd, &client_rect);
-                    float h = client_rect.bottom - client_rect.top;
-                    float w = client_rect.right - client_rect.left;
-                    POINT pt;
-                    GetCursorPos(&pt);
-                    ScreenToClient(hWnd, &pt);
-                    float mx = pt.x;
-                    float my = pt.y;
-                    float nx = pt.x * 2.f / w - 1.f;
-                    float ny = -pt.y * 2.f / h + 1.f;
-                    cout << "pt: " << pt.x << ", " << pt.y << endl;
-                    cout << "x: " << nx << ", y: " << ny << endl;
-                }
-                else {
-                    int b_type = gui_manager.getInventoryBlock(block_type - 1);
-                    if (b_type) {
-                        terrain.putBlock(cam->getPos(), cam->getDir(), b_type);
-                        if (cam->getFreeCamFlag() == false)
-                            entity->setCharacterLeftArmAnimation();
-                    }
+                int b_type = gui_manager.getInventoryBlock(block_type - 1);
+                if (cam->getFreeCamFlag() == false && item_ui == false && b_type) {
+                    terrain.putBlock(cam->getPos(), cam->getDir(), b_type);
+                    entity->setCharacterLeftArmAnimation();
                 }
                 lb_flag = false;
             }
             if (rb_flag) {
-                //vec3 p = cam->getPos();
-                //cout << "cam pos: " << p.x << ' ' << p.y << ' ' << p.z << endl;
-                terrain.deleteBlock(cam->getPos(), cam->getDir());
-                if (cam->getFreeCamFlag() == false)
+                if (cam->getFreeCamFlag() == false && item_ui == false) {
+                    terrain.deleteBlock(cam->getPos(), cam->getDir());
                     entity->setCharacterLeftArmAnimation();
+                }
                 rb_flag = false;
             }
 

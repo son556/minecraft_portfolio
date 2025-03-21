@@ -293,6 +293,24 @@ void TestCam::set3rdView()
 	this->free_cam ^= 1;
 }
 
+pair<float, float> TestCam::getCursorNDCPos(HWND hwnd)
+{
+	pair<float, float> res;
+	RECT client_rect;
+	GetClientRect(hWnd, &client_rect);
+	POINT pt;
+	GetCursorPos(&pt);
+	ScreenToClient(hWnd, &pt);
+	float h = client_rect.bottom - client_rect.top;
+	float w = client_rect.right - client_rect.left;
+
+	float x = pt.x * 2.0 / w - 1.0;
+	float y = -pt.y * 2.0 / h + 1.0;
+	res.first = x;
+	res.second = y;
+	return res;
+}
+
 vec3 TestCam::getPos()
 {
 	return this->pos;

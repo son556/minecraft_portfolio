@@ -7,6 +7,12 @@
 void TBlockItem::setPos(vec3 const& pos)
 {
 	this->world = Mat::CreateTranslation(pos);
+	this->pos_xy = make_pair(pos.x, pos.y);
+}
+
+pair<float, float> const& TBlockItem::getPosXY()
+{
+	return this->pos_xy;
 }
 
 Mat const& TBlockItem::getWorldMatrix()
@@ -64,6 +70,16 @@ void TBlockItem::setInfo(BlockType item_type,
 BlockType TBlockItem::getBlockType()
 {
 	return this->item_type;
+}
+
+bool TBlockItem::checkFreeMove()
+{
+	return this->free_move_flag;
+}
+
+void TBlockItem::setFreeMove(bool free_move_flag)
+{
+	this->free_move_flag = free_move_flag;
 }
 
 void TBlockItem::copyFrom(BlockItem const& other)

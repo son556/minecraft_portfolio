@@ -90,12 +90,17 @@ void GUIRender::render(GUI* gui, bool rtv_reset)
 	gui->optRender();
 
 	// gui opacity item render
+	int free_move_item_idx = -1;
 	this->setPipe(context, false);
 	int cnt = gui->getItemArraySize();
 	for (int i = 0; i < cnt; i++) {
 		shared_ptr<BlockItem> const& block = gui->getItem(i);
 		if (block == nullptr)
 			continue;
+		if (block->checkFreeMove()) {
+			free_move_item_idx = i;
+			continue;
+		}
 		if (block->getBlockFlag() == false) {
 			gui->setOpacityItemBuffer(context, i);
 			context->DrawIndexed(6, 0, 0);
@@ -106,12 +111,22 @@ void GUIRender::render(GUI* gui, bool rtv_reset)
 	this->setPipe(context, true);
 	for (int i = 0; i < cnt; i++) {
 		shared_ptr<BlockItem> const& block = gui->getItem(i);
-		if (block == nullptr)
+		if (block == nullptr || i == free_move_item_idx)
 			continue;
 		if (block->getBlockFlag()) {
 			gui->setTransParencyBuffer(context, i);
 			context->DrawIndexed(6, 0, 0);
 		}
+	}
+
+	if (free_move_item_idx > -1) {
+		if (gui->getItem(free_move_item_idx)->getBlockFlag() == false) {
+			this->setPipe(context, false);
+			gui->setOpacityItemBuffer(context, free_move_item_idx);
+		}
+		else
+			gui->setTransParencyBuffer(context, free_move_item_idx);
+		context->DrawIndexed(6, 0, 0);
 	}
 	context->OMSetBlendState(
 		nullptr,

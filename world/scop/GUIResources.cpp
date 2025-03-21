@@ -3,7 +3,7 @@
 #include "Texture.h"
 #include "DeferredGraphics.h"
 
-shared_ptr<Texture> GUIResources::gui_resources[3];
+shared_ptr<Texture> GUIResources::gui_resources[5];
 
 
 
@@ -19,6 +19,12 @@ void GUIResources::initialize()
 	
 	gui_resources[2] = make_shared<Texture>(
 		device, L"./textures/gui/select_item.png");
+
+	gui_resources[3] = make_shared<Texture>(
+		device, L"./textures/gui/select_tab_item.png");
+
+	gui_resources[4] = make_shared<Texture>(
+		device, L"./textures/gui/x.png");
 }
 
 shared_ptr<Texture> const& GUIResources::getTexture(GUITexture tex_id)

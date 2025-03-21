@@ -39,17 +39,17 @@ Inventory::Inventory(float w, float h)
 	this->items[0] = make_shared<OBlockItem>();
 	shared_ptr<OBlockItem>&& o_item = dynamic_pointer_cast<OBlockItem>(this->items[0]);
 	o_item->setInfo(BlockType::GRASS, false);
-	o_item->setPos(vec3(-0.2, -0.9, 0));
+	o_item->setPos(vec3(this->items_x0, this->items_y0, 0));
 
 	this->items[1] = make_shared<TBlockItem>();
 	shared_ptr<TBlockItem>&& t_item = dynamic_pointer_cast<TBlockItem>(this->items[1]);
 	t_item->setInfo(BlockType::TRANSPARENCY_RED, vec4(1, 0, 0, 0.3), true);
-	t_item->setPos(vec3(0, -0.9, 0));
+	t_item->setPos(vec3(this->items_x0 + this->gap_width, this->items_y0, 0));
 
 	this->items[2] = make_shared<TBlockItem>();
 	t_item = dynamic_pointer_cast<TBlockItem>(this->items[2]);
 	t_item->setInfo(BlockType::TRANSPARENCY_GREEN, vec4(0, 1, 0, 0.3), true);
-	t_item->setPos(vec3(0.2, -0.9, 0));
+	t_item->setPos(vec3(this->items_x0 + 2 * this->gap_width, this->items_y0, 0));
 
 	vertices.clear();
 	indices.clear();

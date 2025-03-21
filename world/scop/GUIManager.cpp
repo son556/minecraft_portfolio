@@ -5,6 +5,8 @@
 #include "TabItems.h"
 #include "Inventory.h"
 
+#include "TestCam.h"
+
 GUIManager::GUIManager()
 {
 	GUIResources::initialize();
@@ -21,8 +23,12 @@ GUIManager::GUIManager()
 
 void GUIManager::render(GUITexture idx)
 {
-	this->render();
-	this->gui_render.render(this->gui_arr[static_cast<int>(idx)].get(), false);
+	if (GUITexture::TAB_ITEMS == idx) { // 임시
+		pair<float, float> ndc_xy = cam->getCursorNDCPos(hWnd);
+		dynamic_pointer_cast<TabItems>(this->gui_arr[static_cast<int>(idx)])->
+			selectSlot(ndc_xy.first, ndc_xy.second);
+	}
+	this->gui_render.render(this->gui_arr[static_cast<int>(idx)].get(), true);
 }
 
 void GUIManager::render()

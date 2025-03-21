@@ -9,7 +9,8 @@ class TBlockItem : public BlockItem
 public:
 	TBlockItem() = default;
 	virtual ~TBlockItem() = default;
-	void setPos(vec3 const& pos);
+	virtual void setPos(vec3 const& pos) override;
+	virtual pair<float, float> const& getPosXY() override;
 	Mat const& getWorldMatrix();
 	shared_ptr<Buffer<VertexColor>> const& getVertexBuffer();
 	shared_ptr<Buffer<uint32>> const& getIndexBuffer();
@@ -24,6 +25,8 @@ public:
 	void setInfo(BlockType item_type, vec4 const& color, 
 		bool tp_flag, float w_size = -1, float h_size = -1);
 	virtual BlockType getBlockType() override;
+	virtual bool checkFreeMove() override;
+	virtual void setFreeMove(bool free_move_flag) override;
 
 private:
 	virtual void copyFrom(BlockItem const& othrer) override;
@@ -35,5 +38,7 @@ private:
 	shared_ptr<Buffer<VertexColor>> v_buff;
 	shared_ptr<Buffer<uint32>> i_buff;
 	Mat world;
+	pair<float, float> pos_xy;
+	bool free_move_flag = false;
 };
 

@@ -9,6 +9,12 @@
 void OBlockItem::setPos(vec3 const& pos)
 {
 	this->world = Mat::CreateTranslation(pos);
+	this->pos_xy = make_pair(pos.x, pos.y);
+}
+
+pair<float, float> const& OBlockItem::getPosXY()
+{
+	return this->pos_xy;
 }
 
 Mat const& OBlockItem::getWorldMatrix()
@@ -52,6 +58,16 @@ void OBlockItem::setInfo(BlockType const& item_type, bool tp_flag,
 BlockType OBlockItem::getBlockType()
 {
 	return this->item_type;
+}
+
+bool OBlockItem::checkFreeMove()
+{
+	return this->free_move_flag;
+}
+
+void OBlockItem::setFreeMove(bool free_move_flag)
+{
+	this->free_move_flag = free_move_flag;
 }
 
 void OBlockItem::copyFrom(BlockItem const& other)

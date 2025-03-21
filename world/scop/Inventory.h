@@ -63,5 +63,10 @@ private:
 	shared_ptr<PixelShader> opt_pixel_shader;
 	shared_ptr<SamplerState> sampler_state;
 	shared_ptr<RasterizerState> opt_rasterizer_state;
+
+private:
+	const float gap_width = 0.2f;
+	const float items_x0 = -0.2f;
+	const float items_y0 = -0.9f;
 };
 

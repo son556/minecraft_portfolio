@@ -2,6 +2,12 @@
 
 #include "GUI.h"
 
+class InputLayout;
+class VertexShader;
+class RasterizerState;
+class PixelShader;
+class SamplerState;
+
 class TabItems : public GUI
 {
 public:
@@ -32,6 +38,15 @@ public:
 	virtual void moveItem(int idx, vec3 const& new_pos) override;
 	virtual void optRender() override;
 
+	/**
+	 * 선택한 슬롯 인덱스 반환.
+	 * 
+	 * \param ndc_x 커서의 ndc x좌표
+	 * \param ndc_y 커서의 ndc y좌표
+	 * \return 슬롯의 인덱스(어떤 것도 선택되지 않으면 -1) 반환 
+	 */
+	int selectSlot(float ndc_x, float ndc_y);
+
 private:
 	TabItems() = delete;
 	TabItems& operator=(TabItems const&) = delete;
@@ -41,9 +56,19 @@ private:
 	shared_ptr<ConstantBuffer> constant_buffer;
 	shared_ptr<Buffer<VertexDefer>> v_buffer;
 	shared_ptr<Buffer<uint32>> i_buffer;
+	shared_ptr<ConstantBuffer> constant_buffer_xflag;
+
+private:
+	shared_ptr<Buffer<VertexDefer>> opt_v_buffer;
+	shared_ptr<InputLayout> opt_input_layout;
+	shared_ptr<VertexShader> opt_vertex_shader;
+	shared_ptr<RasterizerState> opt_rasterizer_state;
+	shared_ptr<PixelShader> opt_pixel_shader;
+	shared_ptr<SamplerState> opt_sampler_state;
 
 private:
 	Mat gui_world = Mat::Identity;
+	Mat select_gui_world = Mat::Identity;
 	vector<shared_ptr<BlockItem>> items;
 	const float gap_width = 0.148f;
 	const float gap_height = 0.215;
@@ -54,5 +79,6 @@ private:
 	const float items_x_0 = -0.66f;
 	const float items_y_0 = 0.7f;
 	const float items_y_45 = -0.43f;
+	bool opt_render_flag = false; // 임시
 };
 
