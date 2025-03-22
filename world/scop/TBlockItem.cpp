@@ -4,6 +4,11 @@
 #include "DeferredGraphics.h"
 #include "WorldUtils.h"
 
+const vec4 TBlockItem::red = vec4(1, 0, 0, 0.3);
+const vec4 TBlockItem::blue = vec4(0, 0, 1, 0.3);
+const vec4 TBlockItem::green = vec4(0, 1, 0, 0.3);
+const vec4 TBlockItem::err_color = vec4(0, 0, 0, 0);
+
 void TBlockItem::setPos(vec3 const& pos)
 {
 	this->world = Mat::CreateTranslation(pos);
@@ -80,6 +85,17 @@ bool TBlockItem::checkFreeMove()
 void TBlockItem::setFreeMove(bool free_move_flag)
 {
 	this->free_move_flag = free_move_flag;
+}
+
+vec4 const& TBlockItem::getColor(BlockType block_type)
+{
+	if (block_type == BlockType::TRANSPARENCY_BLUE)
+		return blue;
+	if (block_type == BlockType::TRANSPARENCY_RED)
+		return red;
+	if (block_type == BlockType::TRANSPARENCY_GREEN)
+		return green;
+	return err_color;
 }
 
 void TBlockItem::copyFrom(BlockItem const& other)

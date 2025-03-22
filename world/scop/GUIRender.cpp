@@ -122,6 +122,11 @@ void GUIRender::render(GUI* gui, bool rtv_reset)
 	if (free_move_item_idx > -1) {
 		if (gui->getItem(free_move_item_idx)->getBlockFlag() == false) {
 			this->setPipe(context, false);
+			context->OMSetBlendState(
+				nullptr,
+				nullptr,
+				0xFFFFFFFF
+			);
 			gui->setOpacityItemBuffer(context, free_move_item_idx);
 		}
 		else

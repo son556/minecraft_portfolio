@@ -92,6 +92,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Time::initialize();
     cam->setCursorInClient(hWnd);
     move_check = true;
+    bool click_check = false;
     while (msg.message != WM_QUIT)
     {
         if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -112,6 +113,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                     terrain.putBlock(cam->getPos(), cam->getDir(), b_type);
                     entity->setCharacterLeftArmAnimation();
                 }
+                click_check = true;
                 lb_flag = false;
             }
             if (rb_flag) {
@@ -129,8 +131,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             terrain.userPositionCheck(cam->getPos().x,
                 cam->getPos().z);
             terrain.Render();
-            if (item_ui)
-                gui_manager.render(GUITexture::TAB_ITEMS);
+            if (item_ui) {
+                gui_manager.render(GUITexture::TAB_ITEMS, click_check);
+                click_check = false;
+            }
             else
                 gui_manager.render();
             composite_renderer.render(terrain.getSRV(), gui_manager.getSRV());

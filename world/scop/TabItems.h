@@ -43,9 +43,29 @@ public:
 	 * 
 	 * \param ndc_x 커서의 ndc x좌표
 	 * \param ndc_y 커서의 ndc y좌표
-	 * \return 슬롯의 인덱스(어떤 것도 선택되지 않으면 -1) 반환 
+	 * \return 슬롯의 인덱스(어떤 것도 선택되지 않으면 -2, 빈 슬롯 -1) 반환
+	 *  
 	 */
 	int selectSlot(float ndc_x, float ndc_y);
+
+	/**
+	 * src_idx 의 아이템을 dst_idx로 옮깁니다.
+	 * 
+	 * \param src_idx
+	 * \param dst_idx
+	 */
+	void moveSlotItem(int src_idx, int dst_idx);
+	void setSlotItem(int idx, BlockType block_type);
+
+	/**
+	 * 인벤토리에 있는 아이템 반환.
+	 * 
+	 * \param idx inventory index(45 ~ 47)
+	 * \return 
+	 */
+	BlockType getSlotItem(int idx);
+
+	virtual void deleteSlotItem(int idx) override;
 
 private:
 	TabItems() = delete;

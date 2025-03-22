@@ -382,9 +382,6 @@
     <Filter Include="소스 파일\GUI\GUIResources">
       <UniqueIdentifier>{430cd8ee-67d5-4811-9653-da9a811c4f5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\GUI\GUIEvent">
-      <UniqueIdentifier>{fefecb39-2df9-4e8d-85ee-5c0e09c2f3b8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\GUI\GUIRender">
       <UniqueIdentifier>{a36e1f43-1e2f-4e17-a598-38430bc31db5}</UniqueIdentifier>
     </Filter>

@@ -27,6 +27,7 @@ public:
 	virtual BlockType getBlockType() override;
 	virtual bool checkFreeMove() override;
 	virtual void setFreeMove(bool free_move_flag) override;
+	static vec4 const& getColor(BlockType block_type);
 
 private:
 	virtual void copyFrom(BlockItem const& othrer) override;
@@ -40,5 +41,11 @@ private:
 	Mat world;
 	pair<float, float> pos_xy;
 	bool free_move_flag = false;
+
+private:
+	static const vec4 red;
+	static const vec4 blue;
+	static const vec4 green;
+	static const vec4 err_color;
 };
 

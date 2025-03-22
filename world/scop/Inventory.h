@@ -35,9 +35,11 @@ public:
 	virtual void moveItem(int idx, vec3 const& new_pos) override;
 	virtual void moveGUIPos(vec3 const& new_pos) override;
 	virtual void optRender() override;
-	
+	virtual void deleteSlotItem(int idx) override;
+
 	BlockType getBlockType(int idx);
 	void selectItem(int idx);
+	void setInventorySlot(int idx, BlockType block_type);
 
 private:
 	Inventory() = delete;

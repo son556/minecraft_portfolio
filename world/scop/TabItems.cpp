@@ -34,7 +34,7 @@ TabItems::TabItems(float w, float h)
 		d_graphic->getContext(),
 		tmp
 	);
-	this->items.resize(9 * 6);
+	this->items.resize(9 * 5 + 3);
 	for (int i = 0; i < this->items.size(); i++)
 		this->items[i] = nullptr;
 
@@ -62,8 +62,6 @@ TabItems::TabItems(float w, float h)
 	t_item->setPos(vec3(this->items_x_0 + 3 * this->gap_width, this->items_y_0, 0));
 
 	// opt setting
-	this->select_gui_world = 
-		Mat::CreateTranslation(vec3(this->items_x_0, this->items_y_0, 0)).Transpose();
 	vertices.clear();
 	indices.clear();
 	Block::makeBox(this->obw_size + 0.01, this->obh_size + 0.01, vertices, indices);
@@ -133,13 +131,14 @@ void TabItems::setOpacityItemBuffer(ComPtr<ID3D11DeviceContext> const& context, 
 		o_item->getIndexBuffer();
 	uint32 stride = v_buff->getStride();
 	uint32 offset = v_buff->getOffset();
-	Mat world = o_item->getWorldMatrix().Transpose();
-	this->constant_buffer->update(world);
 
 	context->IASetVertexBuffers(0, 1,
 		v_buff->getComPtr().GetAddressOf(), &stride, &offset);
 	context->IASetIndexBuffer(i_buff->getComPtr().Get(),
 		DXGI_FORMAT_R32_UINT, 0);
+
+	Mat world = o_item->getWorldMatrix().Transpose();
+	this->constant_buffer->update(world);
 	context->VSSetConstantBuffers(0, 1, this->constant_buffer->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(0, 1,
 		o_item->getTexture()->getComPtr().GetAddressOf());
@@ -263,8 +262,7 @@ int TabItems::selectSlot(float ndc_x, float ndc_y)
 			}
 			if (ndc_x >= sx && ndc_x < ex && ndc_y <= sy && ndc_y > ey) {
 				this->opt_render_flag = true;
-				this->select_gui_world = 
-					Mat::CreateTranslation(
+				this->select_gui_world = Mat::CreateTranslation(
 						vec3(this->items_x_0 + j * this->gap_width, 
 							this->items_y_0 - i * this->gap_height, 0)).Transpose();
 				return i * 9 + j;
@@ -282,13 +280,87 @@ int TabItems::selectSlot(float ndc_x, float ndc_y)
 		}
 		if (ndc_x >= sx && ndc_x < ex && ndc_y <= sy && ndc_y > ey) {
 			this->opt_render_flag = true;
-			this->select_gui_world =
-				Mat::CreateTranslation(
+			this->select_gui_world = Mat::CreateTranslation(
 					vec3(this->items_x_0 + j * this->gap_width,
 						this->items_y_45, 0)).Transpose();
 			return 5 * 9 + j;
 		}
 	}
 	return -1;
+}
+
+void TabItems::moveSlotItem(int src_idx, int dst_idx)
+{
+	this->items[dst_idx] = this->items[src_idx];
+	this->items[dst_idx]->setFreeMove(false);
+	int gap_w = dst_idx % 9;
+	int gap_h = dst_idx / 9;
+	if (dst_idx < 45) {
+		this->items[dst_idx]->setPos(
+			vec3(this->items_x_0 + gap_w * this->gap_width,
+				this->items_y_0 - gap_h * this->gap_height, 0));
+	}
+	else {
+		this->items[dst_idx]->setPos(
+			vec3(this->items_x_0 + gap_w * this->gap_width, this->items_y_45, 0));
+	}
+	if (dst_idx != src_idx)
+		this->items[src_idx] = nullptr;
+}
+
+void TabItems::setSlotItem(int idx, BlockType block_type)
+{
+	if (idx < 0 || idx >= 9 * 5 + 3)
+		assert(false);
+	
+	int type = static_cast<int>(block_type);
+	int gap_w = idx % 9;
+	int gap_h = idx / 9;
+	if (type < 0) {
+		this->items[idx] = make_shared<TBlockItem>();
+		shared_ptr<TBlockItem>&& t_item = 
+			dynamic_pointer_cast<TBlockItem>(this->items[idx]);
+		t_item->setInfo(block_type, TBlockItem::getColor(block_type), true,
+			this->tbw_size, this->tbh_size);
+		if (idx >= 45) {
+			t_item->setPos(vec3(this->items_x_0 + gap_w * this->gap_width,
+				this->items_y_45, 0));
+		}
+		else {
+			t_item->setPos(vec3(this->items_x_0 + gap_w * this->gap_width,
+				this->items_y_0 - gap_h * this->gap_height, 0));
+		}
+	}
+	else if (type > 0) {
+		this->items[idx] = make_shared<OBlockItem>();
+		shared_ptr<OBlockItem>&& o_item = 
+			dynamic_pointer_cast<OBlockItem>(this->items[idx]);
+		o_item->setInfo(block_type, false, this->obw_size, this->obh_size);
+		if (idx >= 45) {
+			o_item->setPos(vec3(this->items_x_0 + gap_w * this->gap_width,
+				this->items_y_45, 0));
+		}
+		else {
+			o_item->setPos(vec3(this->items_x_0 + gap_w * this->gap_width,
+				this->items_y_0 - gap_h * this->gap_height, 0));
+		}
+	}
+	else {
+		this->items[idx] = nullptr;
+	}
+}
+
+BlockType TabItems::getSlotItem(int idx)
+{
+	if (idx < 0 || idx >= 48)
+		assert(false);
+	if (this->items[idx] == nullptr)
+		return BlockType::AIR;
+	return this->items[idx]->getBlockType();
+}
+
+void TabItems::deleteSlotItem(int idx)
+{
+	this->items[idx] = nullptr;
 }
 

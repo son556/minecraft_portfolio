@@ -215,6 +215,11 @@ void Inventory::optRender()
 	context->DrawIndexed(6, 0, 0);
 }
 
+void Inventory::deleteSlotItem(int idx)
+{
+	this->items[idx] = nullptr;
+}
+
 BlockType Inventory::getBlockType(int idx)
 {
 	if (this->items[idx] == nullptr)
@@ -232,4 +237,27 @@ void Inventory::selectItem(int idx)
 	else if (idx == 2)
 		m = Mat::CreateTranslation(vec3(0.2, -0.9, 0)).Transpose();
 	this->constant_opt_buffer->update(m);
+}
+
+void Inventory::setInventorySlot(int idx, BlockType block_type)
+{
+	if (idx < 0 || idx >= 3)
+		assert(false);
+	int type = static_cast<int>(block_type);
+	if (type == 0)
+		this->items[idx] = nullptr;
+	else if (type > 0) {
+		this->items[idx] = make_shared<OBlockItem>();
+		shared_ptr<OBlockItem>&& o_item = 
+			dynamic_pointer_cast<OBlockItem>(this->items[idx]);
+		o_item->setInfo(block_type, false);
+		o_item->setPos(vec3(this->items_x0 + idx * this->gap_width, this->items_y0, 0));
+	}
+	else {
+		this->items[idx] = make_shared<TBlockItem>();
+		shared_ptr<TBlockItem>&& t_item = 
+			dynamic_pointer_cast<TBlockItem>(this->items[idx]);
+		t_item->setInfo(block_type, TBlockItem::getColor(block_type), true);
+		t_item->setPos(vec3(this->items_x0 + idx * this->gap_width, this->items_y0, 0));
+	}
 }

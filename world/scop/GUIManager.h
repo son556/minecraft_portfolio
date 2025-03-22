@@ -8,7 +8,7 @@ class GUIManager
 public:
 	GUIManager();
 	~GUIManager() = default;
-	void render(GUITexture idx);
+	void render(GUITexture idx, bool click_flag);
 	void render();
 	ComPtr<ID3D11ShaderResourceView> const& getSRV();
 	BlockType getInventoryBlock(int idx);
