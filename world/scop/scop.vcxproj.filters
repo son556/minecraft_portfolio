@@ -403,6 +403,12 @@
     <Filter Include="소스 파일\GUI\TabItems\TabItemsShader">
       <UniqueIdentifier>{544f5c16-4563-466f-970e-6262937dbf2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\StartScene">
+      <UniqueIdentifier>{b1cc1138-bb41-4f53-80e2-e59f94aafd49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\StartScene\StartSceneShader">
+      <UniqueIdentifier>{3f5e0fd9-957f-4f67-821e-ebac705c9129}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -699,6 +705,9 @@
     <ClInclude Include="TabItems.h">
       <Filter>소스 파일\GUI\TabItems</Filter>
     </ClInclude>
+    <ClInclude Include="StartScene.h">
+      <Filter>소스 파일\StartScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -986,6 +995,9 @@
     <ClCompile Include="TabItems.cpp">
       <Filter>소스 파일\GUI\TabItems</Filter>
     </ClCompile>
+    <ClCompile Include="StartScene.cpp">
+      <Filter>소스 파일\StartScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="scop.rc">
@@ -1210,6 +1222,12 @@
     </FxCompile>
     <FxCompile Include="TabItemsOptPS.hlsl">
       <Filter>소스 파일\GUI\TabItems\TabItemsShader</Filter>
+    </FxCompile>
+    <FxCompile Include="StartSceneVS.hlsl">
+      <Filter>소스 파일\StartScene\StartSceneShader</Filter>
+    </FxCompile>
+    <FxCompile Include="StartScenePS.hlsl">
+      <Filter>소스 파일\StartScene\StartSceneShader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

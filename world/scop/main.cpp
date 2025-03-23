@@ -61,12 +61,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         return FALSE;
     }
-    RECT client_rect;
-    GetClientRect(hWnd, &client_rect);
 
     d_graphic = make_shared<DeferredGraphics>(hWnd, 800, 650);
     cam = make_shared<TestCam>(800, 650, 60, 0.1, 1000);
     
+    RECT client_rect;
+    GetClientRect(hWnd, &client_rect);
     cam->setWidth(client_rect.right - 1);
     cam->setHeight(client_rect.bottom - 1);
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SCOP));
