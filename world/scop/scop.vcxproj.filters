@@ -409,6 +409,9 @@
     <Filter Include="소스 파일\StartScene\StartSceneShader">
       <UniqueIdentifier>{3f5e0fd9-957f-4f67-821e-ebac705c9129}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\StartScene\Letter">
+      <UniqueIdentifier>{47a7ad9d-47cb-4c8c-8d7e-07155b721aec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -708,6 +711,9 @@
     <ClInclude Include="StartScene.h">
       <Filter>소스 파일\StartScene</Filter>
     </ClInclude>
+    <ClInclude Include="Letter.h">
+      <Filter>소스 파일\StartScene\Letter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -997,6 +1003,9 @@
     </ClCompile>
     <ClCompile Include="StartScene.cpp">
       <Filter>소스 파일\StartScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Letter.cpp">
+      <Filter>소스 파일\StartScene\Letter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

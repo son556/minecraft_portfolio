@@ -65,9 +65,6 @@ GUIRender::GUIRender()
 	D3D11_DEPTH_STENCIL_DESC depth_stencil_desc;
 	ZeroMemory(&depth_stencil_desc, sizeof(depth_stencil_desc));
 	depth_stencil_desc.DepthEnable = false;
-	depth_stencil_desc.DepthFunc = D3D11_COMPARISON_ALWAYS;
-	depth_stencil_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	depth_stencil_desc.StencilEnable = false;
 
 	device->CreateDepthStencilState(&depth_stencil_desc,
 		this->depth_stencil_state.GetAddressOf());

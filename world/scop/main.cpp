@@ -13,6 +13,7 @@
 #include "Entity.h"
 #include "CompositeRenderer.h"
 #include "GUIManager.h"
+#include "StartScene.h"
 
 #define MAX_LOADSTRING 100
 
@@ -74,6 +75,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     Terrain terrain(12, 12, hWnd, w_width, w_height, 1, 8); // 짝수 단위로만
     CompositeRenderer composite_renderer;
     GUIManager gui_manager;
+    StartScene start_scene;
 
     p_terrain = &terrain;
     float h = terrain.getHeight(0.5, 0.5) + 0.5;
@@ -93,6 +95,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     cam->setCursorInClient(hWnd);
     move_check = true;
     bool click_check = false;
+
+    bool start_scene_flag = true;
+    if (start_scene_flag)
+        fix_flag = false;
     while (msg.message != WM_QUIT)
     {
         if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -108,6 +114,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             gui_manager.selectInventoryItem(block_type - 1);
             if (lb_flag) {
                 //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
+                if (start_scene_flag) {
+                    if (start_scene.checkClickStartButton()) {
+                        start_scene_flag = false;
+                        fix_flag = true;
+                        start_scene.~StartScene();
+                    }
+                    else if (start_scene.checkClickExitButton())
+                        exit(0);
+                }
                 int b_type = gui_manager.getInventoryBlock(block_type - 1);
                 if (cam->getFreeCamFlag() == false && item_ui == false && b_type) {
                     terrain.putBlock(cam->getPos(), cam->getDir(), b_type);
@@ -126,18 +141,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
             Time::update();
             delta_time = Time::DeltaTime();
-            entity->update(cam->getDir());
-            cam->update(entity->getCharacterPos(), entity->getCharacterDir());
-            terrain.userPositionCheck(cam->getPos().x,
-                cam->getPos().z);
-            terrain.Render();
-            if (item_ui) {
-                gui_manager.render(GUITexture::TAB_ITEMS, click_check);
-                click_check = false;
+            if (start_scene_flag) {
+                start_scene.render();
             }
-            else
-                gui_manager.render();
-            composite_renderer.render(terrain.getSRV(), gui_manager.getSRV());
+            else {
+                entity->update(cam->getDir());
+                cam->update(entity->getCharacterPos(), entity->getCharacterDir());
+                terrain.userPositionCheck(cam->getPos().x,
+                    cam->getPos().z);
+                terrain.Render();
+                if (item_ui) {
+                    gui_manager.render(GUITexture::TAB_ITEMS, click_check);
+                    click_check = false;
+                }
+                else
+                    gui_manager.render();
+                composite_renderer.render(terrain.getSRV(), gui_manager.getSRV());
+            }
         }
     }
     return (int) msg.wParam;
