@@ -305,9 +305,9 @@ int Map::checkTerrainBoundary(float x, float z) const
 	if (x + r > this->m_info.ev_pos.x)
 		mask |= 1 << 1; // right out
 	if (z + r > this->m_info.sv_pos.y)
-		mask |= 1 << 2; // back out
+		mask |= 1 << 2; // back out (up)
 	if (z - r < this->m_info.ev_pos.y)
-		mask |= 1 << 3; // front out
+		mask |= 1 << 3; // front out (down)
 	return mask;
 }
 

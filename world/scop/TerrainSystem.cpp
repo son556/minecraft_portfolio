@@ -28,6 +28,8 @@ void TerrainSystem::fillChunk(Index2 const& c_idx, Index2 const& c_pos)
 			}
 		}
 	}
+	this->s_water.fillWater(c_idx);
+	this->s_cave.makeCave(c_idx, c_pos);
 }
 
 void TerrainSystem::createHeightMap()
@@ -42,8 +44,6 @@ void TerrainSystem::createHeightMap()
 				vec3(c_pos.x + 0.5f, 0.5f, c_pos.y - 0.5f);
 			this->m_info->chunks[c_idx.y][c_idx.x]->chunk_pos = c_pos;
 			this->fillChunk(c_idx, c_pos);
-			this->s_water.fillWater(c_idx);
-			this->s_cave.makeCave(c_idx, c_pos);
 		}
 	}
 }
