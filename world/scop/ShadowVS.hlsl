@@ -8,6 +8,7 @@ struct VS_INPUT
 struct PS_INPUT
 {
     float4 pos : SV_Position;
+    float4 ndc_pos : NDC;
 };
 
 cbuffer mvp : register(b0)
@@ -25,5 +26,6 @@ PS_INPUT main( VS_INPUT input )
     output.pos = mul(output.pos, world);
     output.pos = mul(output.pos, view);
     output.pos = mul(output.pos, proj);
+    output.ndc_pos = output.pos;
     return output;
 }

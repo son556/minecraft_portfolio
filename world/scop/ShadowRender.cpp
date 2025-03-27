@@ -114,48 +114,11 @@ ShadowRender::ShadowRender(MapUtils* minfo)
 	this->s_rasterizer_state = make_shared<RasterizerState>(
 		d_graphic->getDevice(),
 		D3D11_FILL_SOLID,
-		D3D11_CULL_BACK
+		D3D11_CULL_FRONT,
+		true
 	);
 	this->devideFrustum();
 }
-
-void ShadowRender::renderCSM(CamType type)
-{
-	ComPtr<ID3D11DeviceContext> context =
-		d_graphic->getContext();
-
-	
-	// update structured buffer
-	for (int i = 0; i < split_cnt; i++) {
-		this->csms[i]->updateCBuffer(type);
-		this->mvps[i] = this->csms[i]->getMVP();
-	}
-	this->structured_buffer->CopyToInput(
-		static_cast<void*>(this->mvps.data()));
-
-	// render chunk (light 시점)
-	this->setCSMPipe();
-	for (int k = 0; k < split_cnt; k++) {
-		context->VSSetConstantBuffers(0, 1,
-			this->csms[k]->getCBuffer()->getComPtr().GetAddressOf());
-		d_graphic->renderBegin(this->csms[k]->getDBuffer().get(),
-			this->csms[k]->getDSV());
-		d_graphic->setViewPort(this->csms[k]->getViewPort());
-		for (int i = 0; i < this->m_info->size_h; i++) {
-			for (int j = 0; j < this->m_info->size_w; j++) {
-				if (this->m_info->chunks[i][j]->render_flag == false)
-					continue;
-				this->m_info->chunks[i][j]->setShadowRender(
-					d_graphic->getContext()
-				);
-			}
-		}
-		entity->shadowRender(type,
-			this->csms[k]->getMVP().view, this->csms[k]->getMVP().proj, 
-			this->csms[k]->getDSV());
-	}
-}
-
 
 void ShadowRender::setPipe()
 {
@@ -196,6 +159,7 @@ void ShadowRender::setCSMPipe()
 	context->IASetPrimitiveTopology(
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	context->IASetInputLayout(this->s_input_layout->getComPtr().Get());
+
 	context->VSSetShader(
 		this->s_vertex_shader->getComPtr().Get(),
 		nullptr,
@@ -222,8 +186,8 @@ void ShadowRender::devideFrustum() // view space
 	float t = 0.99;
 	t = 0.6;
 	int csm_idx = 0;
+	float ss = this->split_cnt;
 	for (int i = 0; i < this->split_cnt + 1; i++) {
-		float ss = this->split_cnt;
 		float c_log = log(p_near * pow(p_far / p_near, i / ss));
 		float c_uni = p_near + (p_far - p_near) * (i / ss);
 		float c = t * c_log + (1.0 - t) * c_uni;
@@ -285,6 +249,40 @@ void ShadowRender::render(CamType type)
 	context->DrawIndexed(
 		this->ibuffer->getCount(),
 		0, 0);
+}
+
+void ShadowRender::renderCSM(CamType type)
+{
+	ComPtr<ID3D11DeviceContext> context =
+		d_graphic->getContext();
+
+
+	// update structured buffer
+	for (int i = 0; i < split_cnt; i++) {
+		this->csms[i]->updateCBuffer(type);
+		this->mvps[i] = this->csms[i]->getMVP();
+	}
+	this->structured_buffer->CopyToInput(
+		static_cast<void*>(this->mvps.data()));
+
+	// render chunk (light 시점)
+	this->setCSMPipe();
+	for (int k = 0; k < split_cnt; k++) {
+		context->VSSetConstantBuffers(0, 1,
+			this->csms[k]->getCBuffer()->getComPtr().GetAddressOf());
+		d_graphic->renderBegin(this->csms[k]->getDBuffer().get(),
+			this->csms[k]->getDSV());
+		d_graphic->setViewPort(this->csms[k]->getViewPort());
+		for (int i = 0; i < this->m_info->size_h; i++) {
+			for (int j = 0; j < this->m_info->size_w; j++) {
+				if (this->m_info->chunks[i][j]->render_flag == false)
+					continue;
+				this->m_info->chunks[i][j]->setShadowRender(
+					d_graphic->getContext()
+				);
+			}
+		}
+	}
 }
 
 ComPtr<ID3D11ShaderResourceView> ShadowRender::getSRV()

@@ -3,7 +3,6 @@
 #include "MapUtils.h"
 #include "Chunk.h"
 #include "MyQueue.h"
-#include <thread>
 
 LightSystem::LightSystem(MapUtils* minfo, int thread_cnt)
 {
@@ -183,17 +182,19 @@ void LightSystem::checkBoundary(
 		cidxs->push_back(amz_idx);
 	if ((dir_flag & 8) && (dir & 8))
 		cidxs->push_back(apz_idx);
-	thread t1;
-	thread t2;
-	t1 = thread(&LightSystem::lightBFS, this, 0); // 자기 자신 bfs
-	t2 = thread(&LightSystem::lightBFS, this, 1); // 인접 청크 bfs
-	t1.join();
-	t2.join();
+	//thread t1;
+	//thread t2;
+	//t1 = thread(&LightSystem::lightBFS, this, 0); // 자기 자신 bfs
+	//t2 = thread(&LightSystem::lightBFS, this, 1); // 인접 청크 bfs
+	//t1.join();
+	//t2.join();
+	this->lightBFS(0);
+	this->lightBFS(1);
 }
 
 void LightSystem::createLightMap()
 {
-	vector<thread> threads;
+	//vector<thread> threads;
 	vector<Index2> cidxs;
 	for (int i = 0; i < this->m_info->size_h; i++) {
 		for (int j = 0; j < this->m_info->size_w; j++) {
@@ -215,13 +216,10 @@ void LightSystem::createLightMap()
 		}
 		else
 			siz = t;
-		threads.push_back(thread(&LightSystem::fillLightThread,
-			this, cidxs, st, st + siz, idx));
+		this->fillLightThread(cidxs, st, st + siz, idx);
 		st = st + siz;
 		idx++;
 	}
-	for (int i = 0; i < this->thread_cnt; i++)
-		threads[i].join();
 
 	for (int i = 0; i < this->m_info->size_h; i++) {
 		for (int j = 0; j < this->m_info->size_w; j++) {
@@ -238,7 +236,6 @@ void LightSystem::createLightMap(
 	int dir
 )
 {
-	vector<thread> threads;
 	int t = cidxs.size() / this->thread_cnt;
 	int m = cidxs.size() % this->thread_cnt;
 	int st = 0;
@@ -251,13 +248,10 @@ void LightSystem::createLightMap(
 		}
 		else
 			siz = t;
-		threads.push_back(thread(&LightSystem::fillLightThread,
-			this, cidxs, st, st + siz, idx));
+		this->fillLightThread(cidxs, st, st + siz, idx);
 		st = st + siz;
 		idx++;
 	}
-	for (int i = 0; i < this->thread_cnt; i++)
-		threads[i].join();
 	size_t cidxs_size = cidxs.size();
 	for (int i = 0; i < cidxs_size; i++) {
 		this->checkBoundary(cidxs[i], &cidxs, dir);

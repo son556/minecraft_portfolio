@@ -5,6 +5,7 @@ struct MVP
     matrix proj;
 };
 StructuredBuffer<MVP> mvp_arr : register(t0);
+
 Texture2D shadow_0 : register(t1);
 Texture2D shadow_1 : register(t2);
 Texture2D shadow_2 : register(t3);
@@ -50,21 +51,6 @@ cbuffer Split : register(b0)
     matrix view;
 };
 
-matrix rotateY(float degree)
-{
-    float radian = radians(degree);
-    float c = cos(radian);
-    float s = sin(radian);
-    matrix rotY =
-    {
-        c, 0, s, 0,
-        0, 1, 0, 0,
-        -s, 0, c, 0,
-        0, 0, 0, 1
-    };
-    return rotY;
-}
-
 float shadowCheck(float4 w_pos, int shadow_idx, float3 normal, float p_dis)
 {
     float ans = 1;
@@ -97,15 +83,6 @@ float shadowCheck(float4 w_pos, int shadow_idx, float3 normal, float p_dis)
         z = shadow_6.Sample(shadow_point_sampler, uvw.xy).r;
     else
         z = shadow_7.Sample(shadow_point_sampler, uvw.xy).r;
-    /*
-    bias를 주는 대신 위에서 노말 방향으로 살짝 이동 후 그림자 검사 하는게
-    더 잘됨
-    */
-    //float bias = max(0.0001 * (1.0 + dot(normal, light_dir)), 0.0);
-    //float bias = max(0.05 * (1.0 + dot(normal, light_dir)), 0.005);
-    //bias *= 1.0 / (p_dis * 0.5f);
-    //bias = 0.0;
-    //float biasValues[4] = { 0.0005f, 0.001f, 0.0025f, 0.005f };
     
     if (z < w_pos.z)
         ans = 0;

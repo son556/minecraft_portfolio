@@ -200,6 +200,7 @@ void OpacityRender::render(
 	if (render_option.shadow) {
 		// shadow map render
 		this->shadow_render.renderCSM(type);
+
 		context->PSSetShaderResources(9, 1,
 			this->geo_render.getSRV(RTVIndex::w_position).GetAddressOf());
 		context->PSSetShaderResources(10, 1,

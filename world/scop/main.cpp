@@ -207,7 +207,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
     RECT windowRect = { 0, 0, w_width, w_height };
-    hWnd = CreateWindowW(L"SCOP", L"board", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,
+    hWnd = CreateWindowW(L"SCOP", L"board", 
+        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,
       CW_USEDEFAULT, 0, windowRect.right - windowRect.left, 
         windowRect.bottom - windowRect.top, nullptr, nullptr, hInstance, nullptr);
 
@@ -219,6 +220,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
+   // 항상 화면이 위에 뜨게함
+   SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
    return TRUE;
 }
 

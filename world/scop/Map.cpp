@@ -4,7 +4,6 @@
 #include "DeferredGraphics.h"
 #include "Graphics.h"
 #include "Block.h"
-#include <thread>
 #include <time.h>
 
 Map::Map(
@@ -64,7 +63,6 @@ void Map::terrainSetVerticesAndIndices()
 			v_idxs.push_back(c_idx);
 		}
 	}
-	vector<thread> threads;
 	int st = 0;
 	int siz;
 	for (int i = 0; i < this->thread_cnt; i++) {
@@ -74,12 +72,9 @@ void Map::terrainSetVerticesAndIndices()
 		}
 		else
 			siz = t;
-		threads.push_back(thread(&Map::chunksSetVerticesAndIndices,
-			this, v_idxs, st, st + siz));
+		this->chunksSetVerticesAndIndices(v_idxs, st, st + siz);
 		st = st + siz;
 	}
-	for (int i = 0; i < this->thread_cnt; i++)
-		threads[i].join();
 }
 
 void Map::vertexAndIndexGenerator(
@@ -389,7 +384,6 @@ void Map::userPositionCheck(float x, float z)
 
 void Map::threadFunc(vector<Index2>& vec, int dir)
 {
-	vector<thread> threads;
 	this->l_system.createLightMap(vec, dir);
 	this->t_system.createTrees(vec, dir);
 	int t = vec.size() / this->thread_cnt;
@@ -404,10 +398,7 @@ void Map::threadFunc(vector<Index2>& vec, int dir)
 		}
 		else
 			siz = t;
-		threads.push_back(thread(&Map::chunksSetVerticesAndIndices,
-			this, vec, st, st + siz));
+		this->chunksSetVerticesAndIndices(vec, st, st + siz);
 		st = st + siz;
 	}
-	for (int i = 0; i < this->thread_cnt; i++)
-		threads[i].join();
 }
