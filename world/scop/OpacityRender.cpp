@@ -182,7 +182,7 @@ void OpacityRender::render(
 
 	this->cube_map.render(type, render_option.ccw_flag);
 	this->m_info->directional_light_pos =
-		this->cube_map.getDirectionalLightPos();
+		this->cube_map.getDirectionalLightPos(); // 태양 위치
 	this->m_info->light_dir = XMVector3Normalize(cam_pos -
 		this->m_info->directional_light_pos);
 

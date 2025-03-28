@@ -1020,18 +1020,6 @@
     <Image Include="scop.ico">
       <Filter>리소스 파일</Filter>
     </Image>
-    <Image Include="Skeleton.png">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="grass_bottom.png">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="grass_side.png">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="grass_top.png">
-      <Filter>리소스 파일</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SsaoBlurPS.hlsl">
@@ -1243,7 +1231,10 @@
     <None Include="SimpleMath.inl">
       <Filter>헤더 파일\Utils\SimpleMath</Filter>
     </None>
-    <None Include="cursor1.cur">
+    <None Include="resources\precision.cur">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="cursor2.cur">
       <Filter>리소스 파일</Filter>
     </None>
   </ItemGroup>

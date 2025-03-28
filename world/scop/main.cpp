@@ -142,6 +142,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             Time::update();
             delta_time = Time::DeltaTime();
             if (start_scene_flag) {
+                SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
                 start_scene.render();
             }
             else {
@@ -188,7 +189,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.lpszClassName  = L"SCOP";
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
-    wcex.hCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR1));
+    //wcex.hCursor = LoadIcon(hInstance, 1);
+    wcex.hCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR2));
+    //wcex.hCursor = (HCURSOR)LoadImage(hInstance, MAKEINTRESOURCE(IDC_CURSOR1), 
+        //IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE | LR_LOADTRANSPARENT);
 
     return RegisterClassExW(&wcex);
 }

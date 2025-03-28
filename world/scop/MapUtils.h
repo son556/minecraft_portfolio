@@ -101,7 +101,7 @@ public:
 	HWND hWnd;
 	UINT width; // 창 가로 크기
 	UINT height; // 창 세로 크기
-	vec3 directional_light_pos;
+	vec3 directional_light_pos; // 태양(or 달) 위치
 	vec3 light_dir;
 
 private:

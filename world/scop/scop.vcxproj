@@ -354,11 +354,7 @@
     <ResourceCompile Include="scop.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="grass_bottom.png" />
-    <Image Include="grass_side.png" />
-    <Image Include="grass_top.png" />
     <Image Include="scop.ico" />
-    <Image Include="Skeleton.png" />
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -910,7 +906,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="cursor1.cur" />
+    <None Include="cursor2.cur" />
+    <None Include="resources\precision.cur" />
     <None Include="SimpleMath.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

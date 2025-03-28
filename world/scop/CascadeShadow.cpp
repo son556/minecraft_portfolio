@@ -98,9 +98,7 @@ void CascadeShadow::updateCBuffer(CamType type)
 
 	vec3 center = vec3(mid.x, mid.y, mid.z);
 	vec3 eye = center - base_look_at * 2.0f * len;
-	vec3 dir = (center - eye);
-	dir.Normalize();
-	Mat light_look = XMMatrixLookToLH(eye, dir, up_dir);
+	Mat light_look = XMMatrixLookToLH(eye, base_look_at, up_dir);
 	this->mvp.view = light_look.Transpose();
 
 	this->mvp.proj = XMMatrixOrthographicOffCenterLH(
