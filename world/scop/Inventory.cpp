@@ -130,8 +130,6 @@ void Inventory::setOpacityItemBuffer(ComPtr<ID3D11DeviceContext> const& context,
 	context->IASetIndexBuffer(i_buff->getComPtr().Get(),
 		DXGI_FORMAT_R32_UINT, 0);
 	context->VSSetConstantBuffers(0, 1, this->constant_buffer->getComPtr().GetAddressOf());
-	context->PSSetShaderResources(0, 1,
-		o_item->getTexture()->getComPtr().GetAddressOf());
 }
 
 void Inventory::setTransParencyBuffer(

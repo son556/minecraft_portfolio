@@ -38,28 +38,8 @@ TabItems::TabItems(float w, float h)
 	for (int i = 0; i < this->items.size(); i++)
 		this->items[i] = nullptr;
 
-	this->items[0] = make_shared<OBlockItem>();
-	shared_ptr<OBlockItem>&& o_item = dynamic_pointer_cast<OBlockItem>(this->items[0]);
-	o_item->setInfo(BlockType::GRASS, false, this->obw_size, this->obh_size);
-	o_item->setPos(vec3(this->items_x_0, this->items_y_0, 0));
-
-	this->items[1] = make_shared<TBlockItem>();
-	shared_ptr<TBlockItem>&& t_item = dynamic_pointer_cast<TBlockItem>(this->items[1]);
-	t_item->setInfo(BlockType::TRANSPARENCY_RED, 
-		vec4(1, 0, 0, 0.3), true, this->tbw_size, this->tbh_size);
-	t_item->setPos(vec3(this->items_x_0 + this->gap_width, this->items_y_0, 0));
-	
-	this->items[2] = make_shared<TBlockItem>();
-	t_item = dynamic_pointer_cast<TBlockItem>(this->items[2]);
-	t_item->setInfo(BlockType::TRANSPARENCY_BLUE, vec4(0, 0, 1, 0.3), 
-				true, this->tbw_size, this->tbh_size);
-	t_item->setPos(vec3(this->items_x_0 + 2 * this->gap_width, this->items_y_0, 0));
-
-	this->items[3] = make_shared<TBlockItem>();
-	t_item = dynamic_pointer_cast<TBlockItem>(this->items[3]);
-	t_item->setInfo(BlockType::TRANSPARENCY_GREEN, vec4(0, 1, 0, 0.3), 
-		true, this->tbw_size, this->tbh_size);
-	t_item->setPos(vec3(this->items_x_0 + 3 * this->gap_width, this->items_y_0, 0));
+	this->setOpacityBlocks();
+	this->setTransparencyBlocks();
 
 	// opt setting
 	vertices.clear();
@@ -140,8 +120,6 @@ void TabItems::setOpacityItemBuffer(ComPtr<ID3D11DeviceContext> const& context, 
 	Mat world = o_item->getWorldMatrix().Transpose();
 	this->constant_buffer->update(world);
 	context->VSSetConstantBuffers(0, 1, this->constant_buffer->getComPtr().GetAddressOf());
-	context->PSSetShaderResources(0, 1,
-		o_item->getTexture()->getComPtr().GetAddressOf());
 }
 
 void TabItems::setTransParencyBuffer(ComPtr<ID3D11DeviceContext> const& context, int idx)
@@ -218,9 +196,11 @@ void TabItems::optRender()
 	context->PSSetSamplers(0, 1, this->opt_sampler_state->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(0, 1,
 		GUIResources::getTexture(GUITexture::TAB_ITEM_X)->getComPtr().GetAddressOf());
+	
 	this->constant_buffer_xflag->update(vec4(1, 1, 1, 1));
 	context->PSSetConstantBuffers(0, 1, 
 		this->constant_buffer_xflag->getComPtr().GetAddressOf());
+	
 	float sx = this->items_x_0;
 	for (int i = 3; i < 9; i++) {
 		this->constant_buffer->
@@ -362,5 +342,114 @@ BlockType TabItems::getSlotItem(int idx)
 void TabItems::deleteSlotItem(int idx)
 {
 	this->items[idx] = nullptr;
+}
+
+void TabItems::setOpacityBlocks()
+{
+	this->items[0] = make_shared<OBlockItem>();
+	shared_ptr<OBlockItem>&& o_item = dynamic_pointer_cast<OBlockItem>(this->items[0]);
+	o_item->setInfo(BlockType::GRASS, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0, this->items_y_0, 0));
+
+	this->items[4] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[4]);
+	o_item->setInfo(BlockType::BLACK_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 4 * this->gap_width, this->items_y_0, 0));
+
+	this->items[5] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[5]);
+	o_item->setInfo(BlockType::BLUE_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 5 * this->gap_width, this->items_y_0, 0));
+
+	this->items[6] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[6]);
+	o_item->setInfo(BlockType::BROWN_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 6 * this->gap_width, this->items_y_0, 0));
+
+	this->items[7] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[7]);
+	o_item->setInfo(BlockType::CYAN_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 7 * this->gap_width, this->items_y_0, 0));
+
+	this->items[8] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[8]);
+	o_item->setInfo(BlockType::GRAY_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 8 * this->gap_width, this->items_y_0, 0));
+
+	this->items[9] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[9]);
+	o_item->setInfo(BlockType::GREEN_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0, this->items_y_0 - this->gap_height, 0));
+
+	this->items[10] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[10]);
+	o_item->setInfo(BlockType::LIGHT_BLUE_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + this->gap_width, this->items_y_0 - this->gap_height, 0));
+
+	this->items[11] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[11]);
+	o_item->setInfo(BlockType::LIGHT_GRAY_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 2 * this->gap_width, this->items_y_0 - this->gap_height, 0));
+
+	this->items[12] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[12]);
+	o_item->setInfo(BlockType::LIME_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 3 * this->gap_width, this->items_y_0 - this->gap_height, 0));
+
+	this->items[13] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[13]);
+	o_item->setInfo(BlockType::MAGENTA_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 4 * this->gap_width, this->items_y_0 - this->gap_height, 0));
+
+	this->items[14] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[14]);
+	o_item->setInfo(BlockType::ORANGE_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 5 * this->gap_width, this->items_y_0 - this->gap_height, 0));
+
+	this->items[15] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[15]);
+	o_item->setInfo(BlockType::PINK_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 6 * this->gap_width, this->items_y_0 - this->gap_height, 0));
+
+	this->items[16] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[16]);
+	o_item->setInfo(BlockType::PURPLE_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 7 * this->gap_width, this->items_y_0 - this->gap_height, 0));
+
+	this->items[17] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[17]);
+	o_item->setInfo(BlockType::RED_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + 8 * this->gap_width, this->items_y_0 - this->gap_height, 0));
+
+	this->items[18] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[18]);
+	o_item->setInfo(BlockType::WHITE_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0, this->items_y_0 - 2 * this->gap_height, 0));
+
+	this->items[19] = make_shared<OBlockItem>();
+	o_item = dynamic_pointer_cast<OBlockItem>(this->items[19]);
+	o_item->setInfo(BlockType::YELLOW_CONCRETE, false, this->obw_size, this->obh_size);
+	o_item->setPos(vec3(this->items_x_0 + this->gap_width, this->items_y_0 - 2 * this->gap_height, 0));
+}
+
+void TabItems::setTransparencyBlocks()
+{
+	this->items[1] = make_shared<TBlockItem>();
+	shared_ptr<TBlockItem>&& t_item = dynamic_pointer_cast<TBlockItem>(this->items[1]);
+	t_item->setInfo(BlockType::TRANSPARENCY_RED,
+		vec4(1, 0, 0, 0.3), true, this->tbw_size, this->tbh_size);
+	t_item->setPos(vec3(this->items_x_0 + this->gap_width, this->items_y_0, 0));
+
+	this->items[2] = make_shared<TBlockItem>();
+	t_item = dynamic_pointer_cast<TBlockItem>(this->items[2]);
+	t_item->setInfo(BlockType::TRANSPARENCY_BLUE, vec4(0, 0, 1, 0.3),
+		true, this->tbw_size, this->tbh_size);
+	t_item->setPos(vec3(this->items_x_0 + 2 * this->gap_width, this->items_y_0, 0));
+
+	this->items[3] = make_shared<TBlockItem>();
+	t_item = dynamic_pointer_cast<TBlockItem>(this->items[3]);
+	t_item->setInfo(BlockType::TRANSPARENCY_GREEN, vec4(0, 1, 0, 0.3),
+		true, this->tbw_size, this->tbh_size);
+	t_item->setPos(vec3(this->items_x_0 + 3 * this->gap_width, this->items_y_0, 0));
 }
 

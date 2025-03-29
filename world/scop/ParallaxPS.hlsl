@@ -107,7 +107,7 @@ PS_OUTPUT main(PS_INPUT input)
     
     float lod = calcLOD(pos, t_normal);
     output.color = texture_arr_c.SampleLevel(linear_sampler, uvw, lod);
-    if (uvw.z == 6 || uvw.z == 7 || uvw.z == 8)
+    if (uvw.z == 3)
         output.color = float4(float3(72.0, 181.0, 24.0) / 255.0, 1);
     
     output.w_pos = float4(pos, 1);

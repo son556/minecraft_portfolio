@@ -150,6 +150,7 @@
     <ClInclude Include="BlendState.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="BlockItem.h" />
+    <ClInclude Include="BlockTextureArray.h" />
     <ClInclude Include="Blur.h" />
     <ClInclude Include="Body.h" />
     <ClInclude Include="CascadeShadow.h" />
@@ -178,7 +179,6 @@
     <ClInclude Include="HullShader.h" />
     <ClInclude Include="InputLayouts.h" />
     <ClInclude Include="Inventory.h" />
-    <ClInclude Include="ItemResources.h" />
     <ClInclude Include="LeftArm.h" />
     <ClInclude Include="LeftLeg.h" />
     <ClInclude Include="Letter.h" />
@@ -252,6 +252,7 @@
     <ClCompile Include="BlendState.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BlockItem.cpp" />
+    <ClCompile Include="BlockTextureArray.cpp" />
     <ClCompile Include="Blur.cpp" />
     <ClCompile Include="Body.cpp" />
     <ClCompile Include="CascadeShadow.cpp" />
@@ -280,7 +281,6 @@
     <ClCompile Include="HullShader.cpp" />
     <ClCompile Include="InputLayouts.cpp" />
     <ClCompile Include="Inventory.cpp" />
-    <ClCompile Include="ItemResources.cpp" />
     <ClCompile Include="LeftArm.cpp" />
     <ClCompile Include="LeftLeg.cpp" />
     <ClCompile Include="Letter.cpp" />

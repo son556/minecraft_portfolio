@@ -53,7 +53,7 @@ PS_OUTPUT main(PS_INPUT input)
     if (output.color.w < 0.8)
         discard;
     output.color.w = 1;
-    if (uvw.z == 6 || uvw.z == 7 || uvw.z == 8)
+    if (uvw.z == 3)
         output.color = float4(float3(72.0, 181.0, 24.0) / 255.0, 1);
     
     output.uvw = float4(uvw, 1);

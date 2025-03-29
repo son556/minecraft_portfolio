@@ -385,9 +385,6 @@
     <Filter Include="소스 파일\GUI\GUIRender">
       <UniqueIdentifier>{a36e1f43-1e2f-4e17-a598-38430bc31db5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\GUI\Items\ItemResources">
-      <UniqueIdentifier>{a03deb53-e3e4-4dad-b7d0-edb04b82192f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\GUI\GUIshader">
       <UniqueIdentifier>{9c21d6b2-179f-448c-8428-6dfd2a49f8e0}</UniqueIdentifier>
     </Filter>
@@ -411,6 +408,9 @@
     </Filter>
     <Filter Include="소스 파일\StartScene\Letter">
       <UniqueIdentifier>{47a7ad9d-47cb-4c8c-8d7e-07155b721aec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\BlockTextureArray">
+      <UniqueIdentifier>{19c58998-f65d-4d68-9ec0-b38859054d8a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -696,9 +696,6 @@
     <ClInclude Include="GUIManager.h">
       <Filter>소스 파일\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="ItemResources.h">
-      <Filter>소스 파일\GUI\Items\ItemResources</Filter>
-    </ClInclude>
     <ClInclude Include="Inventory.h">
       <Filter>소스 파일\GUI\Inventory</Filter>
     </ClInclude>
@@ -713,6 +710,9 @@
     </ClInclude>
     <ClInclude Include="Letter.h">
       <Filter>소스 파일\StartScene\Letter</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockTextureArray.h">
+      <Filter>소스 파일\BlockTextureArray</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -989,9 +989,6 @@
     <ClCompile Include="GUIManager.cpp">
       <Filter>소스 파일\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="ItemResources.cpp">
-      <Filter>소스 파일\GUI\Items\ItemResources</Filter>
-    </ClCompile>
     <ClCompile Include="Inventory.cpp">
       <Filter>소스 파일\GUI\Inventory</Filter>
     </ClCompile>
@@ -1006,6 +1003,9 @@
     </ClCompile>
     <ClCompile Include="Letter.cpp">
       <Filter>소스 파일\StartScene\Letter</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockTextureArray.cpp">
+      <Filter>소스 파일\BlockTextureArray</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

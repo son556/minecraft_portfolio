@@ -14,6 +14,7 @@
 #include "CompositeRenderer.h"
 #include "GUIManager.h"
 #include "StartScene.h"
+#include "BlockTextureArray.h"
 
 #define MAX_LOADSTRING 100
 
@@ -74,6 +75,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     Terrain terrain(12, 12, hWnd, w_width, w_height, 1, 8); // 짝수 단위로만
     CompositeRenderer composite_renderer;
+    BlockTextureArray::Init();
     GUIManager gui_manager;
     StartScene start_scene;
 
@@ -183,16 +185,11 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_SCOP));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
     wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_SCOP);
     wcex.lpszClassName  = L"SCOP";
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
-
-    //wcex.hCursor = LoadIcon(hInstance, 1);
     wcex.hCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR2));
-    //wcex.hCursor = (HCURSOR)LoadImage(hInstance, MAKEINTRESOURCE(IDC_CURSOR1), 
-        //IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE | LR_LOADTRANSPARENT);
 
     return RegisterClassExW(&wcex);
 }
@@ -226,6 +223,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    // 항상 화면이 위에 뜨게함
    SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+   //SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); // test
    return TRUE;
 }
 

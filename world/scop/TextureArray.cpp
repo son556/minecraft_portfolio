@@ -134,6 +134,7 @@ void ReadImage(const std::string filename, std::vector<uint8_t>& image,
 		}
 	}
 	else {
+		std::cout << "filename: " << filename << endl;
 		std::cout << "Read 3 or 4 channels images only. " << channels
 			<< " channels" << endl;
 	}

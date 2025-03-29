@@ -7,6 +7,7 @@ class RasterizerState;
 class SamplerState;
 class GUI;
 class DeferredBuffer;
+class ConstantBuffer;
 
 class GUIRender
 {
@@ -35,9 +36,11 @@ private:
 	shared_ptr<RasterizerState> rasterizer_state;
 	shared_ptr<PixelShader> pixel_shader;
 	shared_ptr<SamplerState> sampler_state;
-
+	
 	shared_ptr<InputLayout> input_layout_color;
 	shared_ptr<VertexShader> vertex_shader_color;
 	shared_ptr<PixelShader> pixel_shader_color;
+
+	shared_ptr<ConstantBuffer> constant_buffer;
 };
 

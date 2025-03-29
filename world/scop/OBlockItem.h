@@ -16,7 +16,6 @@ public:
 	Mat const& getWorldMatrix();
 	shared_ptr<Buffer<VertexDefer>> const& getVertexBuffer();
 	shared_ptr<Buffer<uint32>> const& getIndexBuffer();
-	shared_ptr<Texture>const& getTexture();
 	void setInfo(BlockType const& item_type, 
 		bool tp_flag, float w_size = -1, float h_size = -1);
 	virtual BlockType getBlockType() override;

@@ -191,13 +191,12 @@ namespace Block {
 		z = start_pos.z - z;
 		
 		int idx;
-		type = type - 1 + 2 * (type - 1);
 		if (dir == 0)
-			idx = type;
-		else if (dir == 1)
-			idx = type + 2;
-		else
-			idx = type + 1;
+			idx = blockOffset[type - 1][0];
+		else if (dir == 1) // bottom
+			idx = blockOffset[type - 1][2];
+		else // side
+			idx = blockOffset[type - 1][1];
 
 		for (int i = dir * 4; i < dir * 4 + 4; i++) {
 			vertex.pos = pos[i] + vec3(x, y, z);

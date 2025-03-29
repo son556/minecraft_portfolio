@@ -216,7 +216,7 @@ WorldIndex MapUtils::pickBlock(vec3 r_pos, vec3 r_dir)
 	if (flag_z == false)
 		max_z = INT_MAX;
 
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 12; i++) {
 		if (max_x < max_y) {
 			if (max_x < max_z) {
 				x += step_x;

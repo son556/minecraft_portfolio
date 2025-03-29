@@ -4,7 +4,6 @@
 #include "DeferredBuffer.h"
 #include "MapUtils.h"
 #include "RasterizerState.h"
-#include "TextureArray.h"
 #include "SamplerState.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
@@ -16,6 +15,7 @@
 #include "Chunk.h"
 #include "DepthMap.h"
 #include "TestCam.h"
+#include "BlockTextureArray.h"
 
 GeoRender::GeoRender(MapUtils* minfo)
 {
@@ -40,94 +40,6 @@ GeoRender::GeoRender(MapUtils* minfo)
 		D3D11_CULL_BACK,
 		true
 	);
-	vector<wstring> path_color = {
-		L"./textures/pbr/test_sample/grass_path_top.png",
-		L"./textures/pbr/test_sample/grass_path_side.png",
-		L"./textures/pbr/test_sample/packed_mud.png",
-		L"./textures/pbr/oak_tree/oak_log_top.png",
-		L"./textures/pbr/oak_tree/oak_log.png",
-		L"./textures/pbr/oak_tree/oak_log_top.png",
-		L"./textures/pbr/oak_tree/oak_leaves.png",
-		L"./textures/pbr/oak_tree/oak_leaves.png",
-		L"./textures/pbr/oak_tree/oak_leaves.png"
-	};
-	path_color = {
-		L"./textures/pbr/test_sample/packed_mud.png",
-		L"./textures/pbr/test_sample/packed_mud.png",
-		L"./textures/pbr/test_sample/packed_mud.png",
-		L"./textures/pbr/oak_tree/oak_log_top.png",
-		L"./textures/pbr/oak_tree/oak_log.png",
-		L"./textures/pbr/oak_tree/oak_log_top.png",
-		L"./textures/pbr/oak_tree/oak_leaves.png",
-		L"./textures/pbr/oak_tree/oak_leaves.png",
-		L"./textures/pbr/oak_tree/oak_leaves.png"
-	};
-	this->texture_array_color = 
-		make_shared<TextureArray>(
-			device,
-			context,
-			path_color,
-			0, true
-		);
-	vector<wstring> path_normal = {
-		L"./textures/pbr/test_sample/grass_path_top_n.png",
-		L"./textures/pbr/test_sample/grass_path_side_n.png",
-		L"./textures/pbr/test_sample/packed_mud_n.png",
-		L"./textures/pbr/oak_tree/oak_log_top_n.png",
-		L"./textures/pbr/oak_tree/oak_log_n.png",
-		L"./textures/pbr/oak_tree/oak_log_top_n.png",
-		L"./textures/pbr/oak_tree/oak_leaves_n.png",
-		L"./textures/pbr/oak_tree/oak_leaves_n.png",
-		L"./textures/pbr/oak_tree/oak_leaves_n.png"
-	};
-	path_normal = {
-		L"./textures/pbr/test_sample/packed_mud_n.png",
-		L"./textures/pbr/test_sample/packed_mud_n.png",
-		L"./textures/pbr/test_sample/packed_mud_n.png",
-		L"./textures/pbr/oak_tree/oak_log_top_n.png",
-		L"./textures/pbr/oak_tree/oak_log_n.png",
-		L"./textures/pbr/oak_tree/oak_log_top_n.png",
-		L"./textures/pbr/oak_tree/oak_leaves_n.png",
-		L"./textures/pbr/oak_tree/oak_leaves_n.png",
-		L"./textures/pbr/oak_tree/oak_leaves_n.png"
-	};
-	this->texture_array_normal = 
-		make_shared<TextureArray>(
-			device,
-			context,
-			path_normal,
-			0
-		);
-	  
-	vector<wstring> path_s = {
-		L"./textures/pbr/test_sample/grass_path_top_s.png",
-		L"./textures/pbr/test_sample/grass_path_side_s.png",
-		L"./textures/pbr/test_sample/packed_mud_s.png",
-		L"./textures/pbr/oak_tree/oak_log_top_s.png",
-		L"./textures/pbr/oak_tree/oak_log_s.png",
-		L"./textures/pbr/oak_tree/oak_log_top_s.png",
-		L"./textures/pbr/oak_tree/oak_leaves_s.png",
-		L"./textures/pbr/oak_tree/oak_leaves_s.png",
-		L"./textures/pbr/oak_tree/oak_leaves_s.png"
-	};
-	path_s = {
-		L"./textures/pbr/test_sample/packed_mud_s.png",
-		L"./textures/pbr/test_sample/packed_mud_s.png",
-		L"./textures/pbr/test_sample/packed_mud_s.png",
-		L"./textures/pbr/oak_tree/oak_log_top_s.png",
-		L"./textures/pbr/oak_tree/oak_log_s.png",
-		L"./textures/pbr/oak_tree/oak_log_top_s.png",
-		L"./textures/pbr/oak_tree/oak_leaves_s.png",
-		L"./textures/pbr/oak_tree/oak_leaves_s.png",
-		L"./textures/pbr/oak_tree/oak_leaves_s.png"
-	};
-	this->texture_array_s = 
-		make_shared<TextureArray>(
-			device,
-			context,
-			path_s,
-			0
-		);
 	// texture manager: texture array setting
 
 	this->linear_state = make_shared<SamplerState>(device);
@@ -312,17 +224,17 @@ void GeoRender::setPipe(bool ccw_flag)
 	context->PSSetShaderResources(
 		0,
 		1,
-		this->texture_array_color->getComPtr().GetAddressOf()
+		BlockTextureArray::getBlocksColor()->getComPtr().GetAddressOf()
 	);
 	context->PSSetShaderResources(
 		1,
 		1,
-		this->texture_array_s->getComPtr().GetAddressOf()
+		BlockTextureArray::getBlocksS()->getComPtr().GetAddressOf()
 	);
 	context->PSSetShaderResources(
 		2,
 		1,
-		this->texture_array_normal->getComPtr().GetAddressOf()
+		BlockTextureArray::getBlocksNormal()->getComPtr().GetAddressOf()
 	);
 	context->HSSetShader(
 		this->hull_shader->getComPtr().Get(),
@@ -337,7 +249,7 @@ void GeoRender::setPipe(bool ccw_flag)
 
 	// 실제 vertex위치 옮기는 경우
 	context->DSSetShaderResources(0, 1,
-		this->texture_array_normal->getComPtr().GetAddressOf());
+		BlockTextureArray::getBlocksNormal()->getComPtr().GetAddressOf());
 }
 
 void GeoRender::setConstantBuffer(CamType type)
@@ -368,11 +280,11 @@ void GeoRender::parallaxRender(vec3 const& cam_pos)
 	this->parallax_mapping->setRTV();
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	context->PSSetShaderResources(0, 1,
-		this->texture_array_color->getComPtr().GetAddressOf());
+		BlockTextureArray::getBlocksColor()->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(1, 1,
-		this->texture_array_normal->getComPtr().GetAddressOf());
+		BlockTextureArray::getBlocksNormal()->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(2, 1,
-		this->texture_array_s->getComPtr().GetAddressOf());
+		BlockTextureArray::getBlocksS()->getComPtr().GetAddressOf());
 	context->PSSetShaderResources(3, 1,
 		this->d_buffer->getSRV(5).GetAddressOf());
 	context->PSSetShaderResources(4, 1,

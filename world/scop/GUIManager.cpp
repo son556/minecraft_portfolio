@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "GUIManager.h"
 #include "GUIResources.h"
-#include "ItemResources.h"
 #include "TabItems.h"
 #include "Inventory.h"
 
@@ -10,7 +9,6 @@
 GUIManager::GUIManager()
 {
 	GUIResources::initialize();
-	ItemResources::initializeItemResources();
 	int idx = static_cast<int>(GUITexture::TAB_ITEMS);
 	this->gui_arr.resize(2);
 	this->gui_arr[idx] = make_shared<TabItems>(0.8, 0.8);

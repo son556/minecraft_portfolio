@@ -2,7 +2,6 @@
 #include "OBlockItem.h"
 #include "DeferredGraphics.h"
 #include "Block.h"
-#include "ItemResources.h"
 #include "Buffer.h"
 #include "Texture.h"
 
@@ -30,11 +29,6 @@ shared_ptr<Buffer<VertexDefer>> const& OBlockItem::getVertexBuffer()
 shared_ptr<Buffer<uint32>> const& OBlockItem::getIndexBuffer()
 {
 	return this->i_buffer;
-}
-
-shared_ptr<Texture> const& OBlockItem::getTexture()
-{
-	return ItemResources::getTexture(this->item_type);
 }
 
 void OBlockItem::setInfo(BlockType const& item_type, bool tp_flag, 

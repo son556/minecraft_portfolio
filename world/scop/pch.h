@@ -88,12 +88,45 @@ enum BlockType {
 	GRASS,
 	OAK_LOG,
 	OAK_LEAVES,
+	BLACK_CONCRETE,
+	BLUE_CONCRETE,
+	BROWN_CONCRETE,
+	CYAN_CONCRETE,
+	GRAY_CONCRETE,
+	GREEN_CONCRETE,
+	LIGHT_BLUE_CONCRETE,
+	LIGHT_GRAY_CONCRETE,
+	LIME_CONCRETE,
+	MAGENTA_CONCRETE,
+	ORANGE_CONCRETE,
+	PINK_CONCRETE,
+	PURPLE_CONCRETE,
+	RED_CONCRETE,
+	WHITE_CONCRETE,
+	YELLOW_CONCRETE
 };
 
-enum class BlockTexture {
-	GRASS = 1,
-	OAK_LOG,
-	OAK_LEAVES
+static vector<vector<int>> blockOffset = {
+	//top, side, bottom
+	{	0,	0,	0}, // grass
+	{	1,	2,	1}, // oak log
+	{	3,	3,	3}, // oak leaves
+	{	4,	4,	4}, // black concrete
+	{	5,	5,	5}, // blue concrete
+	{	6,	6,	6}, // brown concrete
+	{	7,	7,	7}, // cyan concrete
+	{	8,	8,	8}, // gray concrete
+	{	9,	9,	9}, // green concrete
+	{	10,	10,	10}, // light blue concrete
+	{	11,	11,	11}, // light gray concrete
+	{	12,	12,	12}, // lime concrete
+	{	13,	13,	13}, // magenta concrete
+	{	14,	14,	14}, // orange concrete
+	{	15,	15,	15}, // pink concrete
+	{	16,	16,	16}, // purple concrete
+	{	17,	17,	17}, // red concrete
+	{	18,	18,	18}, // white concrete
+	{	19,	19,	19}, // yellow concrete
 };
 
 enum class CamType {

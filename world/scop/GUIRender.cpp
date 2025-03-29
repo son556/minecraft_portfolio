@@ -9,7 +9,8 @@
 #include "SamplerState.h"
 #include "TabItems.h"
 #include "DeferredBuffer.h"
-
+#include "ConstantBuffer.h"
+#include "BlockTextureArray.h"
 
 GUIRender::GUIRender()
 {
@@ -70,6 +71,12 @@ GUIRender::GUIRender()
 		this->depth_stencil_state.GetAddressOf());
 
 	this->sampler_state = make_shared<SamplerState>(device);
+	vec4 tmp = { -1, -1, -1, -1 };
+	this->constant_buffer = make_shared<ConstantBuffer>(
+		device,
+		d_graphic->getContext(),
+		tmp
+	);
 }
 
 void GUIRender::render(GUI* gui, bool rtv_reset)
@@ -78,8 +85,14 @@ void GUIRender::render(GUI* gui, bool rtv_reset)
 
 	d_graphic->renderBegin(this->deferred_buffer.get(), nullptr, rtv_reset);
 	
+	vec4 idx = { -1, -1, -1, -1 };
+
 	// gui render
 	this->setPipe(context, false);
+	this->constant_buffer->update(idx);
+	context->PSSetConstantBuffers(0, 1, 
+		this->constant_buffer->getComPtr().GetAddressOf());
+
 	gui->setGUIBuffer(context);
 	context->DrawIndexed(6, 0, 0);
 	
@@ -87,6 +100,9 @@ void GUIRender::render(GUI* gui, bool rtv_reset)
 	gui->optRender();
 
 	// gui opacity item render
+	context->PSSetConstantBuffers(0, 1,
+		this->constant_buffer->getComPtr().GetAddressOf());
+
 	int free_move_item_idx = -1;
 	this->setPipe(context, false);
 	int cnt = gui->getItemArraySize();
@@ -99,6 +115,8 @@ void GUIRender::render(GUI* gui, bool rtv_reset)
 			continue;
 		}
 		if (block->getBlockFlag() == false) {
+			idx.x = blockOffset[static_cast<int>(block->getBlockType()) - 1][0];
+			this->constant_buffer->update(idx);
 			gui->setOpacityItemBuffer(context, i);
 			context->DrawIndexed(6, 0, 0);
 		}
@@ -124,6 +142,9 @@ void GUIRender::render(GUI* gui, bool rtv_reset)
 				nullptr,
 				0xFFFFFFFF
 			);
+			idx.x = 
+				blockOffset[static_cast<int>(gui->getItem(free_move_item_idx)->getBlockType()) - 1][0];
+			this->constant_buffer->update(idx);
 			gui->setOpacityItemBuffer(context, free_move_item_idx);
 		}
 		else
@@ -178,6 +199,8 @@ void GUIRender::setPipe(
 			nullptr,
 			0
 		);
+		context->PSSetShaderResources(1, 1,
+			BlockTextureArray::getBlocksColor()->getComPtr().GetAddressOf());
 		context->PSSetSamplers(0, 1, this->sampler_state->getComPtr().GetAddressOf());
 	}
 	context->OMSetDepthStencilState(this->depth_stencil_state.Get(), 0);

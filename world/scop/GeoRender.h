@@ -65,9 +65,6 @@ private:
 	shared_ptr<ConstantBuffer> mvp_cbuffer;
 	shared_ptr<ConstantBuffer> cam_pos_cbuffer;
 	shared_ptr<ConstantBuffer> eye_pos_cbuffer;
-	shared_ptr<TextureArray> texture_array_color;
-	shared_ptr<TextureArray> texture_array_normal;
-	shared_ptr<TextureArray> texture_array_s;
 	shared_ptr<DepthMap> depth_map;
 };
 

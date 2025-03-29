@@ -68,6 +68,10 @@ public:
 	virtual void deleteSlotItem(int idx) override;
 
 private:
+	void setOpacityBlocks();
+	void setTransparencyBlocks();
+
+private:
 	TabItems() = delete;
 	TabItems& operator=(TabItems const&) = delete;
 	TabItems(TabItems const&) = delete;
