@@ -32,6 +32,7 @@ public:
 	vec3 const& getDir();
 	void update(vec3 const& dir);
 	void setLeftArmAnimation();
+	void checkValidatePosition();
 
 private:
 	void renderHead(ComPtr<ID3D11DeviceContext>& context);
@@ -51,6 +52,7 @@ private:
 
 private:
 	vec3 c_pos; // 캐릭터 중앙 발 밑
+	vec3 prev_pos = vec3(0, 0, 0);
 	vec3 dir;
 	vec3 up = vec3(0, 1, 0);
 	Mat pos;

@@ -174,27 +174,12 @@ void LightSystem::checkBoundary(
 			}
 		}
 	}
-	if ((dir_flag & 1) && (dir & 1))
-		cidxs->push_back(apx_idx);
-	if ((dir_flag & 2) && (dir & 2))
-		cidxs->push_back(amx_idx);
-	if ((dir_flag & 4) && (dir & 4))
-		cidxs->push_back(amz_idx);
-	if ((dir_flag & 8) && (dir & 8))
-		cidxs->push_back(apz_idx);
-	//thread t1;
-	//thread t2;
-	//t1 = thread(&LightSystem::lightBFS, this, 0); // 자기 자신 bfs
-	//t2 = thread(&LightSystem::lightBFS, this, 1); // 인접 청크 bfs
-	//t1.join();
-	//t2.join();
 	this->lightBFS(0);
 	this->lightBFS(1);
 }
 
 void LightSystem::createLightMap()
 {
-	//vector<thread> threads;
 	vector<Index2> cidxs;
 	for (int i = 0; i < this->m_info->size_h; i++) {
 		for (int j = 0; j < this->m_info->size_w; j++) {

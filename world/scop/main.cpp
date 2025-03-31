@@ -147,11 +147,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
                 start_scene.render();
             }
+            else if (fix_flag == false) { // test
+                terrain.userPositionCheck(cam->getPos().x,
+                    cam->getPos().z);
+                terrain.Render();
+                if (item_ui) {
+                    gui_manager.render(GUITexture::TAB_ITEMS, click_check);
+                    click_check = false;
+                }
+                else
+                    gui_manager.render();
+            }
             else {
                 entity->update(cam->getDir());
                 cam->update(entity->getCharacterPos(), entity->getCharacterDir());
                 terrain.userPositionCheck(cam->getPos().x,
                     cam->getPos().z);
+                entity->checkEntityNowPos(); // 프레임 떨어졌을 경우 위치 조정용
                 terrain.Render();
                 if (item_ui) {
                     gui_manager.render(GUITexture::TAB_ITEMS, click_check);

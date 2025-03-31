@@ -19,6 +19,7 @@ public:
 	void createHeightMap();
 	void createTrees();
 	void createTrees(vector<Index2>& chunks, int dir);
+	void fillWithUserPlacedBlocks(Index2 const& c_idx);
 
 private:
 	MapUtils* m_info;

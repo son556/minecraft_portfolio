@@ -136,7 +136,7 @@ void TestCam::update()
 		move_dir += vec3(0, 1, 0);
 	if (GetAsyncKeyState('E') & 0x8000)
 		move_dir -= vec3(0, 1, 0);
-	move_dir = XMVector3Normalize(move_dir) * 0.03f;
+	move_dir = XMVector3Normalize(move_dir) * 0.1f;
 	this->pos += move_dir;
 	this->mvp.view = XMMatrixLookToLH(this->pos, this->dir, vec3(0, 1, 0));
 }

@@ -134,8 +134,9 @@ void SetTree::createTrees(vector<Index2>& chunks, int dir)
 			p_chunks[i] = this->m_info->findChunkIndex(cpos.x, cpos.y);
 		}
 	}
-	for (int i = 0; i < p_chunks.size(); i++)
-		chunks.push_back(p_chunks[i]);
+	// TODO 이걸 주석처리하면 나무가 이상하게 나옴 이유를 찾아야함
+	/*for (int i = 0; i < p_chunks.size(); i++)
+		chunks.push_back(p_chunks[i]);*/
 }
 
 void SetTree::checkChunk(Index2 const& c_idx, int x, int y, int z, 

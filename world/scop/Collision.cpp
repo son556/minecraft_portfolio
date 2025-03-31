@@ -35,11 +35,13 @@ vec3 Collision::calcCollision(
 	return ans;
 }
 
+bool Collision::checkCollisionNowPosition(vec3 const& down_pos)
+{
+	return this->c_utils.checkCollision(down_pos);
+}
+
 bool Collision::checkBottom(vec3 const& down_pos)
 {
-	bool flag;
-	this->c_utils.calcCollisionY(down_pos, -0.1, &flag);
-	flag = !flag;
-	return flag;
+	return this->c_utils.checkBottom(down_pos);
 }
 

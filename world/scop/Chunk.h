@@ -27,18 +27,8 @@ public: // create
 	void reset();
 	void setPos(Index2 const& c_pos);
 
-public: // test
-	void createGeoIBuffer(
-		ComPtr<ID3D11Device> const& device,
-		vector<uint32> const& indices
-	);
-	void setGeoRenderIndices(
-		ComPtr<ID3D11DeviceContext> const& context
-	);
-
 public:
 	int16 max_h = -1;
-	uint32 tp_block_cnt = 0;
 	vec3 start_pos; // 0 0 0 번째 블록의 가운데 위치
 	Index2 chunk_pos; // 청크의 시작위치
 	uint32 vertices_idx;
@@ -51,8 +41,5 @@ private:
 	shared_ptr<Buffer<VertexGeo>> geo_vbuffer;
 	shared_ptr<Buffer<VertexShadow>> shadow_vbuffer;
 	shared_ptr<Buffer<uint32>> shadow_ibuffer;
-
-private: // test
-	shared_ptr<Buffer<uint32>> geo_ibuffer;
 };
 

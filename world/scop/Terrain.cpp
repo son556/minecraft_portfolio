@@ -95,44 +95,13 @@ void Terrain::putBlock(
 			if (entity->checkAABBWithEntity(add_idx.pos))// 캐릭터가 있으면 블록 안놓음
 				return;
 
-			if (type < 0) {
-				this->m_manager->m_info.addBlock(cidx, bidx, type);
-				Chunk& chunk = *(this->m_manager->m_info.chunks[cidx.y][cidx.x]);
-				chunk.tp_block_cnt += 1;
-				vector<VertexColor>& u_vertices = chunk.tp_chunk.vertices_up;
-				vector<uint32>& u_indices = chunk.tp_chunk.indices_up;
-				uint32& u_idx = chunk.tp_chunk.vertices_idx_up;
-
-				vector<VertexColor>& d_vertices = chunk.tp_chunk.vertices_down;
-				vector<uint32>& d_indices = chunk.tp_chunk.indices_down;
-				uint32& d_idx = chunk.tp_chunk.vertices_idx_down;
-				int16& max_h = chunk.max_h;
-				max_h = max(max_h, bidx.y + 1);
-				vec4 col;
-				if (type == -3)
-					col = vec4(1, 0, 0, 0.3);
-				if (bidx.y >= WATER_HEIGHT) {
-					for (int i = 0; i < 6; i++) {
-						Block::addBlockFacePosAndCol(
-							chunk.start_pos, bidx.x, bidx.y, bidx.z, i,
-							type, u_vertices);
-						Block::addBlockFaceIndices(u_idx, u_indices);
-						u_idx += 4;
-					}
-					chunk.tp_chunk.update(d_graphic->getDevice(), true);
-				}
-				else {
-					for (int i = 0; i < 6; i++) {
-						Block::addBlockFacePosAndCol(
-							chunk.start_pos, bidx.x, bidx.y, bidx.z, i,
-							type, d_vertices);
-						Block::addBlockFaceIndices(d_idx, d_indices);
-						d_idx += 4;
-					}
-					chunk.tp_chunk.update(d_graphic->getDevice(), false);
-				}
-				return;
-			}
+			this->m_manager->m_info.addBlock(cidx, bidx, type);
+			this->m_manager->m_info.writeBookAboutBlockStatus(
+				this->m_manager->m_info.chunks[cidx.y][cidx.x]->chunk_pos,
+				bidx,
+				static_cast<BlockType>(this->m_manager->m_info.findBlock(cidx, bidx)),
+				static_cast<BlockType>(type)
+			);
 			
 			if (bidx.x == 0) {
 				adj_idx = this->m_manager->m_info.findChunkIndex(cpos.x - 16, cpos.y);
@@ -162,12 +131,12 @@ void Terrain::putBlock(
 					v_idx.push_back(adj_idx);
 				}
 			}
-			this->m_manager->m_info.addBlock(cidx, bidx, type);
-			this->m_manager->m_info.setLight(cidx, bidx, 0);
-			this->m_manager->m_info.chunks[cidx.y][cidx.x]->vertices_idx = 0;
 			int16& max_h = this->m_manager->m_info.chunks[cidx.y][cidx.x]->max_h;
 			max_h = max(max_h, bidx.y + 1);
-			this->m_manager->l_system.chunkSetLight(cidx);
+			if (type > 0) {
+				this->m_manager->m_info.setLight(cidx, bidx, 0);
+				this->m_manager->l_system.chunkSetLight(cidx);
+			}
 			v_idx.push_back(cidx);
 			this->m_manager->chunksSetVerticesAndIndices(v_idx, 0, v_idx.size());
 		}
@@ -180,21 +149,18 @@ void Terrain::deleteBlock(vec3 const& ray_pos, vec3 const& ray_dir)
 	if (widx.flag) {
 		int type = this->m_manager->m_info.findBlock(widx.c_idx, widx.b_idx);
 		this->m_manager->m_info.addBlock(widx.c_idx, widx.b_idx, 0);
+		
+		this->m_manager->m_info.writeBookAboutBlockStatus(
+			this->m_manager->m_info.chunks[widx.c_idx.y][widx.c_idx.x]->chunk_pos,
+			widx.b_idx,
+			BlockType::AIR,
+			BlockType::AIR
+		);
+		
 		int16& max_h = 
 			this->m_manager->m_info.chunks[widx.c_idx.y][widx.c_idx.x]->max_h;
 		max_h = max(max_h, widx.b_idx.y - 1);
 		
-		if (type < 0) { // 반투명인 경우
-			Chunk& chunk = 
-				*(this->m_manager->m_info.chunks[widx.c_idx.y][widx.c_idx.x]);
-			chunk.tp_block_cnt -= 1;
-			chunk.tp_chunk.reset();
-			this->m_manager->vertexAndIndexGeneratorTP(widx.c_idx);
-			return;
-		}
-		this->m_manager->l_system.chunkSetLight(widx.c_idx);
-		this->m_manager->
-			m_info.chunks[widx.c_idx.y][widx.c_idx.x]->vertices_idx = 0;
 		vector<Index2> v_idx;
 		v_idx.push_back(widx.c_idx);
 		Index2 cidx;
@@ -226,6 +192,11 @@ void Terrain::deleteBlock(vec3 const& ray_pos, vec3 const& ray_dir)
 				this->m_manager->m_info.chunks[cidx.y][cidx.x]->vertices_idx = 0;
 				v_idx.push_back(cidx);
 			}
+		}
+
+		if (type > 0) {
+			this->m_manager->m_info.setLight(widx.c_idx, widx.b_idx, 0);
+			this->m_manager->l_system.chunkSetLight(widx.c_idx);
 		}
 		this->m_manager->chunksSetVerticesAndIndices(v_idx, 0, v_idx.size());
 	}

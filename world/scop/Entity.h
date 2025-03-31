@@ -44,6 +44,13 @@ public:
 	void update(vec3 const& cam_dir);
 	void setCharacterLeftArmAnimation();
 
+	/**
+	 * 갱신된 현재 위치가 맞는 지 확인합니다.
+	 * 만약 주위에 충돌물체가 있는 경우 entity는 이전 위치로 설정됩니다.
+	 * 
+	 */
+	void checkEntityNowPos();
+
 private:
 	Entity(Entity const&) = delete;
 	Entity& operator=(Entity const&) = delete;

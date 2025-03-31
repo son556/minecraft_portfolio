@@ -49,6 +49,19 @@ public:
 	void setLight(Index2 const& c_idx, int x, int y, int z, uint8 type);
 	void setLight(Index2 const& c_idx, Index3 const& b_idx, uint8 type);
 
+	// book manage
+	void writeBookAboutBlockStatus(Index2 const& chunk_pos,
+		Index3 const& block_idx, BlockType original, BlockType new_block);
+	/**
+	 * 유저가 놓은 블록들의 정보를 반환합니다.
+	 * 
+	 * \param chunk_pos 청크 위치
+	 * \return 유저가 놓은 블록들의 정보를 shared_ptr<const map<Index3, Index2>> 를
+	 * 반환 합니다. 없으면 nullptr 반환
+	 */
+	map<Index3, Index2> const* const getUserPlacedBlocks(
+		Index2 const& chunk_pos);
+
 public:
 	/**
 	*  @brief 포함되는 world 좌표를 받아 block의 인덱스를 반환합니다.
@@ -91,6 +104,10 @@ private:
 	int findAdjBlock(Index2 const& c_idx, int x, int y, int z) const;
 	uint8 findAdjLightBlock(Index2 const& c_idx, int x, int y, int z) const;
 
+private:
+	MapUtils(MapUtils const&) = delete;
+	MapUtils& operator=(MapUtils const&) = delete;
+
 public:
 	int size_w; // 맵 세로 크기
 	int size_h; // 맵 가로 크기
@@ -103,6 +120,7 @@ public:
 	UINT height; // 창 세로 크기
 	vec3 directional_light_pos; // 태양(or 달) 위치
 	vec3 light_dir;
+	map<Index2, map<Index3, Index2>> book; // 유저의 행동 결과를 저장
 
 private:
 	int* blocks;

@@ -20,20 +20,11 @@ Map::Map(
 {
 	this->c_fov = fov_chunk;
 	this->thread_cnt = thread_cnt;
-	clock_t start, finish;
-	start = clock();
+
 	this->t_system.createHeightMap();
-	finish = clock();
-	cout << "set height(ms)" << static_cast<double>(finish - start) << endl;
-	start = clock();
 	this->l_system.createLightMap();
-	finish = clock();
-	cout << "set light(ms): " << static_cast<double>(finish - start) << endl;
 	this->t_system.createTrees();
-	start = clock();
 	this->terrainSetVerticesAndIndices();
-	finish = clock();
-	cout << "set vi(ms): " << static_cast<double>(finish - start) << endl;
 }
 
 
@@ -150,8 +141,6 @@ void Map::vertexShadowGenerator(
 void Map::vertexAndIndexGeneratorTP(Index2 const& c_idx)
 {
 	Chunk& chunk = *(this->m_info.chunks[c_idx.y][c_idx.x]);
-	if (chunk.tp_block_cnt == 0)
-		return;
 	uint32& vu_idx = chunk.tp_chunk.vertices_idx_up;
 	vector<VertexColor>& vertices_up = chunk.tp_chunk.vertices_up;
 	vector<uint32>& indices_up = chunk.tp_chunk.indices_up;
@@ -160,14 +149,8 @@ void Map::vertexAndIndexGeneratorTP(Index2 const& c_idx)
 	vector<VertexColor>& vertices_down = chunk.tp_chunk.vertices_down;
 	vector<uint32>& indices_down = chunk.tp_chunk.indices_down;
 	
-	vu_idx = 0;
-	vertices_up.clear();
-	indices_up.clear();
-	vd_idx = 0;
-	vertices_down.clear();
-	indices_down.clear();
+	chunk.tp_chunk.reset();
 
-	vec4 col;
 	for (int y = 0; y <= chunk.max_h; y++) {
 		for (int z = 0; z < 16; z++) {
 			for (int x = 0; x < 16; x++) {
@@ -296,13 +279,13 @@ int Map::checkTerrainBoundary(float x, float z) const
 	float r = 16.f * this->c_fov;
 	int mask = 0;
 	if (x - r < this->m_info.sv_pos.x)
-		mask |= 1 << 0; // left out
+		mask |= 1 << 0; // left out(-x)
 	if (x + r > this->m_info.ev_pos.x)
-		mask |= 1 << 1; // right out
+		mask |= 1 << 1; // right out(+x)
 	if (z + r > this->m_info.sv_pos.y)
-		mask |= 1 << 2; // back out (up)
+		mask |= 1 << 2; // back out (+z)
 	if (z - r < this->m_info.ev_pos.y)
-		mask |= 1 << 3; // front out (down)
+		mask |= 1 << 3; // front out (-z)
 	return mask;
 }
 
@@ -314,7 +297,7 @@ void Map::userPositionCheck(float x, float z)
 	if (mask == 1) { // out left
 		for (int i = 0; i < this->m_info.size_h; i++) {
 			if (i && i < this->m_info.size_h - 1) { // 보여주기
-				cpos = Index2(this->m_info.s_pos.x, this->m_info.s_pos.y - 16 * i);
+				cpos = Index2(this->m_info.s_pos.x, this->m_info.sv_pos.y - 16 * i);
 				cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
 				v_idxs.push_back(cidx);
 			}
@@ -328,7 +311,7 @@ void Map::userPositionCheck(float x, float z)
 	else if (mask == 2) { // out right
 		for (int i = 0; i < this->m_info.size_h; i++) {
 			if (i && i < this->m_info.size_h - 1) {
-				cpos = Index2(this->m_info.ev_pos.x, this->m_info.s_pos.y - 16 * i);
+				cpos = Index2(this->m_info.ev_pos.x, this->m_info.sv_pos.y - 16 * i);
 				cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
 				v_idxs.push_back(cidx);
 			}
@@ -340,10 +323,10 @@ void Map::userPositionCheck(float x, float z)
 		this->m_info.s_pos.x += 16;
 		this->m_info.ev_pos.x += 16;
 	}
-	else if (mask == 4) { // out back
+	else if (mask == 4) { // out back(+z)
 		for (int i = 0; i < this->m_info.size_w; i++) {
 			if (i && i < this->m_info.size_w - 1) {
-				cpos = Index2(this->m_info.s_pos.x + 16 * i, this->m_info.s_pos.y);
+				cpos = Index2(this->m_info.sv_pos.x + 16 * i, this->m_info.s_pos.y);
 				cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
 				v_idxs.push_back(cidx);
 			}
@@ -354,10 +337,10 @@ void Map::userPositionCheck(float x, float z)
 		this->m_info.s_pos.y += 16;
 		this->m_info.ev_pos.y += 16;
 	}
-	else if (mask == 8) { // out front
+	else if (mask == 8) { // out front(-z)
 		for (int i = 0; i < this->m_info.size_w; i++) {
 			if (i && i < this->m_info.size_w - 1) {
-				cpos = Index2(this->m_info.s_pos.x + 16 * i, this->m_info.ev_pos.y);
+				cpos = Index2(this->m_info.ev_pos.x + 16 * i, this->m_info.ev_pos.y);
 				cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
 				v_idxs.push_back(cidx);
 			}
@@ -378,14 +361,21 @@ void Map::userPositionCheck(float x, float z)
 			this->t_system.fillChunk(cidx, pos);
 		}
 	}
-	if (v_idxs.size())
+	if (v_idxs.size()) {
 		this->threadFunc(v_idxs, mask);
+	}
 }
 
 void Map::threadFunc(vector<Index2>& vec, int dir)
 {
 	this->l_system.createLightMap(vec, dir);
 	this->t_system.createTrees(vec, dir);
+	static vector<Index2> prev;
+	prev.clear();
+	prev = vec;
+	for (Index2 c_idx : vec) {
+		this->t_system.fillWithUserPlacedBlocks(c_idx);
+	}
 	int t = vec.size() / this->thread_cnt;
 	int m = vec.size() % this->thread_cnt;
 	int st = 0;

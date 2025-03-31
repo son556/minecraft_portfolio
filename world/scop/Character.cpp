@@ -276,10 +276,10 @@ void Character::update(vec3 const& dir)
 	}
 	if (GetAsyncKeyState('E') & 0x8000)
 		move_dir.y -= 1;
-	bool q = false;
+	bool key_q = false;
 	if (GetAsyncKeyState('Q') & 0x8000) {
 		move_dir.y += 1;
-		q = true;
+		key_q = true;
 	}
 
 	if (press_move_key && first_view == false) {
@@ -292,21 +292,25 @@ void Character::update(vec3 const& dir)
 	int space_flag = 0;
 	static bool pv = false;
 	bool bs = GetAsyncKeyState(VK_SPACE) & 0x8000;
+	test_flag = bs;
 	if (bs && pv == false && 
 		this->aabb_collision->checkBottom(this->c_pos)) {
 		space_flag = 1;
 		pv = true;
 	}
-	else if (bs == false)
+	else if (bs == false) {
 		pv = false;
+	}
 
-	float speed = 3;
+
+	float speed = 4;
 	move_dir = XMVector3Normalize(move_dir);
 	move_dir *= speed;
-
 	static float gv = 0;
+
+	// space 를 눌렀거나 바닥에서 떨어져 있는 상태
 	if (this->aabb_collision->checkBottom(this->c_pos + 
-		vec3(0, space_flag, 0)) == false && q == false) {
+		vec3(0, space_flag, 0)) == false && key_q == false) {
 		float g = 27;
 		if (space_flag)
 			gv = -sqrtf(2 * g) - 1;
@@ -334,4 +338,22 @@ void Character::update(vec3 const& dir)
 void Character::setLeftArmAnimation()
 {
 	this->left_arm->setAnimationFlag();
+}
+
+void Character::checkValidatePosition()
+{
+	if (this->aabb_collision->checkCollisionNowPosition(this->c_pos)) {
+		this->c_pos = this->prev_pos;
+		this->pos = Mat::CreateTranslation(this->c_pos);
+		this->aabb_collision->update(this->c_pos + vec3(0, 1, 0));
+		this->head->update(this->pos, this->rot);
+		this->body->update(this->pos, this->rot);
+		this->left_arm->update(this->pos, this->rot);
+		this->right_arm->update(this->pos, this->rot);
+		this->left_leg->update(this->pos, this->rot);
+		this->right_leg->update(this->pos, this->rot);
+	}
+	else {
+		this->prev_pos = this->c_pos;
+	}
 }

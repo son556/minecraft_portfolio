@@ -467,3 +467,40 @@ void MapUtils::setLight(Index2 const& c_idx, Index3 const& b_idx, uint8 type)
 		b_idx.x + 16 * (b_idx.z + 16 * b_idx.y);
 	this->light_map[idx] = type;
 }
+
+void MapUtils::writeBookAboutBlockStatus(
+	Index2 const& chunk_pos, 
+	Index3 const& block_idx, 
+	BlockType original, 
+	BlockType new_block
+)
+{
+	auto it = this->book.find(chunk_pos);
+	if (it == this->book.end()) {
+		this->book.insert({ chunk_pos, map<Index3, Index2>()});
+		this->book[chunk_pos].insert({ block_idx, Index2(new_block, original) });
+	}
+	else {
+		auto v_it = it->second.find(block_idx);
+		if (v_it == it->second.end())
+			it->second.insert({ block_idx, Index2(new_block, original) });
+		else {
+			if (v_it->second.y == static_cast<int>(new_block))
+				it->second.erase(block_idx);
+			else // original 은 처음 청크가 생겼을 때 유지
+				v_it->second = Index2(new_block, v_it->second.y);
+		}
+	}
+}
+
+map<Index3, Index2>const* const MapUtils::getUserPlacedBlocks(
+	Index2 const& chunk_pos
+)
+{
+	auto it = this->book.find(chunk_pos);
+	if (it == this->book.end())
+		return nullptr;
+	return &(it->second);
+}
+
+

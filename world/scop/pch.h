@@ -50,6 +50,8 @@ struct MVP {
 #include <fstream>
 #include <tuple>
 #include <utility>
+#include <set>
+#include <list>
 
 using namespace std;
 
@@ -161,3 +163,5 @@ inline void printVec3(string const& name, vec3 const& v) {
 inline void printVec4(string const& name, vec4 const& v) {
 	cout << name << " : " << v.x << ' ' << v.y << ' ' << v.z << endl;
 }
+
+static bool test_flag = false;

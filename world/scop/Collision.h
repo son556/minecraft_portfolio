@@ -23,7 +23,7 @@ public:
 		vec3 const& dir,
 		float distance
 	);
-
+	bool checkCollisionNowPosition(vec3 const& down_pos);
 	bool checkBottom(vec3 const& down_pos);
 
 private: // test

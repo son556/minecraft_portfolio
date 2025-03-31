@@ -155,3 +155,8 @@ void Entity::setCharacterLeftArmAnimation()
 {
 	this->character->setLeftArmAnimation();
 }
+
+void Entity::checkEntityNowPos()
+{
+	this->character->checkValidatePosition();
+}

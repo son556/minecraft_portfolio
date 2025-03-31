@@ -16,7 +16,15 @@ public:
 		vec3 const& min_b,
 		vec3 const& max_b
 	);
+	bool checkCollision(vec3 const& pos_down);
 
+	/**
+	 * 바닥 충돌 검사.
+	 * 
+	 * \param down_pos
+	 * \return 충돌 시 true 반환
+	 */
+	bool checkBottom(vec3 const& down_pos);
 public:
 	CollisionUtils() = delete;
 	CollisionUtils(CollisionUtils const&) = delete;
