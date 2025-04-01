@@ -22,12 +22,10 @@ void SetCave::makeCave(Index2 const& c_idx, Index2 const& c_pos)
 		for (int j = 0; j < 16; j++) {
 			x = (c_pos.x + j + offset) / 32.f;
 			int h = this->m_info->findHeight(c_idx, j, i);
-			for (int y = 0; y < h; y++) {
+			for (int y = 1; y < h; y++) {
 				sy = y / 16.f;
 				double h_ = this->p_noise->getNoise3D(x, sy, z, 3, 0.5);
 				if (h_ <= 0.1)
-					continue;
-				if (y < 1)
 					continue;
 				if (this->m_info->findBlock(c_idx, j, y, i) == BlockType::WATER)
 					continue;
@@ -42,6 +40,15 @@ void SetCave::makeCave(Index2 const& c_idx, Index2 const& c_pos)
 					continue;
 				this->m_info->addBlock(c_idx, j, y, i, 0);
 			}
+			
+			// 높이 갱신
+			for (int y = h - 1; y > 0; y--) {
+				if (this->m_info->findBlock(c_idx, j, y, i)) {
+					this->m_info->setHeight(c_idx, j, i, y + 1);
+					break;
+				}
+			}
+
 		}
 	}
 }

@@ -80,7 +80,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     StartScene start_scene;
 
     p_terrain = &terrain;
-    float h = terrain.getHeight(0.5, 0.5) + 0.5;
     entity = make_shared<Entity>();
 
     vec3 sp = vec3(-7.58921, 17, 18.8209);
@@ -113,9 +112,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
+            //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
             gui_manager.selectInventoryItem(block_type - 1);
             if (lb_flag) {
-                //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
                 if (start_scene_flag) {
                     if (start_scene.checkClickStartButton()) {
                         start_scene_flag = false;
@@ -126,7 +125,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                         exit(0);
                 }
                 int b_type = gui_manager.getInventoryBlock(block_type - 1);
-                if (cam->getFreeCamFlag() == false && item_ui == false && b_type) {
+                if (cam->getFreeCamFlag() == false && item_ui == false && b_type) {   
                     terrain.putBlock(cam->getPos(), cam->getDir(), b_type);
                     entity->setCharacterLeftArmAnimation();
                 }
@@ -146,17 +145,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             if (start_scene_flag) {
                 SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
                 start_scene.render();
-            }
-            else if (fix_flag == false) { // test
-                terrain.userPositionCheck(cam->getPos().x,
-                    cam->getPos().z);
-                terrain.Render();
-                if (item_ui) {
-                    gui_manager.render(GUITexture::TAB_ITEMS, click_check);
-                    click_check = false;
-                }
-                else
-                    gui_manager.render();
             }
             else {
                 entity->update(cam->getDir());
@@ -274,7 +262,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
             EndPaint(hWnd, &ps);
         }
         break;

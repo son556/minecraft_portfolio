@@ -227,7 +227,7 @@ void Terrain::userPositionCheck(float x, float z)
 int16 Terrain::getHeight(float x, float z) const
 {
 	WorldIndex w_idx = m_manager->m_info.getBlockIndex(x, 0, z);
-	return m_manager->m_info.findHeight(w_idx.c_idx, w_idx.b_idx);
+	return m_manager->m_info.findHeight(w_idx.c_idx, w_idx.b_idx.x, w_idx.b_idx.z);
 }
 
 void Terrain::testClickLightBlock(
@@ -238,8 +238,10 @@ void Terrain::testClickLightBlock(
 	if (widx.flag) {
 		Index2& cidx = widx.c_idx;
 		Index3& bidx = widx.b_idx;
+		cout << "now height: " << 
+			this->m_manager->m_info.findHeight(cidx, bidx.x, bidx.z) << endl;
 		cout << "block type: " << widx.block_type << endl;
-		cout << "chunk idx: " << cidx.y << ' ' << cidx.x << endl;
-		cout << "block idx: " << bidx.x << ' ' << bidx.y << ' ' << bidx.z << endl << endl;
+		cout << "chunk idx y: " << cidx.y << ", x: " << cidx.x << endl;
+		cout << "block idx x: " << bidx.x << ' ' << bidx.y << ' ' << bidx.z << endl << endl;
 	}
 }

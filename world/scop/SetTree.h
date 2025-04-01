@@ -14,7 +14,8 @@ public:
 
 private:
 	void makeTree(Index2 const& c_idx);
-	void putTree(Index2 const& c_idx, int x, int y, int z, int type);
+	void putTree(Index2 const& c_idx, int x, int y, int z);
+
 	void checkChunk(
 		Index2 const& c_idx,
 		int x, int y, int z,

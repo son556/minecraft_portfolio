@@ -176,7 +176,6 @@ void Inventory::moveItem(int idx, vec3 const& new_pos)
 {
 	if (this->items[idx] == nullptr)
 		return;
-	// TODO: 아이템창 칸 안에 들어와 있는 지 확인
 }
 
 void Inventory::moveGUIPos(vec3 const& new_pos)

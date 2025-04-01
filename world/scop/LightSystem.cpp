@@ -60,11 +60,7 @@ void LightSystem::fillLightThread(
 		this->fillLight(vec[i], idx);
 }
 
-void LightSystem::checkBoundary(
-	Index2 const& c_idx,
-	vector<Index2>* cidxs,
-	int dir
-)
+void LightSystem::checkBoundary(Index2 const& c_idx)
 {
 	Index2 apz_idx, amz_idx, apx_idx, amx_idx;
 	Index2 cpos, tpos;
@@ -239,7 +235,7 @@ void LightSystem::createLightMap(
 	}
 	size_t cidxs_size = cidxs.size();
 	for (int i = 0; i < cidxs_size; i++) {
-		this->checkBoundary(cidxs[i], &cidxs, dir);
+		this->checkBoundary(cidxs[i]);
 	}
 }
 

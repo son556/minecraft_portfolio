@@ -286,7 +286,7 @@ Index2 MapUtils::getChunkIndex(int w_x, int w_z) const
 int MapUtils::findAdjBlock(Index2 const& c_idx, int x, int y, int z) const
 {
 	Index2 cpos = this->chunks[c_idx.y][c_idx.x]->chunk_pos;
-	int idx;
+	int idx = 0;
 	if (x < 0) {
 		cpos.x -= 16;
 		Index2 adj_idx = this->findChunkIndex(cpos.x, cpos.y);
@@ -419,13 +419,6 @@ int MapUtils::findHeight(Index2 const& c_idx, Index2 const& h_idx) const
 {
 	int idx = 16 * 16 * (c_idx.x + this->size_w * c_idx.y) +
 		h_idx.x + 16 * h_idx.y;
-	return this->h_map[idx];
-}
-
-int MapUtils::findHeight(Index2 const& c_idx, Index3 const& b_idx) const
-{
-	int idx = 16 * 16 * (c_idx.x + this->size_w * c_idx.y) +
-		b_idx.x + 16 * b_idx.z;
 	return this->h_map[idx];
 }
 

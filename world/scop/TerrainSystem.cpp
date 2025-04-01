@@ -64,9 +64,7 @@ void TerrainSystem::fillWithUserPlacedBlocks(Index2 const& c_idx)
 		getUserPlacedBlocks(this->m_info->chunks[c_idx.y][c_idx.x]->chunk_pos);
 	if (book == nullptr)
 		return;
-	cout << "book size: " << book->size() << endl;
-	Index2& pos = this->m_info->chunks[c_idx.y][c_idx.x]->chunk_pos;
-	cout << "pos: " << pos.x << ' ' << pos.y << endl;
+
 	for (auto it = book->begin(); it != book->end(); it++) {
 		this->m_info->addBlock(c_idx, it->first, it->second.x);
 	}

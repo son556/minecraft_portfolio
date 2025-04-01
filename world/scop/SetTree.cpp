@@ -20,8 +20,19 @@ void SetTree::makeTree(Index2 const& c_idx)
 		for (int x = 0; x < 16; x++) {
 			double d_x = (cpos.x + x + offset) / 32.f;
 			int h = this->m_info->findHeight(c_idx, x, z);
-			if (this->m_info->findBlock(c_idx, x, h - 1, z) == 0)
+
+			// 높이가 낮거나 빛이 없는 경우
+			int block_type = this->m_info->findBlock(c_idx, x, h - 1, z);
+			if (h < 10 || block_type == 0)
 				continue;
+
+			// 펄린 노이즈
+			double p = this->p_noise->getNoise2D(d_x, d_z, 3, 0.5);
+			if (p < 0.0)
+				continue;
+			
+			// 놓을 수 있는 충분한 높이가 안되는 경우 (이미 다른 나무가 있음)
+			// 기둥은 다른 나무 밑에 못 놓게 하기 위한 조건
 			for (int y = h; y < h + 7; y++) {
 				if (this->m_info->findBlock(c_idx, x, y, z)) {
 					continue_flag = true;
@@ -30,17 +41,12 @@ void SetTree::makeTree(Index2 const& c_idx)
 			}
 			if (continue_flag)
 				continue;
-			if (h < 10 || this->m_info->findLight(c_idx, x, h, z) < 10)
-				continue;
-			double p = this->p_noise->getNoise2D(d_x, d_z, 3, 0.5);
-			if (p < 0.0)
-				continue;
-			this->putTree(c_idx, x, h, z, 0);
+			this->putTree(c_idx, x, h, z);
 		}
 	}
 }
 
-void SetTree::putTree(Index2 const& c_idx, int x, int y, int z, int type)
+void SetTree::putTree(Index2 const& c_idx, int x, int y, int z)
 {
 	int ix = -1;
 	int iy = -1;
@@ -48,39 +54,36 @@ void SetTree::putTree(Index2 const& c_idx, int x, int y, int z, int type)
 	Index2 here_cidx;
 	Index3 here_bidx;
 	Index2 pos = this->m_info->chunks[c_idx.y][c_idx.x]->chunk_pos;
-	double nx, nz;
-	double offset = 0.001;
 
-	if (type == 0) {
-		for (int sy = y; sy < y + 7; sy++) {
-			iy++;
-			iz = -1;
-			for (int sz = z - 2; sz <= z + 2; sz++) {
-				iz++;
-				ix = -1;
-				for (int sx = x - 2; sx <= x + 2; sx++) {
-					ix++;
-					int tr = Trees::getOakTreeInfo(ix, iy, iz);
-					if (tr) {
-						this->checkChunk(c_idx, sx, sy, sz,
-							here_cidx, here_bidx);
-						if (here_cidx.flag == false)
-							continue;
-						int b_type =
-							this->m_info->findBlock(here_cidx, here_bidx);
-						if (b_type && b_type != 3)
-							continue;
-						if (tr == 2 && b_type == 3)
-							continue;
-						if (tr == 1)
-							this->m_info->addBlock(here_cidx, here_bidx,
-								BlockType::OAK_LOG);
-						if (tr == 2)
-							this->m_info->addBlock(here_cidx, here_bidx,
-								BlockType::OAK_LEAVES);
-						this->resetChunkHeight(here_cidx, here_bidx.x,
-							here_bidx.z, here_bidx.y);
-					}
+	for (int sy = y; sy < y + 7; sy++) {
+		iy++;
+		iz = -1;
+		for (int sz = z - 2; sz <= z + 2; sz++) {
+			iz++;
+			ix = -1;
+			for (int sx = x - 2; sx <= x + 2; sx++) {
+				ix++;
+				int tr = Trees::getOakTreeInfo(ix, iy, iz);
+				if (tr) {
+					here_bidx = Index3(sx, sy, sz);
+					this->checkChunk(c_idx, sx, sy, sz,
+						here_cidx, here_bidx);
+					if (here_cidx.flag == false)
+						continue;
+					int b_type =
+						this->m_info->findBlock(here_cidx, here_bidx);
+					if (b_type && b_type != BlockType::OAK_LEAVES)
+						continue;
+					if (tr == 2 && b_type == BlockType::OAK_LEAVES)
+						continue;
+					if (tr == 1)
+						this->m_info->addBlock(here_cidx, here_bidx,
+							BlockType::OAK_LOG);
+					if (tr == 2)
+						this->m_info->addBlock(here_cidx, here_bidx,
+							BlockType::OAK_LEAVES);
+					this->resetChunkHeight(here_cidx, here_bidx.x,
+						here_bidx.z, here_bidx.y);
 				}
 			}
 		}
@@ -106,6 +109,7 @@ void SetTree::createTrees(vector<Index2>& chunks, int dir)
 	Index2 cpos;
 	for (Index2& cidx : chunks)
 		this->makeTree(cidx);
+	// 나무가 추가되었기 때문에 인접한 이전 청크의 정점을 갱신해주기 위해.
 	if (dir == 1) {
 		for (int i = 0; i < chunks.size(); i++) {
 			cpos = this->m_info->chunks[chunks[i].y][chunks[i].x]->chunk_pos;
@@ -134,9 +138,8 @@ void SetTree::createTrees(vector<Index2>& chunks, int dir)
 			p_chunks[i] = this->m_info->findChunkIndex(cpos.x, cpos.y);
 		}
 	}
-	// TODO 이걸 주석처리하면 나무가 이상하게 나옴 이유를 찾아야함
-	/*for (int i = 0; i < p_chunks.size(); i++)
-		chunks.push_back(p_chunks[i]);*/
+	for (int i = 0; i < p_chunks.size(); i++)
+		chunks.push_back(p_chunks[i]);
 }
 
 void SetTree::checkChunk(Index2 const& c_idx, int x, int y, int z, 
@@ -157,11 +160,11 @@ void SetTree::checkChunk(Index2 const& c_idx, int x, int y, int z,
 	if (x < 0)
 		here_x = 16 + x;
 	else if (x > 15)
-		here_x = abs(16 - x);
+		here_x = x - 16;
 	if (z < 0)
 		here_z = 16 + z;
 	else if (z > 15)
-		here_z = abs(16 - z);
+		here_z = z - 16;
 
 	res_cidx = c_idx;
 	if (x < 0 && z < 0)
@@ -187,9 +190,7 @@ void SetTree::checkChunk(Index2 const& c_idx, int x, int y, int z,
 
 void SetTree::resetChunkHeight(Index2 const& c_idx, int x, int z, int h)
 {
-	int now_h = this->m_info->findHeight(c_idx, x, z);
-	if (now_h < h)
-		this->m_info->setHeight(c_idx, x, z, h);
+	this->m_info->setHeight(c_idx, x, z, h);
 	int16& max_h = this->m_info->chunks[c_idx.y][c_idx.x]->max_h;
 	max_h = max(max_h, static_cast<int16>(h + 1));
 }

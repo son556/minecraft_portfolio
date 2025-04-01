@@ -18,6 +18,19 @@ class Chunk;
 * 청크의 시작 위치 -> 위 그림을 chunk라 할 때 0 번
 */
 
+/**
+ * s_pos - - - - - - - - - - - *
+ * |						   |
+ * |	sv_p - - - - - - *	   |
+ * |	|				 |	   |
+ * |	|				 |	   |
+ * |	|				 |	   |
+ * |	|				 |	   |
+ * |	* - - - - - - ev_p	   |
+ * |						   |
+ * * - - - - - - - - - - - - - *
+ */
+
 class MapUtils
 {
 public:
@@ -39,11 +52,21 @@ public:
 	int findBlock(Index2 const& c_idx, Index3 const& b_idx) const;
 	void addBlock(Index2 const& c_idx, int x, int y, int z, int type);
 	void addBlock(Index2 const& c_idx, Index3 const& b_idx, int type);
+	
 	int findHeight(Index2 const& c_idx, Index2 const& h_idx) const;
-	int findHeight(Index2 const& c_idx, Index3 const& b_idx) const;
+	/**
+	 * 현위치의 최고 높이를 반환합니다.
+	 * 
+	 * \param c_idx 청크 인덱스
+	 * \param x 블록 인덱스 x
+	 * \param z 블록 인덱스 z
+	 * \return 
+	 */
 	int findHeight(Index2 const& c_idx, int x, int z) const;
 	void setHeight(Index2 const& c_idx, Index2 const& b_idx, int h);
 	void setHeight(Index2 const& c_idx, int x, int z, int h);
+	
+	// light
 	uint8 findLight(Index2 const& c_idx, int x, int y, int z) const;
 	uint8 findLight(Index2 const& c_idx, Index3 const& b_idx) const;
 	void setLight(Index2 const& c_idx, int x, int y, int z, uint8 type);
@@ -124,7 +147,7 @@ public:
 
 private:
 	int* blocks;
-	int* h_map;
+	int* h_map; // x z 위치에서 블록의 최고 높이(블록의 윗면 높이를 기준으로 함)
 	uint8* light_map;
 };
 

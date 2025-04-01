@@ -291,7 +291,7 @@ TextureArray::TextureArray(
 		&view_desc,
 		this->shader_resource_view.GetAddressOf()
 	);
-	CHECK(hr); // TODO 오류 해결
+	CHECK(hr);
 }
 
 void TextureArray::updateTextureArray(

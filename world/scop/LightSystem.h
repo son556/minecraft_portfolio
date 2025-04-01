@@ -28,11 +28,7 @@ private:
 		int idx
 	);
 	void fillLight(Index2 const& c_idx, int idx); // 특정 청크 빛
-	void checkBoundary(
-		Index2 const& c_idx,
-		vector<Index2>* cidxs = nullptr,
-		int dir = 0
-	);
+	void checkBoundary(Index2 const& c_idx); // 주변 청크 빛 업데이트
 private:
 	MapUtils* m_info;
 	MyQueue que[8];

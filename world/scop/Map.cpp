@@ -78,15 +78,16 @@ void Map::vertexAndIndexGenerator(
 	uint32* index
 )
 {
-	int16& max_h = this->m_info.chunks[c_idx.y][c_idx.x]->max_h;
+	int16 const& max_h = this->m_info.chunks[c_idx.y][c_idx.x]->max_h;
 	int next_type;
+	Index2 const& cpos = this->m_info.chunks[c_idx.y][c_idx.x]->chunk_pos;
 	for (int y = 0; y < max_h; y++) {
 		for (int z = 0; z < 16; z++) {
 			for (int x = 0; x < 16; x++) {
 				int type = this->m_info.findBlock(c_idx, x, y, z);
 				if (type <= 0)
 					continue;
-				Index3 next(x + move.x, y + move.y, z - move.z); // index
+				Index3 next(x + move.x, y + move.y, z - move.z);
 				int adj_type = this->m_info.findBlock(c_idx, next);
 				if (adj_type > 0 && adj_type != BlockType::OAK_LEAVES)
 					continue;
@@ -111,7 +112,7 @@ void Map::vertexShadowGenerator(
 	uint32* index
 )
 {
-	int16& max_h = this->m_info.chunks[c_idx.y][c_idx.x]->max_h;
+	int16 const& max_h = this->m_info.chunks[c_idx.y][c_idx.x]->max_h;
 	int shadow_flag;
 	for (int y = 0; y < max_h; y++) {
 		for (int z = 0; z < 16; z++) {
@@ -297,11 +298,12 @@ void Map::userPositionCheck(float x, float z)
 	if (mask == 1) { // out left
 		for (int i = 0; i < this->m_info.size_h; i++) {
 			if (i && i < this->m_info.size_h - 1) { // 보여주기
-				cpos = Index2(this->m_info.s_pos.x, this->m_info.sv_pos.y - 16 * i);
+				cpos = Index2(this->m_info.s_pos.x, this->m_info.s_pos.y - 16 * i);
 				cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
 				v_idxs.push_back(cidx);
 			}
-			cpos = this->m_info.s_pos + Index2(-16, -16 * i);
+			cpos.x = this->m_info.s_pos.x - 16;
+			cpos.y = this->m_info.s_pos.y - 16 * i;
 			f_pos.push_back(cpos); // 새로 만들기
 		}
 		this->m_info.sv_pos.x -= 16;
@@ -311,7 +313,7 @@ void Map::userPositionCheck(float x, float z)
 	else if (mask == 2) { // out right
 		for (int i = 0; i < this->m_info.size_h; i++) {
 			if (i && i < this->m_info.size_h - 1) {
-				cpos = Index2(this->m_info.ev_pos.x, this->m_info.sv_pos.y - 16 * i);
+				cpos = Index2(this->m_info.ev_pos.x, this->m_info.s_pos.y - 16 * i);
 				cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
 				v_idxs.push_back(cidx);
 			}
@@ -323,24 +325,25 @@ void Map::userPositionCheck(float x, float z)
 		this->m_info.s_pos.x += 16;
 		this->m_info.ev_pos.x += 16;
 	}
-	else if (mask == 4) { // out back(+z)
+	else if (mask == 4) { // out +z
 		for (int i = 0; i < this->m_info.size_w; i++) {
 			if (i && i < this->m_info.size_w - 1) {
-				cpos = Index2(this->m_info.sv_pos.x + 16 * i, this->m_info.s_pos.y);
+				cpos = Index2(this->m_info.s_pos.x + 16 * i, this->m_info.s_pos.y);
 				cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
 				v_idxs.push_back(cidx);
 			}
-			cpos = this->m_info.s_pos + Index2(16 * i, 16);
+			cpos.x = this->m_info.s_pos.x + 16 * i;
+			cpos.y = this->m_info.s_pos.y + 16;
 			f_pos.push_back(cpos);
 		}
 		this->m_info.sv_pos.y += 16;
 		this->m_info.s_pos.y += 16;
 		this->m_info.ev_pos.y += 16;
 	}
-	else if (mask == 8) { // out front(-z)
+	else if (mask == 8) { // out -z
 		for (int i = 0; i < this->m_info.size_w; i++) {
 			if (i && i < this->m_info.size_w - 1) {
-				cpos = Index2(this->m_info.ev_pos.x + 16 * i, this->m_info.ev_pos.y);
+				cpos = Index2(this->m_info.s_pos.x + 16 * i, this->m_info.ev_pos.y);
 				cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
 				v_idxs.push_back(cidx);
 			}
@@ -361,21 +364,19 @@ void Map::userPositionCheck(float x, float z)
 			this->t_system.fillChunk(cidx, pos);
 		}
 	}
-	if (v_idxs.size()) {
+	if (v_idxs.size())
 		this->threadFunc(v_idxs, mask);
-	}
 }
 
 void Map::threadFunc(vector<Index2>& vec, int dir)
 {
 	this->l_system.createLightMap(vec, dir);
-	this->t_system.createTrees(vec, dir);
-	static vector<Index2> prev;
-	prev.clear();
-	prev = vec;
-	for (Index2 c_idx : vec) {
-		this->t_system.fillWithUserPlacedBlocks(c_idx);
+	int v_size = vec.size();
+	this->t_system.createTrees(vec, dir); // 새로 만든나무와 인접했던 나무 추가
+	for (int i = 0; i < v_size; i++) {
+		this->t_system.fillWithUserPlacedBlocks(vec[i]);
 	}
+
 	int t = vec.size() / this->thread_cnt;
 	int m = vec.size() % this->thread_cnt;
 	int st = 0;
