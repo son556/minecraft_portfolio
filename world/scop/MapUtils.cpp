@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "MapUtils.h"
-#include "Chunk.h"
 
 #define STDZERO 0.00000001
 
@@ -36,65 +35,6 @@ MapUtils::~MapUtils()
 	delete[] this->light_map;
 }
 
-vec3 MapUtils::intersectionRayAndPlane(
-	vec3 const& r_pos,
-	vec3 const& r_dir,
-	vec3 const& p_pos,
-	vec3 const& p_dir
-)
-{
-	vec3 res;
-	float t;
-	t = (p_pos.Dot(p_dir) - r_pos.Dot(p_dir)) / p_dir.Dot(r_dir);
-	res = r_pos + t * r_dir;
-	return res;
-}
-
-bool MapUtils::inChunkBoundary(int x, int y, int z) {
-	if (x >= 0 && x < 16 && z >= 0 && z < 16 && y >= 0 && y < 256)
-		return true;
-	return false;
-}
-
-bool MapUtils::inChunkBoundary(Index3 const& bidx)
-{
-	if (bidx.x >= 0 && bidx.x < 16 && 
-		bidx.z >= 0 && bidx.z < 16 && bidx.y >= 0 && bidx.y < 256)
-		return true;
-	return false;
-}
-
-
-WorldIndex MapUtils::getBlockIndex(float x, float y, float z) const
-{
-	WorldIndex ans;
-	int w_x = static_cast<int>(floor(x)) / 16;
-	int w_z = static_cast<int>(floor(z)) / 16;
-
-	if (w_x * 16 > x)
-		w_x--;
-	if (w_z * 16 < z)
-		w_z++;
-	Index2 c_idx = this->findChunkIndex(w_x * 16, w_z * 16);
-	Index2 pos = this->chunks[c_idx.y][c_idx.x]->chunk_pos;
-	int ex = pos.x + 16;
-	int ez = pos.y - 16;
-	ans.flag = false;
-	if (x < pos.x || x > ex || z > pos.y || z < ez || y < 0 || y > 255)
-		return ans;
-	ans.flag = true;
-	ans.c_idx = c_idx;
-	int ix = static_cast<int>(floor(x) - pos.x);
-	int iy = static_cast<int>(floor(y));
-	int iz = floor(z);
-	if (iz < z)
-		iz += 1;
-	iz = static_cast<int>(pos.y - iz);
-	ans.b_idx = Index3(ix, iy, iz);
-	ans.pos = vec3(pos.x, 0, pos.y) + vec3(ans.b_idx.x, ans.b_idx.y, -ans.b_idx.z);
-	ans.block_type = this->findBlock(ans.c_idx, ans.b_idx);
-	return ans;
-}
 
 WorldIndex MapUtils::pickBlock(vec3 r_pos, vec3 r_dir)
 {
@@ -256,210 +196,6 @@ WorldIndex MapUtils::pickBlock(vec3 r_pos, vec3 r_dir)
 	return ans;
 }
 
-Index2 MapUtils::findChunkIndex(int w_x, int w_z) const
-{
-	int t = w_x / 16;
-	int x = (t % this->size_w + this->size_w) % this->size_w;
-	t = w_z / 16;
-	int z = (t % this->size_h + this->size_h) % this->size_h;
-	Index2 ans = Index2(x, z);
-	if (this->chunks[ans.y][ans.x] == nullptr) {
-		ans.flag = false;
-		return ans;
-	}
-	Index2 pos = this->chunks[ans.y][ans.x]->chunk_pos;
-	if (pos.x != w_x || pos.y != w_z)
-		ans.flag = false;
-	return ans;
-}
-
-Index2 MapUtils::getChunkIndex(int w_x, int w_z) const
-{
-	int t = w_x / 16;
-	int x = (t % this->size_w + this->size_w) % this->size_w;
-	t = w_z / 16;
-	int z = (t % this->size_h + this->size_h) % this->size_h;
-	Index2 ans = Index2(x, z);
-	return ans;
-}
-
-int MapUtils::findAdjBlock(Index2 const& c_idx, int x, int y, int z) const
-{
-	Index2 cpos = this->chunks[c_idx.y][c_idx.x]->chunk_pos;
-	int idx = 0;
-	if (x < 0) {
-		cpos.x -= 16;
-		Index2 adj_idx = this->findChunkIndex(cpos.x, cpos.y);
-		if (adj_idx.flag == false)
-			return 0;
-		idx = 16 * 16 * 256 * (adj_idx.x + this->size_w * adj_idx.y) +
-			15 + 16 * (z + 16 * y);
-	}
-	else if (x > 15) {
-		cpos.x += 16;
-		Index2 adj_idx = this->findChunkIndex(cpos.x, cpos.y);
-		if (adj_idx.flag == false)
-			return 0;
-		idx = 16 * 16 * 256 * (adj_idx.x + this->size_w * adj_idx.y)
-			+ 16 * (z + 16 * y);
-	}
-	else if (z < 0) {
-		cpos.y += 16;
-		Index2 adj_idx = this->findChunkIndex(cpos.x, cpos.y);
-		if (adj_idx.flag == false)
-			return 0;
-		idx = 16 * 16 * 256 * (adj_idx.x + this->size_w * adj_idx.y)
-			+ x + 16 * (15 + 16 * y);
-	}
-	else if (z > 15) {
-		cpos.y -= 16;
-		Index2 adj_idx = this->findChunkIndex(cpos.x, cpos.y);
-		if (adj_idx.flag == false)
-			return 0;
-		idx = 16 * 16 * 256 * (adj_idx.x + this->size_w * adj_idx.y)
-			+ x + 16 * (0 + 16 * y);
-	}
-	else if (y < 0)
-		return 0;
-	else if (y > 255)
-		return 0;
-	return this->blocks[idx];
-}
-
-uint8 MapUtils::findAdjLightBlock(Index2 const& c_idx, int x, int y, int z) const
-{
-	Index2 cpos = this->chunks[c_idx.y][c_idx.x]->chunk_pos;
-	int idx;
-	if (x < 0) {
-		cpos.x -= 16;
-		Index2 adj_idx = this->findChunkIndex(cpos.x, cpos.y);
-		if (adj_idx.flag == false)
-			return 0;
-		idx = 16 * 16 * 256 * (adj_idx.x + this->size_w * adj_idx.y) +
-			15 + 16 * (z + 16 * y);
-	}
-	else if (x > 15) {
-		cpos.x += 16;
-		Index2 adj_idx = this->findChunkIndex(cpos.x, cpos.y);
-		if (adj_idx.flag == false)
-			return 0;
-		idx = 16 * 16 * 256 * (adj_idx.x + this->size_w * adj_idx.y)
-			+ 16 * (z + 16 * y);
-	}
-	else if (z < 0) {
-		cpos.y += 16;
-		Index2 adj_idx = this->findChunkIndex(cpos.x, cpos.y);
-		if (adj_idx.flag == false)
-			return 0;
-		idx = 16 * 16 * 256 * (adj_idx.x + this->size_w * adj_idx.y)
-			+ x + 16 * (15 + 16 * y);
-	}
-	else if (z > 15) {
-		cpos.y -= 16;
-		Index2 adj_idx = this->findChunkIndex(cpos.x, cpos.y);
-		if (adj_idx.flag == false)
-			return 0;
-		idx = 16 * 16 * 256 * (adj_idx.x + this->size_w * adj_idx.y)
-			+ x + 16 * (0 + 16 * y);
-	}
-	else if (y < 0)
-		return 0;
-	else if (y > 255)
-		return 15;
-	return this->light_map[idx];
-}
-
-int MapUtils::findBlock(Index2 const& c_idx, int x, int y, int z) const
-{
-	int idx = 16 * 16 * 256 * (c_idx.x + this->size_w * c_idx.y) +
-		x + 16 * (z + 16 * y);
-	if (x < 0 || x > 15 || z < 0 || z > 15 || y < 0 || y > 255)
-		return this->findAdjBlock(c_idx, x, y, z);
-	return this->blocks[idx];
-}
-
-int MapUtils::findBlock(Index2 const& c_idx, Index3 const& b_idx) const
-{
-	int idx = 16 * 16 * 256 * (c_idx.x + this->size_w * c_idx.y) +
-		b_idx.x + 16 * (b_idx.z + 16 * b_idx.y);
-	if (b_idx.x < 0 || b_idx.x > 15 || b_idx.z < 0 || b_idx.z > 15 
-		|| b_idx.y < 0 || b_idx.y > 255)
-		return this->findAdjBlock(c_idx, b_idx.x, b_idx.y, b_idx.z);
-	return this->blocks[idx];
-}
-
-void MapUtils::addBlock(Index2 const& c_idx, int x, int y, int z, int type)
-{
-	int idx = 16 * 16 * 256 * (c_idx.x + this->size_w * c_idx.y) + x +
-		16 * (z + 16 * y);
-	this->blocks[idx] = type;
-}
-
-void MapUtils::addBlock(Index2 const& c_idx, Index3 const& b_idx, int type)
-{
-	int idx = 16 * 16 * 256 * (c_idx.x + this->size_w * c_idx.y) +
-		b_idx.x + 16 * (b_idx.z + 16 * b_idx.y);
-	this->blocks[idx] = type;
-}
-
-void MapUtils::setHeight(Index2 const& c_idx, int x, int z, int h)
-{
-	int idx = 16 * 16 * (c_idx.x + this->size_w * c_idx.y) + x + 16 * z;
-	this->h_map[idx] = h;
-}
-
-void MapUtils::setHeight(Index2 const& c_idx, Index2 const& b_idx, int h)
-{
-	int idx = 16 * 16 * (c_idx.x + this->size_w * c_idx.y) +
-		b_idx.x + 16 * b_idx.y;
-	this->h_map[idx] = h;
-}
-
-int MapUtils::findHeight(Index2 const& c_idx, Index2 const& h_idx) const
-{
-	int idx = 16 * 16 * (c_idx.x + this->size_w * c_idx.y) +
-		h_idx.x + 16 * h_idx.y;
-	return this->h_map[idx];
-}
-
-int MapUtils::findHeight(Index2 const& c_idx, int x, int z) const
-{
-	int idx = 16 * 16 * (c_idx.x + this->size_w * c_idx.y) + x + 16 * z;
-	return this->h_map[idx];
-}
-
-uint8 MapUtils::findLight(Index2 const& c_idx, int x, int y, int z) const
-{
-	int idx = 16 * 16 * 256 * (c_idx.x + this->size_w * c_idx.y) +
-		x + 16 * (z + 16 * y);
-	if (x < 0 || x > 15 || z < 0 || z > 15 || y < 0 || y > 255)
-		return this->findAdjLightBlock(c_idx, x, y, z);
-	return this->light_map[idx];
-}
-
-uint8 MapUtils::findLight(Index2 const& c_idx, Index3 const& b_idx) const
-{
-	int idx = 16 * 16 * 256 * (c_idx.x + this->size_w * c_idx.y) +
-		b_idx.x + 16 * (b_idx.z + 16 * b_idx.y);
-	if (b_idx.x < 0 || b_idx.x > 15 || b_idx.z < 0 || b_idx.z > 15
-		|| b_idx.y < 0 || b_idx.y > 255)
-		return this->findAdjBlock(c_idx, b_idx.x, b_idx.y, b_idx.z);
-	return this->light_map[idx];
-}
-
-void MapUtils::setLight(Index2 const& c_idx, int x, int y, int z, uint8 type)
-{
-	int idx = 16 * 16 * 256 * (c_idx.x + this->size_w * c_idx.y) +
-		x + 16 * (z + 16 * y);
-	this->light_map[idx] = type;
-}
-
-void MapUtils::setLight(Index2 const& c_idx, Index3 const& b_idx, uint8 type)
-{
-	int idx = 16 * 16 * 256 * (c_idx.x + this->size_w * c_idx.y) +
-		b_idx.x + 16 * (b_idx.z + 16 * b_idx.y);
-	this->light_map[idx] = type;
-}
 
 void MapUtils::writeBookAboutBlockStatus(
 	Index2 const& chunk_pos, 
@@ -478,10 +214,14 @@ void MapUtils::writeBookAboutBlockStatus(
 		if (v_it == it->second.end())
 			it->second.insert({ block_idx, Index2(new_block, original) });
 		else {
-			if (v_it->second.y == static_cast<int>(new_block))
+			if (v_it->second.y == static_cast<int>(new_block)) {
 				it->second.erase(block_idx);
-			else // original 은 처음 청크가 생겼을 때 유지
+				if (it->second.size() == 0)
+					this->book.erase(it->first);
+			}
+			else {// original 은 처음 청크가 생겼을 때 유지
 				v_it->second = Index2(new_block, v_it->second.y);
+			}
 		}
 	}
 }

@@ -1,276 +1,152 @@
 #include "pch.h"
 #include "LightSystem.h"
-#include "MapUtils.h"
 #include "Chunk.h"
-#include "MyQueue.h"
 
-LightSystem::LightSystem(MapUtils* minfo, int thread_cnt)
+
+// TODO 전체 맵 생성 그림자 수정
+
+const vector<Index3> move_dir = {
+		{0, 1, 0},
+		{0, -1, 0},
+		{1, 0, 0},
+		{-1, 0, 0},
+		{0, 0, 1},
+		{0, 0, -1}
+};
+
+LightSystem::LightSystem(MapUtils* minfo) : m_info(minfo)
 {
-	this->m_info = minfo;
-	this->thread_cnt = thread_cnt;
-	if (this->thread_cnt > 8)
-		this->thread_cnt = 8;
 }
 
-void LightSystem::lightBFS(int idx) // 청크 하나에 대해 bfs
+void LightSystem::lightBFS(queue<pair<Index2, Index3>>& que)
 {
-	static const Index3 move_arr[6] = {
-		Index3(0, 1, 0),
-		Index3(0, -1, 0),
-		Index3(0, 0, -1),
-		Index3(0, 0, 1),
-		Index3(-1, 0, 0),
-		Index3(1, 0, 0)
-	};
-
-	pair<Index2, Index3> here;
-	Index3 next;
-	Index2 cpos;
+	Index2 s_cidx;
+	Index3 s_bidx;
+	Index2 n_cidx;
+	Index3 n_bidx;
 	uint8 light;
-	while (this->que[idx].size()) {
-		here = this->que[idx].front();
-		this->que[idx].pop();
-		light = this->m_info->findLight(here.first, here.second);
-		if (light <= 1)
-			continue;
+	uint8 n_light;
+	int block_type;
+
+	while (que.size()) {
+		s_cidx = que.front().first;
+		s_bidx = que.front().second;
+		light = this->m_info->findLight(s_cidx, s_bidx);
+		que.pop();
 		for (int i = 0; i < 6; i++) {
-			next = here.second + move_arr[i];
-			if (this->m_info->inChunkBoundary(next) == false)
+			n_cidx = s_cidx;
+			n_bidx = s_bidx + move_dir[i];
+			this->getIndex(n_cidx, n_bidx);
+			if (n_cidx.flag == false)
 				continue;
-			if (this->m_info->findBlock(here.first, next) > 0)
+			if (n_bidx.y > this->m_info->chunks[n_cidx.y][n_cidx.x]->max_h + 8)
 				continue;
-			if (light - 1 <= this->m_info->findLight(here.first, next))
+			block_type = this->m_info->findBlock(n_cidx, n_bidx);
+			if (block_type > 0 && block_type != BlockType::OAK_LEAVES)
 				continue;
-			this->m_info->setLight(here.first, next, light - 1);
-			this->que[idx].push(here.first, next);
+			n_light = this->m_info->findLight(n_cidx, n_bidx);
+			if (light > n_light + 1) {
+				this->m_info->setLight(n_cidx, n_bidx, light - 1);
+				que.push({ n_cidx, n_bidx });
+			}
 		}
 	}
 }
 
-void LightSystem::fillLightThread(
-	vector<Index2> const& vec,
-	int st,
-	int ed,
-	int idx
-)
+set<Index2> LightSystem::lightBFSAddChunks(queue<pair<Index2, Index3>>& que)
 {
-	if (idx > 8)
-		idx = 8;
-	for (int i = st; i < ed; i++)
-		this->fillLight(vec[i], idx);
-}
+	Index2 s_cidx;
+	Index3 s_bidx;
+	Index2 n_cidx;
+	Index3 n_bidx;
+	uint8 light;
+	uint8 n_light;
+	set<Index2> book;
+	int block_type;
 
-void LightSystem::checkBoundary(Index2 const& c_idx)
-{
-	Index2 apz_idx, amz_idx, apx_idx, amx_idx;
-	Index2 cpos, tpos;
-	Index3 bidx, adj;
-	uint8 light, alight;
-	cpos = this->m_info->chunks[c_idx.y][c_idx.x]->chunk_pos;
-	tpos = cpos + Index2(0, 16);
-	apz_idx = this->m_info->findChunkIndex(tpos.x, tpos.y);
-	tpos = cpos + Index2(0, -16);
-	amz_idx = this->m_info->findChunkIndex(tpos.x, tpos.y);
-	tpos = cpos + Index2(16, 0);
-	apx_idx = this->m_info->findChunkIndex(tpos.x, tpos.y);
-	tpos = cpos + Index2(-16, 0);
-	amx_idx = this->m_info->findChunkIndex(tpos.x, tpos.y);
-	this->que[0].clear();
-	this->que[1].clear();
-	int dir_flag = 0;
-	if (apz_idx.flag) {
-		for (int i = 0; i < 256; i++) {
-			for (int j = 0; j < 16; j++) {
-				setIndex3(adj, j, i, 15);
-				setIndex3(bidx, j, i, 0);
-				if (this->m_info->findBlock(c_idx, bidx) > 0)
-					continue;
-				if (this->m_info->findBlock(apz_idx, adj) > 0)
-					continue;
-				light = this->m_info->findLight(c_idx, bidx);
-				alight = this->m_info->findLight(apz_idx, adj);
-				if (light < alight - 1) {
-					this->m_info->setLight(c_idx, bidx, alight);
-					this->que[0].push(c_idx, bidx);
-				}
-				else if (light > alight + 1) {
-					this->m_info->setLight(apz_idx, adj, light - 1);
-					this->que[1].push(apz_idx, adj);
-					dir_flag |= 8;
-				}
+	while (que.size()) {
+		s_cidx = que.front().first;
+		s_bidx = que.front().second;
+		light = this->m_info->findLight(s_cidx, s_bidx);
+		book.insert(s_cidx);
+		que.pop();
+		for (int i = 0; i < 6; i++) {
+			n_cidx = s_cidx;
+			n_bidx = s_bidx + move_dir[i];
+			this->getIndex(n_cidx, n_bidx);
+			if (n_cidx.flag == false)
+				continue;
+			block_type = this->m_info->findBlock(n_cidx, n_bidx);
+			if (block_type > 0 && block_type != BlockType::OAK_LEAVES)
+				continue;
+			n_light = this->m_info->findLight(n_cidx, n_bidx);
+			if (light > n_light + 1) {
+				this->m_info->setLight(n_cidx, n_bidx, light - 1);
+				que.push({ n_cidx, n_bidx });
 			}
 		}
 	}
-	if (amz_idx.flag) {
-		for (int i = 0; i < 256; i++) {
-			for (int j = 0; j < 16; j++) {
-				setIndex3(adj, j, i, 0);
-				setIndex3(bidx, j, i, 15);
-				if (this->m_info->findBlock(c_idx, bidx) > 0)
-					continue;
-				if (this->m_info->findBlock(amz_idx, adj) > 0)
-					continue;
-				light = this->m_info->findLight(c_idx, bidx);
-				alight = this->m_info->findLight(amz_idx, adj);
-				if (light < alight - 1) {
-					this->m_info->setLight(c_idx, bidx, alight);
-					this->que[0].push(c_idx, bidx);
-				}
-				else if (light > alight + 1) {
-					this->m_info->setLight(amz_idx, adj, light - 1);
-					this->que[1].push(amz_idx, adj);
-					dir_flag |= 4;
-				}
-			}
-		}
-	}
-	if (apx_idx.flag) {
-		for (int i = 0; i < 256; i++) {
-			for (int j = 0; j < 16; j++) {
-				setIndex3(adj, 0, i, j);
-				setIndex3(bidx, 15, i, j);
-				if (this->m_info->findBlock(c_idx, bidx) > 0)
-					continue;
-				if (this->m_info->findBlock(apx_idx, adj) > 0)
-					continue;
-				light = this->m_info->findLight(c_idx, bidx);
-				alight = this->m_info->findLight(apx_idx, adj);
-				if (light < alight - 1) {
-					this->m_info->setLight(c_idx, bidx, alight);
-					this->que[0].push(c_idx, bidx);
-				}
-				else if (light > alight + 1) {
-					this->m_info->setLight(apx_idx, adj, light - 1);
-					this->que[1].push(apx_idx, adj);
-					dir_flag |= 1;
-				}
-			}
-		}
-	}
-	if (amx_idx.flag) {
-		for (int i = 0; i < 256; i++) {
-			for (int j = 0; j < 16; j++) {
-				setIndex3(adj, 15, i, j);
-				setIndex3(bidx, 0, i, j);
-				if (this->m_info->findBlock(c_idx, bidx) > 0)
-					continue;
-				if (this->m_info->findBlock(amx_idx, adj) > 0)
-					continue;
-				light = this->m_info->findLight(c_idx, bidx);
-				alight = this->m_info->findLight(amx_idx, adj);
-				if (light < alight - 1) {
-					this->m_info->setLight(c_idx, bidx, alight);
-					this->que[0].push(c_idx, bidx);
-				}
-				else if (light > alight + 1) {
-					this->m_info->setLight(amx_idx, adj, light - 1);
-					this->que[1].push(amx_idx, adj);
-					dir_flag |= 2;
-				}
-			}
-		}
-	}
-	this->lightBFS(0);
-	this->lightBFS(1);
+	return book;
 }
 
 void LightSystem::createLightMap()
 {
-	vector<Index2> cidxs;
+	queue<pair<Index2, Index3>> que;
 	for (int i = 0; i < this->m_info->size_h; i++) {
 		for (int j = 0; j < this->m_info->size_w; j++) {
 			Index2 c_pos = this->m_info->s_pos + Index2(j * 16, -i * 16);
 			Index2 c_idx;
 			c_idx = this->m_info->getChunkIndex(c_pos.x, c_pos.y);
-			cidxs.push_back(c_idx);
+			this->setSunLight(c_idx, que);
 		}
 	}
-	int t = cidxs.size() / this->thread_cnt;
-	int m = cidxs.size() % this->thread_cnt;
-	int st = 0;
-	int siz;
-	int idx = 0;
-	for (int i = 0; i < this->thread_cnt; i++) {
-		if (m) {
-			siz = t + 1;
-			m--;
-		}
-		else
-			siz = t;
-		this->fillLightThread(cidxs, st, st + siz, idx);
-		st = st + siz;
-		idx++;
-	}
-
-	for (int i = 0; i < this->m_info->size_h; i++) {
-		for (int j = 0; j < this->m_info->size_w; j++) {
-			Index2 c_pos = this->m_info->s_pos + Index2(j * 16, -i * 16);
-			Index2 c_idx;
-			c_idx = this->m_info->getChunkIndex(c_pos.x, c_pos.y);
-			this->checkBoundary(c_idx);
-		}
-	}
+	this->lightBFS(que);
 }
 
 void LightSystem::createLightMap(
-	vector<Index2>& cidxs,
-	int dir
+	vector<Index2> const& new_cidxs,
+	vector<Index2>& renew_cidxs
 )
 {
-	int t = cidxs.size() / this->thread_cnt;
-	int m = cidxs.size() % this->thread_cnt;
-	int st = 0;
-	int siz;
-	int idx = 0;
-	for (int i = 0; i < this->thread_cnt; i++) {
-		if (m) {
-			siz = t + 1;
-			m--;
-		}
-		else
-			siz = t;
-		this->fillLightThread(cidxs, st, st + siz, idx);
-		st = st + siz;
-		idx++;
+	queue<pair<Index2, Index3>> que;
+	set<Index2> check_list;
+	for (Index2 const& cidx : new_cidxs) {
+		this->resetLight(cidx);
+		this->setSunLight(cidx, que);
+		check_list.insert(cidx);
 	}
-	size_t cidxs_size = cidxs.size();
-	for (int i = 0; i < cidxs_size; i++) {
-		this->checkBoundary(cidxs[i]);
-	}
-}
+	for (Index2 const& cidx : renew_cidxs)
+		check_list.insert(cidx);
 
-void LightSystem::fillLight(Index2 const& c_idx, int idx)
-{
-	this->que[idx].clear();
-	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 16; j++) {
-			for (int y = 255; y >= 0; y--) {
-				if (m_info->findBlock(c_idx, j, y, i) > 0)
-					break;
-				Index3 bidx(j, y, i);
-				m_info->setLight(c_idx, bidx, 15);
-				this->que[idx].push(c_idx, bidx);
-			}
-		}
+	set<Index2> const& book = this->lightBFSAddChunks(que);
+	for (Index2 const& cidx : book) {
+		if (check_list.find(cidx) != check_list.end())
+			continue;
+		renew_cidxs.push_back(cidx);
 	}
-	this->lightBFS(idx);
 }
 
 void LightSystem::resetLight(Index2 const& c_idx)
 {
-	for (int y = 0; y < 256; y++) {
+	for (int y = 0; y < this->m_info->chunks[c_idx.y][c_idx.x]->max_h + 1; y++) {
 		for (int z = 0; z < 16; z++) {
 			for (int x = 0; x < 16; x++)
-				m_info->setLight(c_idx, x, y, z, 0);
+				this->m_info->setLight(c_idx, x, y, z, 0);
 		}
 	}
+}
+
+void LightSystem::setSunLight(Index2 const& c_idx, queue<pair<Index2, Index3>>& que)
+{
 	for (int z = 0; z < 16; z++) {
 		for (int x = 0; x < 16; x++) {
-			for (int y = 255; y >= 0; y--) {
-				if (m_info->findBlock(c_idx, x, y, z) > 0)
+			for (int y = this->m_info->chunks[c_idx.y][c_idx.x]->max_h + 10; y > 0; y--) {
+				int block_type = this->m_info->findBlock(c_idx, x, y, z);
+				if (block_type > 0 && block_type != BlockType::OAK_LEAVES) {
 					break;
-				Index3 bidx(x, y, z);
-				m_info->setLight(c_idx, x, y, z, 15);
+				}
+				que.push({ c_idx, Index3(x, y, z) });
+				this->m_info->setLight(c_idx, x, y, z, 15);
 			}
 		}
 	}
@@ -279,15 +155,219 @@ void LightSystem::resetLight(Index2 const& c_idx)
 // chunk의 light을 다시 계산
 void LightSystem::chunkSetLight(Index2 const& chunk_idx)
 {
-	this->que[0].clear();
-	this->resetLight(chunk_idx);
-	int max_h = this->m_info->chunks[chunk_idx.y][chunk_idx.x]->max_h;
-	for (int z = 0; z < 15; z++) {
-		for (int y = 0; y < max_h; y++) {
-			for (int x = 0; x < 15; x++)
-				if (this->m_info->findLight(chunk_idx, x, y, z) == 15)
-					this->que[0].push({chunk_idx, Index3(x, y, z)});
+}
+
+
+// light one block
+void LightSystem::BFSLightBlockDelete(
+	Index2 const& c_idx,
+	Index3 const& b_idx,
+	vector<Index2>& cidx_vec
+)
+{
+	queue<pair<Index2, Index3>> que;
+	Index2 s_cidx = c_idx;
+	Index3 s_bidx = b_idx;
+	Index2 n_cidx;
+	Index3 n_bidx;
+	s_cidx.flag = true;
+	uint8 light;
+	uint8 n_light;
+	set<Index2> book;
+	
+	book.insert(c_idx);
+	que.push({ s_cidx, b_idx });
+	// 지금 블록 light 갱신
+	light = this->m_info->findLight(s_cidx, s_bidx);
+	for (int i = 0; i < 6; i++) {
+		n_cidx = s_cidx;
+		n_bidx = s_bidx + move_dir[i];
+		this->getIndex(n_cidx, n_bidx);
+		if (n_cidx.flag == false)
+			continue;
+		n_light = this->m_info->findLight(n_cidx, n_bidx);
+		if (n_light == 15 && move_dir[i].y == 1) // 태양에서 수직으로 빛이 오는 경우
+			light = max(light, n_light);
+		else
+			light = max(light, n_light - 1);
+	}
+	this->m_info->setLight(s_cidx, s_bidx, light);
+
+	// bfs
+	int b_type;
+	int c_cnt = 0; // 청크수 제한
+	bool exit_flag = false;
+	while (que.size()) {
+		s_cidx = que.front().first;
+		s_bidx = que.front().second;
+		light = this->m_info->findLight(s_cidx, s_bidx);
+		que.pop();
+		book.insert(s_cidx);
+
+		for (int i = 0; i < 6; i++) {
+			n_cidx = s_cidx;
+			n_bidx = s_bidx + move_dir[i];
+			this->getIndex(n_cidx, n_bidx);
+			if (n_cidx.flag == false)
+				continue;
+			if (n_bidx.y > this->m_info->chunks[n_cidx.y][n_cidx.x]->max_h)
+				continue;
+			b_type = this->m_info->findBlock(n_cidx, n_bidx);
+			if (b_type > 0 && b_type != BlockType::OAK_LEAVES)
+				continue;
+
+			n_light = this->m_info->findLight(n_cidx, n_bidx);
+			if (light == 15 && move_dir[i].y == -1) {
+				this->m_info->setLight(n_cidx, n_bidx, 15);
+				que.push({ n_cidx, n_bidx});
+				continue;
+			}
+			if (n_light + 1 >= light)
+				continue;
+			
+			this->m_info->setLight(n_cidx, n_bidx, light - 1);
+			que.push({ n_cidx, n_bidx });
 		}
 	}
-	this->lightBFS(0);
+	for (auto it : book) {
+		if (it == c_idx)
+			continue;
+		cidx_vec.push_back(it);
+	}
+}
+
+void LightSystem::BFSLightBlockAdd(
+	Index2 const& c_idx, 
+	Index3 const& b_idx,
+	vector<Index2>& cidx_vec
+)
+{
+	queue<pair<Index2, Index3>> que;
+	stack<pair<Index2, Index3>> l_stack;
+	Index2 s_cidx = c_idx;
+	Index3 s_bidx = b_idx;
+	Index2 n_cidx;
+	Index3 n_bidx;
+	s_cidx.flag = true;
+	uint8 light;
+	uint8 n_light;
+	set<Index2> book;
+
+	// 빛 제거 bfs
+	int b_type;
+	que.push({ s_cidx, s_bidx });
+	while (que.size()) {
+		s_cidx = que.front().first;
+		s_bidx = que.front().second;
+		light = this->m_info->findLight(s_cidx, s_bidx);
+		this->m_info->setLight(s_cidx, s_bidx, 0);
+		book.insert(s_cidx);
+		que.pop();
+		for (int i = 0; i < 6; i++) {
+			n_cidx = s_cidx;
+			n_bidx = s_bidx + move_dir[i];
+			this->getIndex(n_cidx, n_bidx);
+			if (n_cidx.flag == false)
+				continue;
+			if (n_bidx.y > this->m_info->chunks[n_cidx.y][n_cidx.x]->max_h)
+				continue;
+			b_type = this->m_info->findBlock(n_cidx, n_bidx);
+			if (b_type && b_type != BlockType::OAK_LEAVES)
+				continue;
+			n_light = this->m_info->findLight(n_cidx, n_bidx);
+			if (light == n_light + 1 || (light == 15 && move_dir[i].y == -1)) {
+				que.push({ n_cidx, n_bidx });
+				l_stack.push({ n_cidx, n_bidx });
+			}
+		}
+	}
+
+	// 빛 추가 stack
+	while (l_stack.size()) {
+		s_cidx = l_stack.top().first;
+		s_bidx = l_stack.top().second;
+		light = 0;
+		l_stack.pop();
+		for (int i = 0; i < 6; i++) {
+			n_cidx = s_cidx;
+			n_bidx = s_bidx + move_dir[i];
+			this->getIndex(n_cidx, n_bidx);
+			if (n_cidx.flag == false)
+				continue;
+			n_light = this->m_info->findLight(n_cidx, n_bidx);
+			if (n_light == 0)
+				continue;
+			if (n_light == 15 && move_dir[i].y == 1)
+				light = max(light, n_light);
+			else
+				light = max(light, n_light - 1);
+		}
+		if (light == 0)
+			que.push({ s_cidx, s_bidx });
+		this->m_info->setLight(s_cidx, s_bidx, light);
+	}
+
+	// 구석에 있어서 제대로 갱신 안되는 빛 다시 확인
+	while (que.size()) {
+		s_cidx = que.front().first;
+		s_bidx = que.front().second;
+		light = 0;
+		que.pop();
+		for (int i = 0; i < 6; i++) {
+			n_cidx = s_cidx;
+			n_bidx = s_bidx + move_dir[i];
+			this->getIndex(n_cidx, n_bidx);
+			if (n_cidx.flag == false)
+				continue;
+			n_light = this->m_info->findLight(n_cidx, n_bidx);
+			if (n_light == 0)
+				continue;
+			if (n_light == 15 && move_dir[i].y == 1)
+				light = max(light, n_light);
+			else
+				light = max(light, n_light - 1);
+		}
+		this->m_info->setLight(s_cidx, s_bidx, light);
+	}
+
+	for (auto it : book) {
+		if (it == c_idx)
+			continue;
+		cidx_vec.push_back(it);
+	}
+}
+
+void LightSystem::getIndex(Index2& c_idx, Index3& b_idx) const
+{
+	if (b_idx.x >= 0 && b_idx.x < 16 && b_idx.z >= 0 && b_idx.z < 16 
+		&& b_idx.y > -1 && b_idx.y < 256) {
+		c_idx.flag = true;
+		return;
+	}
+	Index2 cpos = this->m_info->chunks[c_idx.y][c_idx.x]->chunk_pos;
+	c_idx.flag = true;
+	if (b_idx.x < 0) {
+		c_idx = this->m_info->findChunkIndex(cpos.x - 16, cpos.y);
+		b_idx.x = 16 + b_idx.x;
+		return;
+	}
+	if (b_idx.x > 15) {
+		c_idx = this->m_info->findChunkIndex(cpos.x + 16, cpos.y);
+		b_idx.x -= 16;
+		return;
+	}
+	if (b_idx.z < 0) {
+		c_idx = this->m_info->findChunkIndex(cpos.x, cpos.y + 16);
+		b_idx.z = 16 + b_idx.z;
+		return;
+	}
+	if (b_idx.z > 15) {
+		c_idx = this->m_info->findChunkIndex(cpos.x, cpos.y - 16);
+		b_idx.z -= 16;
+		return;
+	}
+	else {
+		c_idx.flag = false;
+		return;
+	}
 }

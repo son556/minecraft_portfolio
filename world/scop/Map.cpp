@@ -15,7 +15,7 @@ Map::Map(
 	UINT window_w,
 	UINT window_h
 ) : m_info(size_w, size_h, hwnd, window_w, window_h), 
-	l_system(&m_info, thread_cnt), 
+	l_system(&m_info), 
 	t_system(&m_info), r_system(&m_info)
 {
 	this->c_fov = fov_chunk;
@@ -293,7 +293,7 @@ int Map::checkTerrainBoundary(float x, float z) const
 void Map::userPositionCheck(float x, float z)
 {
 	int mask = this->checkTerrainBoundary(x, z);
-	vector<Index2> v_idxs, f_pos;
+	vector<Index2> v_idxs, f_idxs;
 	Index2 cidx, cpos;
 	if (mask == 1) { // out left
 		for (int i = 0; i < this->m_info.size_h; i++) {
@@ -304,7 +304,10 @@ void Map::userPositionCheck(float x, float z)
 			}
 			cpos.x = this->m_info.s_pos.x - 16;
 			cpos.y = this->m_info.s_pos.y - 16 * i;
-			f_pos.push_back(cpos); // 새로 만들기
+			cidx = this->m_info.getChunkIndex(cpos.x, cpos.y);
+			this->m_info.chunks[cidx.y][cidx.x]->reset();
+			this->m_info.chunks[cidx.y][cidx.x]->setPos(cpos);
+			f_idxs.push_back(cidx);
 		}
 		this->m_info.sv_pos.x -= 16;
 		this->m_info.s_pos.x -= 16;
@@ -319,7 +322,10 @@ void Map::userPositionCheck(float x, float z)
 			}
 			cpos.x = this->m_info.ev_pos.x + 16;
 			cpos.y = this->m_info.s_pos.y - 16 * i;
-			f_pos.push_back(cpos);
+			cidx = this->m_info.getChunkIndex(cpos.x, cpos.y);
+			this->m_info.chunks[cidx.y][cidx.x]->reset();
+			this->m_info.chunks[cidx.y][cidx.x]->setPos(cpos);
+			f_idxs.push_back(cidx);
 		}
 		this->m_info.sv_pos.x += 16;
 		this->m_info.s_pos.x += 16;
@@ -334,7 +340,10 @@ void Map::userPositionCheck(float x, float z)
 			}
 			cpos.x = this->m_info.s_pos.x + 16 * i;
 			cpos.y = this->m_info.s_pos.y + 16;
-			f_pos.push_back(cpos);
+			cidx = this->m_info.getChunkIndex(cpos.x, cpos.y);
+			this->m_info.chunks[cidx.y][cidx.x]->reset();
+			this->m_info.chunks[cidx.y][cidx.x]->setPos(cpos);
+			f_idxs.push_back(cidx);
 		}
 		this->m_info.sv_pos.y += 16;
 		this->m_info.s_pos.y += 16;
@@ -349,19 +358,21 @@ void Map::userPositionCheck(float x, float z)
 			}
 			cpos.x = this->m_info.s_pos.x + 16 * i;
 			cpos.y = this->m_info.ev_pos.y - 16;
-			f_pos.push_back(cpos);
+			cidx = this->m_info.getChunkIndex(cpos.x, cpos.y);
+			this->m_info.chunks[cidx.y][cidx.x]->reset();
+			this->m_info.chunks[cidx.y][cidx.x]->setPos(cpos);
+			f_idxs.push_back(cidx);
 		}
 		this->m_info.sv_pos.y -= 16;
 		this->m_info.s_pos.y -= 16;
 		this->m_info.ev_pos.y -= 16;
 	}
-	if (f_pos.size()) {
-		for (Index2& pos : f_pos) {
-			cidx = this->m_info.getChunkIndex(pos.x, pos.y);
-			this->m_info.chunks[cidx.y][cidx.x]->reset();
-			this->m_info.chunks[cidx.y][cidx.x]->setPos(pos);
-			this->resetChunk(cidx);
-			this->t_system.fillChunk(cidx, pos);
+	if (f_idxs.size()) {
+		for (Index2& c_idx : f_idxs) {
+			this->resetChunk(c_idx);
+			this->t_system.fillChunk(c_idx, 
+				this->m_info.chunks[c_idx.y][c_idx.x]->chunk_pos);
+			this->l_system.createLightMap(f_idxs, v_idxs);
 		}
 	}
 	if (v_idxs.size())
@@ -370,10 +381,9 @@ void Map::userPositionCheck(float x, float z)
 
 void Map::threadFunc(vector<Index2>& vec, int dir)
 {
-	this->l_system.createLightMap(vec, dir);
 	int v_size = vec.size();
 	this->t_system.createTrees(vec, dir); // 새로 만든나무와 인접했던 나무 추가
-	for (int i = 0; i < v_size; i++) {
+	for (int i = 0; i < vec.size(); i++) {
 		this->t_system.fillWithUserPlacedBlocks(vec[i]);
 	}
 

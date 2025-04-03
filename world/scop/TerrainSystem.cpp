@@ -65,8 +65,11 @@ void TerrainSystem::fillWithUserPlacedBlocks(Index2 const& c_idx)
 	if (book == nullptr)
 		return;
 
+	int16& max_h = this->m_info->chunks[c_idx.y][c_idx.x]->max_h;
 	for (auto it = book->begin(); it != book->end(); it++) {
 		this->m_info->addBlock(c_idx, it->first, it->second.x);
+		if (it->second.x)
+			max_h = max(max_h, it->first.y + 1);
 	}
 }
 

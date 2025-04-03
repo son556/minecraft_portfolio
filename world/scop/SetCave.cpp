@@ -16,7 +16,7 @@ void SetCave::makeCave(Index2 const& c_idx, Index2 const& c_pos)
 {
 	float x, sy, z;
 	float offset = 0.000001f;
-	int16& max_h = this->m_info->chunks[c_idx.y][c_idx.x]->max_h;
+	int cm_h = 0;
 	for (int i = 0; i < 16; i++) {
 		z = (c_pos.y - i + offset) / 32.f;
 		for (int j = 0; j < 16; j++) {
@@ -42,15 +42,18 @@ void SetCave::makeCave(Index2 const& c_idx, Index2 const& c_pos)
 			}
 			
 			// 높이 갱신
+			int m_h = 0;
 			for (int y = h - 1; y > 0; y--) {
 				if (this->m_info->findBlock(c_idx, j, y, i)) {
 					this->m_info->setHeight(c_idx, j, i, y + 1);
+					m_h = y + 1;
 					break;
 				}
 			}
-
+			cm_h = max(cm_h, m_h);
 		}
 	}
+	this->m_info->chunks[c_idx.y][c_idx.x]->max_h = cm_h;
 }
 
 int SetCave::getAdjInfo(Index2 const& c_idx, int x, int y, int z, int dir)

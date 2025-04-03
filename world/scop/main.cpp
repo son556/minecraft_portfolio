@@ -112,7 +112,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            //terrain.testClickLightBlock(cam->getPos(), cam->getDir());
             gui_manager.selectInventoryItem(block_type - 1);
             if (lb_flag) {
                 if (start_scene_flag) {
@@ -125,7 +124,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                         exit(0);
                 }
                 int b_type = gui_manager.getInventoryBlock(block_type - 1);
-                if (cam->getFreeCamFlag() == false && item_ui == false && b_type) {   
+                if (cam->getFreeCamFlag() == false && item_ui == false && b_type) {
                     terrain.putBlock(cam->getPos(), cam->getDir(), b_type);
                     entity->setCharacterLeftArmAnimation();
                 }
@@ -222,7 +221,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    UpdateWindow(hWnd);
 
    // 항상 화면이 위에 뜨게함
-   SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+   //SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
    //SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); // test
    return TRUE;
 }

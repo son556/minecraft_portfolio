@@ -46,12 +46,14 @@ struct MVP {
 #include <map>
 #include <vector>
 #include <string>
+#include <stack>
 #include <iostream>
 #include <fstream>
 #include <tuple>
 #include <utility>
 #include <set>
 #include <list>
+#include <queue>
 
 using namespace std;
 

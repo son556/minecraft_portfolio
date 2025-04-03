@@ -95,13 +95,18 @@ void Terrain::putBlock(
 			if (entity->checkAABBWithEntity(add_idx.pos))// 캐릭터가 있으면 블록 안놓음
 				return;
 
-			this->m_manager->m_info.addBlock(cidx, bidx, type);
 			this->m_manager->m_info.writeBookAboutBlockStatus(
 				this->m_manager->m_info.chunks[cidx.y][cidx.x]->chunk_pos,
 				bidx,
 				static_cast<BlockType>(this->m_manager->m_info.findBlock(cidx, bidx)),
 				static_cast<BlockType>(type)
 			);
+
+			this->m_manager->m_info.addBlock(cidx, bidx, type);
+			
+			// height map 갱신
+			if (bidx.y + 1 > this->m_manager->m_info.findHeight(cidx, bidx.x, bidx.z))
+				this->m_manager->m_info.setHeight(cidx, bidx.x, bidx.z, bidx.y + 1);
 			
 			if (bidx.x == 0) {
 				adj_idx = this->m_manager->m_info.findChunkIndex(cpos.x - 16, cpos.y);
@@ -133,10 +138,8 @@ void Terrain::putBlock(
 			}
 			int16& max_h = this->m_manager->m_info.chunks[cidx.y][cidx.x]->max_h;
 			max_h = max(max_h, bidx.y + 1);
-			if (type > 0) {
-				this->m_manager->m_info.setLight(cidx, bidx, 0);
-				this->m_manager->l_system.chunkSetLight(cidx);
-			}
+			if (type > 0 && type != BlockType::OAK_LEAVES)
+				this->m_manager->l_system.BFSLightBlockAdd(cidx, bidx, v_idx);
 			v_idx.push_back(cidx);
 			this->m_manager->chunksSetVerticesAndIndices(v_idx, 0, v_idx.size());
 		}
@@ -148,14 +151,25 @@ void Terrain::deleteBlock(vec3 const& ray_pos, vec3 const& ray_dir)
 	WorldIndex widx = this->m_manager->m_info.pickBlock(ray_pos, ray_dir);
 	if (widx.flag) {
 		int type = this->m_manager->m_info.findBlock(widx.c_idx, widx.b_idx);
-		this->m_manager->m_info.addBlock(widx.c_idx, widx.b_idx, 0);
-		
 		this->m_manager->m_info.writeBookAboutBlockStatus(
 			this->m_manager->m_info.chunks[widx.c_idx.y][widx.c_idx.x]->chunk_pos,
 			widx.b_idx,
-			BlockType::AIR,
+			static_cast<BlockType>(type),
 			BlockType::AIR
 		);
+		
+		this->m_manager->m_info.addBlock(widx.c_idx, widx.b_idx, 0);
+		
+		// height map 갱신
+		if (widx.b_idx.y + 1 == this->m_manager->m_info.findHeight(
+			widx.c_idx, widx.b_idx.x, widx.b_idx.z)) {
+			for (int y = widx.b_idx.y; y > -1; y--) {
+				if (this->m_manager->m_info.findBlock(widx.c_idx, widx.b_idx.x, y, widx.b_idx.z)) {
+					this->m_manager->m_info.setHeight(widx.c_idx, widx.b_idx.x, widx.b_idx.z, y + 1);
+					break;
+				}
+			}
+		}
 		
 		int16& max_h = 
 			this->m_manager->m_info.chunks[widx.c_idx.y][widx.c_idx.x]->max_h;
@@ -165,39 +179,34 @@ void Terrain::deleteBlock(vec3 const& ray_pos, vec3 const& ray_dir)
 		v_idx.push_back(widx.c_idx);
 		Index2 cidx;
 		Index2 const& pos = this->m_manager->m_info.chunks[widx.c_idx.y][widx.c_idx.x]->chunk_pos;
-		if (widx.b_idx.x == 0) {
-			cidx = this->m_manager->m_info.findChunkIndex(pos.x - 16, pos.y);
-			if (cidx.flag) {
-				this->m_manager->m_info.chunks[cidx.y][cidx.x]->vertices_idx = 0;
-				v_idx.push_back(cidx);
-			}
+		
+		// 인접 청크도 vertex 갱신
+		cidx = this->m_manager->m_info.findChunkIndex(pos.x - 16, pos.y);
+		if (cidx.flag && widx.b_idx.x == 0) {
+			this->m_manager->m_info.chunks[cidx.y][cidx.x]->vertices_idx = 0;
+			v_idx.push_back(cidx);
 		}
-		if (widx.b_idx.x == 15) {
-			cidx = this->m_manager->m_info.findChunkIndex(pos.x + 16, pos.y);
-			if (cidx.flag) {
-				this->m_manager->m_info.chunks[cidx.y][cidx.x]->vertices_idx = 0;
-				v_idx.push_back(cidx);
-			}
-		}
-		if (widx.b_idx.z == 0) {
-			cidx = this->m_manager->m_info.findChunkIndex(pos.x, pos.y + 16);
-			if (cidx.flag) {
-				this->m_manager->m_info.chunks[cidx.y][cidx.x]->vertices_idx = 0;
-				v_idx.push_back(cidx);
-			}
-		}
-		if (widx.b_idx.z == 15) {
-			cidx = this->m_manager->m_info.findChunkIndex(pos.x, pos.y - 16);
-			if (cidx.flag) {
-				this->m_manager->m_info.chunks[cidx.y][cidx.x]->vertices_idx = 0;
-				v_idx.push_back(cidx);
-			}
+		cidx = this->m_manager->m_info.findChunkIndex(pos.x + 16, pos.y);
+		if (cidx.flag && widx.b_idx.x == 15) {
+			this->m_manager->m_info.chunks[cidx.y][cidx.x]->vertices_idx = 0;
+			v_idx.push_back(cidx);
 		}
 
-		if (type > 0) {
-			this->m_manager->m_info.setLight(widx.c_idx, widx.b_idx, 0);
-			this->m_manager->l_system.chunkSetLight(widx.c_idx);
+		cidx = this->m_manager->m_info.findChunkIndex(pos.x, pos.y + 16);
+		if (cidx.flag && widx.b_idx.z == 0) {
+			this->m_manager->m_info.chunks[cidx.y][cidx.x]->vertices_idx = 0;
+			v_idx.push_back(cidx);
 		}
+
+		cidx = this->m_manager->m_info.findChunkIndex(pos.x, pos.y - 16);
+		if (cidx.flag && widx.b_idx.z == 15) {
+			this->m_manager->m_info.chunks[cidx.y][cidx.x]->vertices_idx = 0;
+			v_idx.push_back(cidx);
+		}
+
+		// 그림자 갱신
+		if (type > 0 && type != BlockType::OAK_LEAVES)
+			this->m_manager->l_system.BFSLightBlockDelete(widx.c_idx, widx.b_idx, v_idx);
 		this->m_manager->chunksSetVerticesAndIndices(v_idx, 0, v_idx.size());
 	}
 }
@@ -238,10 +247,11 @@ void Terrain::testClickLightBlock(
 	if (widx.flag) {
 		Index2& cidx = widx.c_idx;
 		Index3& bidx = widx.b_idx;
+
 		cout << "now height: " << 
 			this->m_manager->m_info.findHeight(cidx, bidx.x, bidx.z) << endl;
 		cout << "block type: " << widx.block_type << endl;
-		cout << "chunk idx y: " << cidx.y << ", x: " << cidx.x << endl;
+		cout << "chunk idx: " << cidx.x << ' ' << cidx.y << endl;
 		cout << "block idx x: " << bidx.x << ' ' << bidx.y << ' ' << bidx.z << endl << endl;
 	}
 }
