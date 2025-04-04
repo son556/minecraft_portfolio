@@ -4,7 +4,6 @@
 #include "DeferredGraphics.h"
 #include "Graphics.h"
 #include "Block.h"
-#include <time.h>
 
 Map::Map(
 	int size_w, 

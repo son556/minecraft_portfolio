@@ -15,7 +15,7 @@ template<typename T> class Buffer;
 
 
 struct FrusumSplit {
-	vec4 light_pos; // world space
+	vec4 light_dir; // world space
 	vec4 vz_arr[8]; // view space
 	Mat view;
 };

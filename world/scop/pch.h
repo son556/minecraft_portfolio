@@ -139,6 +139,8 @@ enum class CamType {
 	TEMP
 };
 
+extern float sun_radian;
+
 class TestCam;
 class DeferredGraphics;
 class Entity;

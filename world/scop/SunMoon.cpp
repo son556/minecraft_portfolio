@@ -63,15 +63,13 @@ void SunMoon::render(CamType type, bool ccw_flag)
 	device = d_graphic->getDevice();
 	ComPtr<ID3D11DeviceContext> context;
 	context = d_graphic->getContext();
-	static float d = 15;
-	float dt = XMConvertToRadians(d);
 	
-	//d += 0.04;
+	//sun_radian += 0.04 * delta_time;
 	MVP mvp = cam->getMVP(type);
 	vec3 cam_pos = cam->getPos();
 	vec3 move_pos = vec3(cam_pos.x + 299, 0, cam_pos.z);
 	mvp.model = SimpleMath::Matrix::CreateTranslation(move_pos) * 
-		SimpleMath::Matrix::CreateRotationZ(dt) * mvp.model;
+		SimpleMath::Matrix::CreateRotationZ(sun_radian) * mvp.model;
 	XMFLOAT4 s_pos = XMFLOAT4(0, 0, 0, 1);
 	XMVECTOR sun_pos_vec = XMLoadFloat4(&s_pos);
 	sun_pos_vec = XMVector4Transform(sun_pos_vec, mvp.model);
@@ -97,9 +95,9 @@ void SunMoon::render(CamType type, bool ccw_flag)
 		0, 0);
 
 	// moon
-	move_pos = vec3(cam_pos.x - 299, 0, cam_pos.z);
+	/*move_pos = vec3(cam_pos.x - 299, 0, cam_pos.z);
 	mvp.model = SimpleMath::Matrix::CreateTranslation(move_pos) *
-		SimpleMath::Matrix::CreateRotationZ(dt);
+		SimpleMath::Matrix::CreateRotationZ(sun_radian);
 	XMFLOAT4 m_pos = XMFLOAT4(0, 0, 0, 1);
 	XMVECTOR moon_pos_vec = XMLoadFloat4(&m_pos);
 	moon_pos_vec = XMVector4Transform(moon_pos_vec, mvp.model);
@@ -114,7 +112,7 @@ void SunMoon::render(CamType type, bool ccw_flag)
 		this->moon->getVertexBffer()->getComPtr().GetAddressOf(),
 		&stride, &offset);
 	context->DrawIndexed(this->moon->getIndexBuffer()->getCount(),
-		0, 0);
+		0, 0);*/
 }
 
 ComPtr<ID3D11ShaderResourceView> SunMoon::getSRV()
@@ -155,7 +153,5 @@ void SunMoon::setPipe(bool ccw_flag)
 
 vec3 SunMoon::getLightPos()
 {
-	if (this->sun_pos.y < 0.f)
-		return this->moon_pos;
 	return this->sun_pos;
 }

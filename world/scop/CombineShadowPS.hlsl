@@ -46,19 +46,16 @@ struct PS_INPUT
 // 최대 8개 까지 나눔
 cbuffer Split : register(b0)
 {
-    float4 light_pos; // world space
-    float z_arr[8]; // view space
+    float4 light_dir; // world space
+    float4 z_arr[8]; // view space
     matrix view;
 };
 
-float shadowCheck(float4 w_pos, int shadow_idx, float3 normal, float p_dis)
-{
-    float ans = 1;
-    float3 light_dir = light_pos.xyz;
-    light_dir.z = w_pos.z;
-    light_dir = normalize(w_pos.xyz - light_dir);
-    
-    w_pos += float4(normal, 0) * 0.1;
+float shadowCheck(float4 w_pos, int shadow_idx, float3 normal)
+{   
+    if (dot(float3(0, 1, 0), light_dir.xyz) < 0)
+        return 0;
+    w_pos += float4(normal, 0) * 0.042;
     w_pos = mul(w_pos, mvp_arr[shadow_idx].view);
     w_pos = mul(w_pos, mvp_arr[shadow_idx].proj);
     w_pos /= w_pos.w; // ndc
@@ -85,8 +82,8 @@ float shadowCheck(float4 w_pos, int shadow_idx, float3 normal, float p_dis)
         z = shadow_7.Sample(shadow_point_sampler, uvw.xy).r;
     
     if (z < w_pos.z)
-        ans = 0;
-    return ans;
+        return 0;
+    return 1;
 };
 
 float4 main(PS_INPUT input) : SV_TARGET
@@ -105,16 +102,16 @@ float4 main(PS_INPUT input) : SV_TARGET
     }
     
     [loop]
-    for (int i = 0; i < light_pos.w; i++)
+    for (int i = 0; i < light_dir.w; i++)
     {
-        if (p_eye.z < z_arr[i])
+        if (p_eye.z < z_arr[i].x)
         {
-            if (p_eye.z > z_arr[i] * 0.8 && p_eye.z < z_arr[i])
+            if (p_eye.z > z_arr[i].x * 0.8 && p_eye.z < z_arr[i].x)
             {
                 float r1 = 
-                    shadowCheck(w_pos, i, normal, z_arr[i]);
+                    shadowCheck(w_pos, i, normal);
                 float r2 =
-                    shadowCheck(w_pos, i + 1, normal, z_arr[i + 1]);
+                    shadowCheck(w_pos, i + 1, normal);
                 
                 if (r1 == 0 || r2 == 0)
                     return float4(0, 0, 0, 1);
@@ -123,10 +120,11 @@ float4 main(PS_INPUT input) : SV_TARGET
             }
             else
             {
-                res = shadowCheck(w_pos, i, normal, z_arr[i]);
+                res = shadowCheck(w_pos, i, normal);
                 return float4(res, res, res, 1);
             }
         }
     }
-    return float4(1, 1, 1, 1);
+
+    return float4(0, 0, 0, 0);
 }

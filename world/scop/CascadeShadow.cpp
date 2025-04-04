@@ -80,7 +80,7 @@ void CascadeShadow::updateCBuffer(CamType type)
 	float len = (mid - coord[4]).Length();
 	float texel_per_unit = this->width / (len * 2.0f);
 
-	vec3 ld = this->m_info->light_dir;
+	vec3 ld = -this->m_info->light_dir;
 	vec4 l_dir = vec4(ld.x, ld.y, ld.z, 1);
 	Mat scalar =
 		XMMatrixScaling(texel_per_unit, texel_per_unit, texel_per_unit);

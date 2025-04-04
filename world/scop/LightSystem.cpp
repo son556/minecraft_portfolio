@@ -2,9 +2,6 @@
 #include "LightSystem.h"
 #include "Chunk.h"
 
-
-// TODO 전체 맵 생성 그림자 수정
-
 const vector<Index3> move_dir = {
 		{0, 1, 0},
 		{0, -1, 0},

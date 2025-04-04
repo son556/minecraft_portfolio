@@ -114,7 +114,7 @@ ShadowRender::ShadowRender(MapUtils* minfo)
 	this->s_rasterizer_state = make_shared<RasterizerState>(
 		d_graphic->getDevice(),
 		D3D11_FILL_SOLID,
-		D3D11_CULL_FRONT,
+		D3D11_CULL_NONE,
 		true
 	);
 	this->devideFrustum();
@@ -231,8 +231,8 @@ void ShadowRender::render(CamType type)
 	d_graphic->renderBegin(this->d_buffer.get());
 
 	// shadow csm
-	vec3 lp = this->m_info->directional_light_pos;
-	this->frustum_split.light_pos = vec4(lp.x, lp.y, lp.z, this->split_cnt);
+	vec3 ld = this->m_info->light_dir;
+	this->frustum_split.light_dir = vec4(ld.x, ld.y, ld.z, this->split_cnt);
 	this->frustum_split.view = cam->getMVP(type).view.Transpose();
 	this->ps_cbuffer->update(this->frustum_split);
 

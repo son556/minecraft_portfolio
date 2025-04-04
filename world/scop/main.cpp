@@ -26,6 +26,7 @@ HWND hWnd;
 bool under_water = false; // 물 속에 있는 지
 bool in_water = false;
 float delta_time = 0;
+float sun_radian = XMConvertToRadians(20);
 
 vec3 dir;
 int w_width = 800;
@@ -100,6 +101,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     bool start_scene_flag = true;
     if (start_scene_flag)
         fix_flag = false;
+
     while (msg.message != WM_QUIT)
     {
         if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -148,8 +150,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             else {
                 entity->update(cam->getDir());
                 cam->update(entity->getCharacterPos(), entity->getCharacterDir());
-                terrain.userPositionCheck(cam->getPos().x,
-                    cam->getPos().z);
+                terrain.userPositionCheck(cam->getPos().x, cam->getPos().z);
                 entity->checkEntityNowPos(); // 프레임 떨어졌을 경우 위치 조정용
                 terrain.Render();
                 if (item_ui) {
@@ -221,7 +222,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    UpdateWindow(hWnd);
 
    // 항상 화면이 위에 뜨게함
-   //SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+   SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
    //SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); // test
    return TRUE;
 }
