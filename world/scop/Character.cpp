@@ -245,9 +245,6 @@ vec3 const& Character::getDir()
 
 void Character::update(vec3 const& dir)
 {
-	if (cam->getFreeCamFlag())
-		return;
-
 	vec3 new_dir = XMVector3Normalize(vec3(dir.x, 0, dir.z));
 	this->dir = new_dir;
 	float theta = atan2(-new_dir.x, -new_dir.z);
@@ -282,6 +279,14 @@ void Character::update(vec3 const& dir)
 		key_q = true;
 	}
 
+	// 자유 이동
+	static bool free_move = false;
+	static bool pre_shift = false;
+	bool shift_flag = GetAsyncKeyState(VK_SHIFT) & 0x8000;
+	if (shift_flag && pre_shift == false)
+		free_move ^= 1;
+	pre_shift = shift_flag;
+
 	if (press_move_key && first_view == false) {
 		this->left_arm->setAnimationFlagWalk();
 		this->right_arm->setAnimationFlag();
@@ -309,7 +314,7 @@ void Character::update(vec3 const& dir)
 	static float gv = 0;
 
 	// space 를 눌렀거나 바닥에서 떨어져 있는 상태
-	if (this->aabb_collision->checkBottom(this->c_pos + 
+	if (free_move == false && this->aabb_collision->checkBottom(this->c_pos + 
 		vec3(0, space_flag, 0)) == false && key_q == false) {
 		float g = 27;
 		if (space_flag)

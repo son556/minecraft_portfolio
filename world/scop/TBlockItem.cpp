@@ -7,6 +7,7 @@
 const vec4 TBlockItem::red = vec4(1, 0, 0, 0.3);
 const vec4 TBlockItem::blue = vec4(0, 0, 1, 0.3);
 const vec4 TBlockItem::green = vec4(0, 1, 0, 0.3);
+const vec4 TBlockItem::glass = vec4(0.06, 0.07, 0.1, 0.6);
 const vec4 TBlockItem::err_color = vec4(0, 0, 0, 0);
 
 void TBlockItem::setPos(vec3 const& pos)
@@ -95,6 +96,8 @@ vec4 const& TBlockItem::getColor(BlockType block_type)
 		return red;
 	if (block_type == BlockType::TRANSPARENCY_GREEN)
 		return green;
+	if (block_type == BlockType::GLASS)
+		return glass;
 	return err_color;
 }
 

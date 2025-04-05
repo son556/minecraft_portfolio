@@ -451,5 +451,11 @@ void TabItems::setTransparencyBlocks()
 	t_item->setInfo(BlockType::TRANSPARENCY_GREEN, vec4(0, 1, 0, 0.3),
 		true, this->tbw_size, this->tbh_size);
 	t_item->setPos(vec3(this->items_x_0 + 3 * this->gap_width, this->items_y_0, 0));
+
+	this->items[20] = make_shared<TBlockItem>();
+	t_item = dynamic_pointer_cast<TBlockItem>(this->items[20]);
+	t_item->setInfo(BlockType::GLASS, vec4(0.06, 0.07, 0.1, 0.6),
+		true, this->tbw_size, this->tbh_size);
+	t_item->setPos(vec3(this->items_x_0 + 2 * this->gap_width, this->items_y_0 - 2 * this->gap_height, 0));
 }
 

@@ -176,7 +176,7 @@ void ShadowRender::setCSMPipe()
 void ShadowRender::devideFrustum() // view space
 {
 	float p_near = 0.1f;
-	float p_far = 250;
+	float p_far = 280;
 	float r = w_width / w_height;
 	float fov = cam->getFOV();
 	float theta = XMConvertToRadians(fov / 2);

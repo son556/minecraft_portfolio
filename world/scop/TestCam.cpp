@@ -119,39 +119,9 @@ void TestCam::setCursorInClient(HWND hwnd)
 	SetCursorPos(pt.x, pt.y);
 }
 
-void TestCam::update()
-{
-	vec3 right_dir = vec3(0, 1, 0).Cross(this->dir);
-	vec3 up_dir = this->dir.Cross(right_dir);
-	vec3 move_dir = vec3(0, 0, 0);
-	if (GetAsyncKeyState('A') & 0x8000)
-		move_dir -= vec3(right_dir.x, 0, right_dir.z);
-	if (GetAsyncKeyState('D') & 0x8000)
-		move_dir += vec3(right_dir.x, 0, right_dir.z);
-	if (GetAsyncKeyState('W') & 0x8000)
-		move_dir += vec3(this->dir.x, 0, this->dir.z);
-	if (GetAsyncKeyState('S') & 0x8000)
-		move_dir -= vec3(this->dir.x, 0, this->dir.z);
-	if (GetAsyncKeyState('Q') & 0x8000)
-		move_dir += vec3(0, 1, 0);
-	if (GetAsyncKeyState('E') & 0x8000)
-		move_dir -= vec3(0, 1, 0);
-	move_dir = XMVector3Normalize(move_dir) * 0.1f;
-	this->pos += move_dir;
-	this->mvp.view = XMMatrixLookToLH(this->pos, this->dir, vec3(0, 1, 0));
-}
-
 void TestCam::update(vec3 const& character_pos, vec3 const& character_dir)
 {
-	static bool pre_shift = false;
-	bool current_shift = GetAsyncKeyState(VK_SHIFT) & 0x8000;
-	if (current_shift && !pre_shift)
-		this->free_cam ^= 1;
-	pre_shift = current_shift;
-
-	if (this->free_cam)
-		this->update();
-	else if (first_view) 
+	if (first_view) 
 	{
 		this->pos = character_pos;
 		this->pos += 0.15 * XMVector3Normalize(vec3(character_dir.x, 0, character_dir.z));
@@ -281,16 +251,6 @@ Mat TestCam::getReflection()
 	if (this->pos.y > WATER_HEIGHT)
 		return this->reflection_mat;
 	return this->reflection_cmat;
-}
-
-bool TestCam::getFreeCamFlag()
-{
-	return this->free_cam;
-}
-
-void TestCam::set3rdView()
-{
-	this->free_cam ^= 1;
 }
 
 pair<float, float> TestCam::getCursorNDCPos(HWND hwnd)

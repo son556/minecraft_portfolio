@@ -29,7 +29,6 @@ private:
 
 private:
 	shared_ptr<Sun> sun;
-	shared_ptr<Moon> moon;
 	vec3 sun_pos;
 	vec3 moon_pos;
 private:

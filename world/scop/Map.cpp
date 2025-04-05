@@ -4,6 +4,7 @@
 #include "DeferredGraphics.h"
 #include "Graphics.h"
 #include "Block.h"
+#include <time.h>
 
 Map::Map(
 	int size_w, 
@@ -24,6 +25,23 @@ Map::Map(
 	this->l_system.createLightMap();
 	this->t_system.createTrees();
 	this->terrainSetVerticesAndIndices();
+
+	//{ // test
+	//	clock_t start, finish;
+	//	start = clock();
+	//	this->t_system.createHeightMap();
+	//	finish = clock();
+	//	cout << "set height(ms)" << static_cast<double>(finish - start) << endl;
+	//	start = clock();
+	//	this->l_system.createLightMap();
+	//	finish = clock();
+	//	cout << "set light(ms): " << static_cast<double>(finish - start) << endl;
+	//	this->t_system.createTrees();
+	//	start = clock();
+	//	this->terrainSetVerticesAndIndices();
+	//	finish = clock();
+	//	cout << "set vi(ms): " << static_cast<double>(finish - start) << endl;
+	//}
 }
 
 
@@ -90,6 +108,7 @@ void Map::vertexAndIndexGenerator(
 				int adj_type = this->m_info.findBlock(c_idx, next);
 				if (adj_type > 0 && adj_type != BlockType::OAK_LEAVES)
 					continue;
+			
 				Block::addFaceQuadPosAndTex(
 					this->m_info.chunks[c_idx.y][c_idx.x]->start_pos,
 					dir,

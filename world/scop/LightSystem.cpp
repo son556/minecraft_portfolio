@@ -149,12 +149,6 @@ void LightSystem::setSunLight(Index2 const& c_idx, queue<pair<Index2, Index3>>& 
 	}
 }
 
-// chunk의 light을 다시 계산
-void LightSystem::chunkSetLight(Index2 const& chunk_idx)
-{
-}
-
-
 // light one block
 void LightSystem::BFSLightBlockDelete(
 	Index2 const& c_idx,
@@ -245,20 +239,37 @@ void LightSystem::BFSLightBlockAdd(
 	Index3 s_bidx = b_idx;
 	Index2 n_cidx;
 	Index3 n_bidx;
+
 	s_cidx.flag = true;
 	uint8 light;
 	uint8 n_light;
 	set<Index2> book;
-
-	// 빛 제거 bfs
 	int b_type;
+
+	int h = this->m_info->findHeight(c_idx, b_idx.x, b_idx.z);
+	// 최고 높이가 갱신된 경우
+	if (h == this->m_info->chunks[c_idx.y][c_idx.x]->max_h) {
+		for (int z = 0; z < 16; z++) {
+			for (int x = 0; x < 16; x++) {
+				for (int y = h + 8; y > -1; y--) {
+					b_type = this->m_info->findBlock(c_idx, x, y, z);
+					light = this->m_info->findLight(c_idx, x, y, z);
+					if (b_type || light)
+						break;
+					this->m_info->setLight(c_idx, x, y, z, 15);
+				}
+			}
+		}
+	}
+
+	// erase light value
 	que.push({ s_cidx, s_bidx });
 	while (que.size()) {
 		s_cidx = que.front().first;
 		s_bidx = que.front().second;
 		light = this->m_info->findLight(s_cidx, s_bidx);
-		this->m_info->setLight(s_cidx, s_bidx, 0);
 		book.insert(s_cidx);
+		this->m_info->setLight(s_cidx, s_bidx, 0);
 		que.pop();
 		for (int i = 0; i < 6; i++) {
 			n_cidx = s_cidx;
@@ -272,14 +283,14 @@ void LightSystem::BFSLightBlockAdd(
 			if (b_type && b_type != BlockType::OAK_LEAVES)
 				continue;
 			n_light = this->m_info->findLight(n_cidx, n_bidx);
-			if (light == n_light + 1 || (light == 15 && move_dir[i].y == -1)) {
+			if (n_light + 1 == light || (light == 15 && move_dir[i].y == -1)) {
 				que.push({ n_cidx, n_bidx });
 				l_stack.push({ n_cidx, n_bidx });
 			}
 		}
 	}
-
-	// 빛 추가 stack
+	
+	// light injection
 	while (l_stack.size()) {
 		s_cidx = l_stack.top().first;
 		s_bidx = l_stack.top().second;
@@ -292,23 +303,22 @@ void LightSystem::BFSLightBlockAdd(
 			if (n_cidx.flag == false)
 				continue;
 			n_light = this->m_info->findLight(n_cidx, n_bidx);
-			if (n_light == 0)
-				continue;
-			if (n_light == 15 && move_dir[i].y == 1)
+			if (move_dir[i].y == 1 && n_light == 15)
 				light = max(light, n_light);
-			else
+			else if (n_light > 0)
 				light = max(light, n_light - 1);
 		}
 		if (light == 0)
-			que.push({ s_cidx, s_bidx });
+			continue;
 		this->m_info->setLight(s_cidx, s_bidx, light);
+		que.push({ s_cidx, s_bidx });
 	}
 
-	// 구석에 있어서 제대로 갱신 안되는 빛 다시 확인
+	// light propagation
 	while (que.size()) {
 		s_cidx = que.front().first;
 		s_bidx = que.front().second;
-		light = 0;
+		light = this->m_info->findLight(s_cidx, s_bidx);
 		que.pop();
 		for (int i = 0; i < 6; i++) {
 			n_cidx = s_cidx;
@@ -316,17 +326,18 @@ void LightSystem::BFSLightBlockAdd(
 			this->getIndex(n_cidx, n_bidx);
 			if (n_cidx.flag == false)
 				continue;
-			n_light = this->m_info->findLight(n_cidx, n_bidx);
-			if (n_light == 0)
+			b_type = this->m_info->findBlock(n_cidx, n_bidx);
+			if (b_type > 0 && b_type != BlockType::OAK_LEAVES)
 				continue;
-			if (n_light == 15 && move_dir[i].y == 1)
-				light = max(light, n_light);
-			else
-				light = max(light, n_light - 1);
+			n_light = this->m_info->findLight(n_cidx, n_bidx);
+			if (n_light + 1 < light) {
+				this->m_info->setLight(n_cidx, n_bidx, light - 1);
+				que.push({ n_cidx, n_bidx });
+			}
 		}
-		this->m_info->setLight(s_cidx, s_bidx, light);
 	}
 
+	this->m_info->setLight(c_idx, b_idx, 0);
 	for (auto it : book) {
 		if (it == c_idx)
 			continue;

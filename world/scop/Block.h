@@ -208,19 +208,6 @@ namespace Block {
 		}
 	}
 
-	inline void addBlocQuadIndices( // test
-		uint32 start,
-		vector<uint32>& indices
-	)
-	{
-		indices.push_back(start);
-		indices.push_back(start + 1);
-		indices.push_back(start + 2);
-		indices.push_back(start + 3);
-		indices.push_back(start + 2);
-		indices.push_back(start + 1);
-	}
-
 	inline void addBlockFacePosAndTex(
 		vec3 const& start_pos,
 		float x,
@@ -261,6 +248,8 @@ namespace Block {
 			col = vec4(0, 1, 0, 0.3);
 		else if (type == -1)
 			col = vec4(0, 0, 1, 0.3);
+		else
+			col = vec4(0.06, 0.07, 0.1, 0.2);
 		VertexColor vertex;
 		x = start_pos.x + x;
 		y = start_pos.y + y;

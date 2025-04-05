@@ -42,7 +42,6 @@ private:
 private:
 	void resetLight(Index2 const& c_idx);
 	void setSunLight(Index2 const& c_idx, queue<pair<Index2, Index3>> &que);
-	void chunkSetLight(Index2 const& chunk_idx); // 청크 1개 light map 계산
 	void lightBFS(queue<pair<Index2, Index3>>& que);
 
 	/**

@@ -9,14 +9,12 @@
 #include "RasterizerState.h"
 #include "ConstantBuffer.h"
 #include "Sun.h"
-#include "Moon.h"
 #include "Buffer.h"
 #include "TestCam.h"
 
 SunMoon::SunMoon(UINT width, UINT height)
 {
 	this->sun = make_shared<Sun>(30);
-	this->moon = make_shared<Moon>(30);
 	this->d_buffer = make_shared<DeferredBuffer>(1);
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	this->d_buffer->setRTVsAndSRVs(device, width, height);
@@ -93,26 +91,6 @@ void SunMoon::render(CamType type, bool ccw_flag)
 		&stride, &offset);
 	context->DrawIndexed(this->sun->getIndexBuffer()->getCount(),
 		0, 0);
-
-	// moon
-	/*move_pos = vec3(cam_pos.x - 299, 0, cam_pos.z);
-	mvp.model = SimpleMath::Matrix::CreateTranslation(move_pos) *
-		SimpleMath::Matrix::CreateRotationZ(sun_radian);
-	XMFLOAT4 m_pos = XMFLOAT4(0, 0, 0, 1);
-	XMVECTOR moon_pos_vec = XMLoadFloat4(&m_pos);
-	moon_pos_vec = XMVector4Transform(moon_pos_vec, mvp.model);
-	XMStoreFloat4(&m_pos, moon_pos_vec);
-	this->moon_pos = vec3(m_pos.x, m_pos.y, m_pos.z);
-	mvp.model = mvp.model.Transpose();
-	this->constant_buff->update(mvp);
-
-	offset = this->moon->getVertexBffer()->getOffset();
-	stride = this->moon->getVertexBffer()->getStride();
-	context->IASetVertexBuffers(0, 1,
-		this->moon->getVertexBffer()->getComPtr().GetAddressOf(),
-		&stride, &offset);
-	context->DrawIndexed(this->moon->getIndexBuffer()->getCount(),
-		0, 0);*/
 }
 
 ComPtr<ID3D11ShaderResourceView> SunMoon::getSRV()

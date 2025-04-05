@@ -229,9 +229,6 @@
     <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\Reflection">
       <UniqueIdentifier>{e1480218-aa17-45a8-acf4-89c086c39070}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\ReflectionCube">
-      <UniqueIdentifier>{5309c267-99c1-4034-8d0b-8755b53bd00e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\World\WorldShaderFIle\OIT\Water\Reflection\Cube">
       <UniqueIdentifier>{e5da4856-8fb0-41d3-9e53-51646291a5b3}</UniqueIdentifier>
     </Filter>
@@ -291,9 +288,6 @@
     </Filter>
     <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object">
       <UniqueIdentifier>{1a447a19-1fe9-4202-810b-679cfa5da5a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Moon">
-      <UniqueIdentifier>{7b2df57c-a174-4ee7-bbdf-e4a5975b6a83}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Sun">
       <UniqueIdentifier>{61e1663b-8c1a-41b4-9d26-ada09a42569b}</UniqueIdentifier>
@@ -525,9 +519,6 @@
     <ClInclude Include="Sun.h">
       <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Sun</Filter>
     </ClInclude>
-    <ClInclude Include="Moon.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Moon</Filter>
-    </ClInclude>
     <ClInclude Include="Blur.h">
       <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Blur</Filter>
     </ClInclude>
@@ -608,9 +599,6 @@
     </ClInclude>
     <ClInclude Include="SetCave.h">
       <Filter>소스 파일\World\Map\System\TerrainSystem\SetCave</Filter>
-    </ClInclude>
-    <ClInclude Include="ReflectionCube.h">
-      <Filter>소스 파일\World\Map\System\RenderSystem\ReflectionCube</Filter>
     </ClInclude>
     <ClInclude Include="WaterReflection.h">
       <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterReflection</Filter>
@@ -815,9 +803,6 @@
     <ClCompile Include="Sun.cpp">
       <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Sun</Filter>
     </ClCompile>
-    <ClCompile Include="Moon.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Object\Moon</Filter>
-    </ClCompile>
     <ClCompile Include="Blur.cpp">
       <Filter>소스 파일\World\Map\System\RenderSystem\DeferredRender\OpacityRender\Wallpaper\SunMoon\Blur</Filter>
     </ClCompile>
@@ -898,9 +883,6 @@
     </ClCompile>
     <ClCompile Include="SetCave.cpp">
       <Filter>소스 파일\World\Map\System\TerrainSystem\SetCave</Filter>
-    </ClCompile>
-    <ClCompile Include="ReflectionCube.cpp">
-      <Filter>소스 파일\World\Map\System\RenderSystem\ReflectionCube</Filter>
     </ClCompile>
     <ClCompile Include="WaterReflection.cpp">
       <Filter>소스 파일\World\Map\System\RenderSystem\OIT\Water\WaterReflection</Filter>

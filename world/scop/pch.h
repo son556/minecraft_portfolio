@@ -84,7 +84,8 @@ using namespace Microsoft::WRL;
 #define WATER_SPEED 0.02
 
 enum BlockType {
-	WATER = -4,
+	WATER = -5,
+	GLASS,
 	TRANSPARENCY_RED,
 	TRANSPARENCY_GREEN,
 	TRANSPARENCY_BLUE,
@@ -107,10 +108,10 @@ enum BlockType {
 	PURPLE_CONCRETE,
 	RED_CONCRETE,
 	WHITE_CONCRETE,
-	YELLOW_CONCRETE
+	YELLOW_CONCRETE,
 };
 
-static vector<vector<int>> blockOffset = {
+static const vector<vector<int>> blockOffset = {
 	//top, side, bottom
 	{	0,	0,	0}, // grass
 	{	1,	2,	1}, // oak log
@@ -131,6 +132,7 @@ static vector<vector<int>> blockOffset = {
 	{	17,	17,	17}, // red concrete
 	{	18,	18,	18}, // white concrete
 	{	19,	19,	19}, // yellow concrete
+	{	20, 20, 20} // glass
 };
 
 enum class CamType {

@@ -126,7 +126,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                         exit(0);
                 }
                 int b_type = gui_manager.getInventoryBlock(block_type - 1);
-                if (cam->getFreeCamFlag() == false && item_ui == false && b_type) {
+                if (item_ui == false && b_type) {
                     terrain.putBlock(cam->getPos(), cam->getDir(), b_type);
                     entity->setCharacterLeftArmAnimation();
                 }
@@ -134,7 +134,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 lb_flag = false;
             }
             if (rb_flag) {
-                if (cam->getFreeCamFlag() == false && item_ui == false) {
+                if (item_ui == false) {
                     terrain.deleteBlock(cam->getPos(), cam->getDir());
                     entity->setCharacterLeftArmAnimation();
                 }

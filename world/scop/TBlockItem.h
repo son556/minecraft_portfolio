@@ -46,6 +46,7 @@ private:
 	static const vec4 red;
 	static const vec4 blue;
 	static const vec4 green;
+	static const vec4 glass;
 	static const vec4 err_color;
 };
 
