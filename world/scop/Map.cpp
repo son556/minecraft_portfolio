@@ -96,8 +96,6 @@ void Map::vertexAndIndexGenerator(
 )
 {
 	int16 const& max_h = this->m_info.chunks[c_idx.y][c_idx.x]->max_h;
-	int next_type;
-	Index2 const& cpos = this->m_info.chunks[c_idx.y][c_idx.x]->chunk_pos;
 	for (int y = 0; y < max_h; y++) {
 		for (int z = 0; z < 16; z++) {
 			for (int x = 0; x < 16; x++) {
@@ -132,6 +130,9 @@ void Map::vertexShadowGenerator(
 {
 	int16 const& max_h = this->m_info.chunks[c_idx.y][c_idx.x]->max_h;
 	int shadow_flag;
+	Index2 const& cpos = this->m_info.chunks[c_idx.y][c_idx.x]->chunk_pos;
+	Index2 const& sv_pos = this->m_info.sv_pos;
+	Index2 const& ev_pos = this->m_info.ev_pos;
 	for (int y = 0; y < max_h; y++) {
 		for (int z = 0; z < 16; z++) {
 			for (int x = 0; x < 16; x++) {
@@ -140,13 +141,16 @@ void Map::vertexShadowGenerator(
 					continue;
 				Index3 next(x + move.x, y + move.y, z - move.z);
 				if (this->m_info.findBlock(c_idx, next) > 0) {
-					Index2 n_idx = this->m_info.getAdjacentChunkIndex(c_idx, next);
-					const Index2& cpos = this->m_info.chunks[n_idx.y][n_idx.x]->chunk_pos;
-					const Index2& sv_pos = this->m_info.sv_pos;
-					const Index2& ev_pos = this->m_info.ev_pos;
-					if ((cpos.x >= sv_pos.x && cpos.x < ev_pos.x) && 
-						(cpos.y <= sv_pos.y && cpos.y > ev_pos.y) && 
-						n_idx.flag == false)
+					bool c_flag = true;
+					if (cpos.x == sv_pos.x && next.x < 0)
+						c_flag = false;
+					else if (cpos.x == ev_pos.x - 16 && next.x > 15)
+						c_flag = false;
+					else if (cpos.y == sv_pos.y && next.z < 0)
+						c_flag = false;
+					else if (cpos.y == ev_pos.y + 16 && next.z > 15)
+						c_flag = false;
+					if (c_flag)
 						continue;
 				}
 				shadow_flag = this->m_info.findLight(c_idx, next.x, next.y, next.z);

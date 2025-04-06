@@ -26,7 +26,7 @@ HWND hWnd;
 bool under_water = false; // 물 속에 있는 지
 bool in_water = false;
 float delta_time = 0;
-float sun_radian = XMConvertToRadians(20);
+float sun_radian = XMConvertToRadians(15);
 
 vec3 dir;
 int w_width = 800;

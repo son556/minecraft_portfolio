@@ -121,7 +121,7 @@ void TestCam::setCursorInClient(HWND hwnd)
 
 void TestCam::update(vec3 const& character_pos, vec3 const& character_dir)
 {
-	if (first_view) 
+	if (first_view)
 	{
 		this->pos = character_pos;
 		this->pos += 0.15 * XMVector3Normalize(vec3(character_dir.x, 0, character_dir.z));
