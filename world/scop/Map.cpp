@@ -139,8 +139,16 @@ void Map::vertexShadowGenerator(
 				if (type <= 0)
 					continue;
 				Index3 next(x + move.x, y + move.y, z - move.z);
-				if (this->m_info.findBlock(c_idx, next) > 0)
-					continue;
+				if (this->m_info.findBlock(c_idx, next) > 0) {
+					Index2 n_idx = this->m_info.getAdjacentChunkIndex(c_idx, next);
+					const Index2& cpos = this->m_info.chunks[n_idx.y][n_idx.x]->chunk_pos;
+					const Index2& sv_pos = this->m_info.sv_pos;
+					const Index2& ev_pos = this->m_info.ev_pos;
+					if ((cpos.x >= sv_pos.x && cpos.x < ev_pos.x) && 
+						(cpos.y <= sv_pos.y && cpos.y > ev_pos.y) && 
+						n_idx.flag == false)
+						continue;
+				}
 				shadow_flag = this->m_info.findLight(c_idx, next.x, next.y, next.z);
 				Block::addBlockFacePosAndTex(
 					this->m_info.chunks[c_idx.y][c_idx.x]->start_pos,
@@ -403,6 +411,50 @@ void Map::threadFunc(vector<Index2>& vec, int dir)
 	this->t_system.createTrees(vec, dir); // 새로 만든나무와 인접했던 나무 추가
 	for (int i = 0; i < vec.size(); i++) {
 		this->t_system.fillWithUserPlacedBlocks(vec[i]);
+	}
+
+	set<Index2> book;
+	for (int i = 0; i < vec.size(); i++)
+		book.insert(vec[i]);
+
+	Index2 cidx;
+	Index2 cpos;
+	if (dir == 1) {
+		for (int i = 1; i < this->m_info.size_h - 1; i++) {
+			cpos = this->m_info.sv_pos + Index2(16, -16 * (i - 1));
+			cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
+			if (book.find(cidx) == book.end())
+				vec.push_back(cidx);
+		}
+	}
+
+	else if (dir == 2) {
+		for (int i = 1; i < this->m_info.size_h - 1; i++) {
+			cpos = Index2(this->m_info.ev_pos.x - 32,
+				this->m_info.sv_pos.y - 16 * (i - 1));
+			cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
+			if (book.find(cidx) == book.end())
+				vec.push_back(cidx);
+		}
+	}
+
+	else if (dir == 4) {
+		for (int i = 1; i < this->m_info.size_w - 1; i++) {
+			cpos = this->m_info.sv_pos + Index2(16 * (i - 1), -16);
+			cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
+			if (book.find(cidx) == book.end())
+				vec.push_back(cidx);
+		}
+	}
+
+	else {
+		for (int i = 1; i < this->m_info.size_w - 1; i++) {
+			cpos = Index2(this->m_info.sv_pos.x + 16 * (i - 1),
+				this->m_info.ev_pos.y + 32);
+			cidx = this->m_info.findChunkIndex(cpos.x, cpos.y);
+			if (book.find(cidx) == book.end())
+				vec.push_back(cidx);
+		}
 	}
 
 	int t = vec.size() / this->thread_cnt;

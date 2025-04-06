@@ -239,6 +239,24 @@ public:
 		return ans;
 	}
 
+	inline Index2 getAdjacentChunkIndex(Index2 const& c_idx, 
+		Index3 const& next) {
+		Index2 cidx;
+		Index2 const& cpos = this->chunks[c_idx.y][c_idx.x]->chunk_pos;
+		if (next.x < 0)
+			cidx = this->findChunkIndex(cpos.x - 16, cpos.y);
+		else if (next.x > 15)
+			cidx = this->findChunkIndex(cpos.x + 16, cpos.y);
+		else if (next.z < 0)
+			cidx = this->findChunkIndex(cpos.x, cpos.y + 16);
+		else if (next.z > 15)
+			cidx = this->findChunkIndex(cpos.x, cpos.y - 16);
+		else if (next.y < 0)
+			cidx.flag = false;
+		else if (next.y > 255)
+			cidx.flag = false;
+		return cidx;
+	}
 private:
 	inline int findAdjBlock(Index2 const& c_idx, int x, int y, int z) const {
 		Index2 cpos = this->chunks[c_idx.y][c_idx.x]->chunk_pos;

@@ -55,7 +55,7 @@ float shadowCheck(float4 w_pos, int shadow_idx, float3 normal)
 {   
     if (dot(float3(0, 1, 0), light_dir.xyz) < 0)
         return 0;
-    w_pos += float4(normal, 0) * 0.1;
+    w_pos += float4(normal, 0) * 0.03;
     w_pos = mul(w_pos, mvp_arr[shadow_idx].view);
     w_pos = mul(w_pos, mvp_arr[shadow_idx].proj);
     w_pos /= w_pos.w; // ndc

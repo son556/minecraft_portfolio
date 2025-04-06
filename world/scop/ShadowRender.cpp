@@ -114,8 +114,7 @@ ShadowRender::ShadowRender(MapUtils* minfo)
 	this->s_rasterizer_state = make_shared<RasterizerState>(
 		d_graphic->getDevice(),
 		D3D11_FILL_SOLID,
-		D3D11_CULL_NONE,
-		true
+		D3D11_CULL_BACK
 	);
 	this->devideFrustum();
 }
