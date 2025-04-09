@@ -6,8 +6,6 @@ TextureCube irradiance_tex : register(t4);
 TextureCube specular_tex : register(t5);
 Texture2D brdf_tex : register(t6);
 
-// 블록 면의 normal을 가져와서 normal_tex와 조합해야 할 듯
-
 SamplerState linear_sampler : register(s0);
 SamplerState clamp_sampler : register(s1);
 
