@@ -180,6 +180,7 @@ void OpacityRender::render(
 	context = d_graphic->getContext();
 	vec3 cam_pos = cam->getPos();
 
+	// sky box
 	this->cube_map.render(type, render_option.ccw_flag);
 	this->m_info->directional_light_pos =
 		this->cube_map.getDirectionalLightPos(); // 태양 위치

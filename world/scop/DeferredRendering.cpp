@@ -93,6 +93,7 @@ ComPtr<ID3D11ShaderResourceView>& DeferredRendering::getSRV()
 
 void DeferredRendering::renderUnderWater(ComPtr<ID3D11DeviceContext>& context)
 {
+	// oit up render
 	this->oit.setRTVandSRV(this->opacity_render.getRTV(),
 		this->opacity_render.getSRV(), this->opacity_render.getGeoDepthSRV());
 	this->oit.render(CamType::NORMAL, true);
@@ -109,7 +110,7 @@ void DeferredRendering::renderUnderWater(ComPtr<ID3D11DeviceContext>& context)
 	// water render
 	this->water.render(this->opacity_render.getSRV());
 
-	// oit up render
+	// oit down render
 	this->oit.setRTVandSRV(this->water.getRTV(), this->water.getSRV(),
 		this->opacity_render.getGeoDepthSRV());
 	this->oit.render(CamType::NORMAL, false);
