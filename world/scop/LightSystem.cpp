@@ -186,7 +186,6 @@ void LightSystem::BFSLightBlockDelete(
 
 	// bfs
 	int b_type;
-	int c_cnt = 0; // 청크수 제한
 	bool exit_flag = false;
 	while (que.size()) {
 		s_cidx = que.front().first;

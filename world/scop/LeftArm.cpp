@@ -109,10 +109,7 @@ void LeftArm::animation()
 		Parts::updateLeftArmVertices(this->ani_vertices, right, z_axis, c_up, c_down);
 		this->v_buffer->update(this->ani_vertices, d_graphic->getContext());
 		Mat t = Mat::CreateTranslation(vec3(0, 0.375, 0));
-		if (first_view == false)
-			this->basic_mat = this->basic_mat * t;
-		else
-			this->basic_mat = t * this->basic_mat;
+		this->basic_mat = this->basic_mat * t;
 	}
 	dt += delta_time * 30;
 	w = cosf(dt * XMConvertToRadians(speed) * 0.5);
