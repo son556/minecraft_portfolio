@@ -30,7 +30,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
     float revealage = reveal.Sample(sampler0, input.uv).r;
 	
-    if (isApproximatelyEqual(revealage, 1.0f)) 
+    if (isApproximatelyEqual(revealage, 1.0f)) // 투명 효과에 기여 X
         discard;
  
     float4 accumulation = accum.Sample(sampler0, input.uv);
