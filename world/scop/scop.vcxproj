@@ -110,14 +110,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries/include/;$(SolutionDir)Libraries/include/inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libraries/Lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libraries/Lib/;$(SolutionDir)Libraries/Lib/lib/x64/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -131,7 +131,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libraries/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries/include/;$(SolutionDir)Libraries/include/inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -140,7 +140,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libraries/Lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libraries/Lib/;$(SolutionDir)Libraries/Lib/lib/x64/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -169,6 +169,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EXEPath.h" />
     <ClInclude Include="Filter.h" />
+    <ClInclude Include="FmodSound.h" />
     <ClInclude Include="GeometryShader.h" />
     <ClInclude Include="GeoRender.h" />
     <ClInclude Include="GUI.h" />
@@ -268,6 +269,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EXEPath.cpp" />
     <ClCompile Include="Filter.cpp" />
+    <ClCompile Include="FmodSound.cpp" />
     <ClCompile Include="GeometryShader.cpp" />
     <ClCompile Include="GeoRender.cpp" />
     <ClCompile Include="GUI.cpp" />
@@ -903,6 +905,13 @@
     <None Include="cursor2.cur" />
     <None Include="resources\precision.cur" />
     <None Include="SimpleMath.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="resources\hal1.mp3" />
+    <Media Include="resources\Leaf_litter_break1.mp3" />
+    <Media Include="resources\minecraft-glass-break.mp3" />
+    <Media Include="resources\m_click.mp3" />
+    <Media Include="resources\stone_effect.mp3" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

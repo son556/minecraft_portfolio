@@ -403,6 +403,9 @@
     <Filter Include="소스 파일\BlockTextureArray">
       <UniqueIdentifier>{19c58998-f65d-4d68-9ec0-b38859054d8a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Fmod">
+      <UniqueIdentifier>{6c815ec0-03a8-4948-9f90-612ae182d154}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -696,6 +699,9 @@
     <ClInclude Include="BlockTextureArray.h">
       <Filter>소스 파일\BlockTextureArray</Filter>
     </ClInclude>
+    <ClInclude Include="FmodSound.h">
+      <Filter>소스 파일\Fmod</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -980,6 +986,9 @@
     <ClCompile Include="BlockTextureArray.cpp">
       <Filter>소스 파일\BlockTextureArray</Filter>
     </ClCompile>
+    <ClCompile Include="FmodSound.cpp">
+      <Filter>소스 파일\Fmod</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="scop.rc">
@@ -1210,5 +1219,22 @@
     <None Include="cursor2.cur">
       <Filter>리소스 파일</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="resources\hal1.mp3">
+      <Filter>리소스 파일</Filter>
+    </Media>
+    <Media Include="resources\stone_effect.mp3">
+      <Filter>리소스 파일</Filter>
+    </Media>
+    <Media Include="resources\m_click.mp3">
+      <Filter>리소스 파일</Filter>
+    </Media>
+    <Media Include="resources\Leaf_litter_break1.mp3">
+      <Filter>리소스 파일</Filter>
+    </Media>
+    <Media Include="resources\minecraft-glass-break.mp3">
+      <Filter>리소스 파일</Filter>
+    </Media>
   </ItemGroup>
 </Project>

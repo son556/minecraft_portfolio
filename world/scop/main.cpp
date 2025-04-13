@@ -16,6 +16,8 @@
 #include "StartScene.h"
 #include "BlockTextureArray.h"
 
+#include "FmodSound.h"
+
 #define MAX_LOADSTRING 100
 
 shared_ptr<DeferredGraphics> d_graphic;
@@ -102,6 +104,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     if (start_scene_flag)
         fix_flag = false;
 
+
+	FmodSound::init();
+	FmodSound::playBGM();
     while (msg.message != WM_QUIT)
     {
         if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -121,9 +126,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                         start_scene_flag = false;
                         fix_flag = true;
                         start_scene.~StartScene();
+                        FmodSound::playSelectedSound();
                     }
-                    else if (start_scene.checkClickExitButton())
+                    else if (start_scene.checkClickExitButton()) {
+                        FmodSound::release();
                         exit(0);
+                    }
                 }
                 int b_type = gui_manager.getInventoryBlock(block_type - 1);
                 if (item_ui == false && b_type) {
@@ -271,8 +279,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 // ESC 키가 눌렸을 때 프로그램 종료
                 if (item_ui)
                     item_ui = false;
-                else
+                else {
+                    FmodSound::release();
                     DestroyWindow(hWnd);
+                }
             }
             else if (wParam == 13) {
                 fix_flag ^= 1;

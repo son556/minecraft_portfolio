@@ -3,8 +3,8 @@
 #include "GUIResources.h"
 #include "TabItems.h"
 #include "Inventory.h"
-
 #include "TestCam.h"
+#include "FmodSound.h"
 
 GUIManager::GUIManager()
 {
@@ -30,10 +30,13 @@ void GUIManager::render(GUITexture idx, bool click_flag)
 		shared_ptr<TabItems>&& t_item =
 			dynamic_pointer_cast<TabItems>(
 				this->gui_arr[static_cast<int>(GUITexture::TAB_ITEMS)]);
+		
+		// 아이템 동기화
 		for (int i = 0; i < 3; i++) {
 			BlockType b_type = inv->getBlockType(i);
 			t_item->setSlotItem(45 + i, b_type);
 		}
+
 		pair<float, float> ndc_xy = cam->getCursorNDCPos(hWnd);
 		int s_idx = t_item->selectSlot(ndc_xy.first, ndc_xy.second);
 		shared_ptr<BlockItem> block = nullptr;
@@ -42,12 +45,14 @@ void GUIManager::render(GUITexture idx, bool click_flag)
 		if (click_slot > -1)
 			t_item->moveItem(click_slot, vec3(ndc_xy.first, ndc_xy.second, 0));
 		if (flag == false && click_flag && block) {
+			FmodSound::playSelectedSound();
 			click_slot = s_idx;
 			flag = true;
 			t_item->moveItem(click_slot, vec3(ndc_xy.first, ndc_xy.second, 0));
 			t_item->getItem(click_slot)->setFreeMove(true);
 		}
 		else if (flag && click_flag && s_idx > -1) {
+			FmodSound::playSelectedSound();
 			if (s_idx == click_slot)
 				t_item->setSlotItem(click_slot, t_item->getSlotItem(click_slot));
 			else {
@@ -77,6 +82,7 @@ void GUIManager::render(GUITexture idx, bool click_flag)
 			click_slot = -1;
 		}
 	}
+
 	this->gui_render.render(this->gui_arr[static_cast<int>(idx)].get(), true);
 }
 
