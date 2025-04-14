@@ -129,7 +129,7 @@ void DeferredGraphics::createSwapChainAndDevice()
 	desc.SampleDesc.Quality = 0;
 	desc.BufferUsage = DXGI_USAGE_SHADER_INPUT |
 		DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	desc.BufferCount = 2;
+	desc.BufferCount = 1;
 	desc.OutputWindow = this->hWnd;
 	desc.Windowed = TRUE;
 	desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
@@ -155,14 +155,14 @@ void DeferredGraphics::createRTV()
 {
 	HRESULT hr;
 	ComPtr<ID3D11Texture2D> tex;
-	for (int i = 0; i < 3; i++) {
-		hr = this->swap_chain->GetBuffer(
-			0,
-			__uuidof(ID3D11Texture2D),
-			reinterpret_cast<void**>(tex.GetAddressOf())
-		);
-		CHECK(hr);
-	}
+
+	hr = this->swap_chain->GetBuffer(
+		0,
+		__uuidof(ID3D11Texture2D),
+		reinterpret_cast<void**>(tex.GetAddressOf())
+	);
+	CHECK(hr);
+
 	hr = this->device->CreateRenderTargetView(
 		tex.Get(),
 		nullptr,
