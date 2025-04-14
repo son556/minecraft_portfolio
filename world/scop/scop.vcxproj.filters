@@ -406,6 +406,15 @@
     <Filter Include="소스 파일\Fmod">
       <UniqueIdentifier>{6c815ec0-03a8-4948-9f90-612ae182d154}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Utils\JSON">
+      <UniqueIdentifier>{34d55ac7-6d03-40e7-9a42-2c8b9a15fc51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="리소스 파일\Sound">
+      <UniqueIdentifier>{8731cff7-e98c-49ee-8fad-58454662f108}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="리소스 파일\file">
+      <UniqueIdentifier>{6d9e75a4-98d0-4548-833d-7c67952ced9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -701,6 +710,9 @@
     </ClInclude>
     <ClInclude Include="FmodSound.h">
       <Filter>소스 파일\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>헤더 파일\Utils\JSON</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1219,22 +1231,31 @@
     <None Include="cursor2.cur">
       <Filter>리소스 파일</Filter>
     </None>
+    <None Include="book.json">
+      <Filter>리소스 파일\file</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <Media Include="resources\fishing.mp3">
+      <Filter>리소스 파일\Sound</Filter>
+    </Media>
     <Media Include="resources\hal1.mp3">
-      <Filter>리소스 파일</Filter>
-    </Media>
-    <Media Include="resources\stone_effect.mp3">
-      <Filter>리소스 파일</Filter>
-    </Media>
-    <Media Include="resources\m_click.mp3">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Sound</Filter>
     </Media>
     <Media Include="resources\Leaf_litter_break1.mp3">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Sound</Filter>
+    </Media>
+    <Media Include="resources\m_click.mp3">
+      <Filter>리소스 파일\Sound</Filter>
     </Media>
     <Media Include="resources\minecraft-glass-break.mp3">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Sound</Filter>
+    </Media>
+    <Media Include="resources\roblox.mp3">
+      <Filter>리소스 파일\Sound</Filter>
+    </Media>
+    <Media Include="resources\stone_effect.mp3">
+      <Filter>리소스 파일\Sound</Filter>
     </Media>
   </ItemGroup>
 </Project>

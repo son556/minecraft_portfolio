@@ -214,6 +214,11 @@ void Terrain::deleteBlock(vec3 const& ray_pos, vec3 const& ray_dir)
 	}
 }
 
+void Terrain::saveGame()
+{
+	this->m_manager->m_info.saveGame();
+}
+
 WorldIndex Terrain::getBlock(float x, float y, float z)
 {
 	return this->m_manager->m_info.getBlockIndex(x, y, z);

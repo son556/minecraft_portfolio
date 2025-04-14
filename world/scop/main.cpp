@@ -18,6 +18,8 @@
 
 #include "FmodSound.h"
 
+#include "json.hpp"
+
 #define MAX_LOADSTRING 100
 
 shared_ptr<DeferredGraphics> d_graphic;
@@ -35,12 +37,13 @@ int w_width = 800;
 int w_height = 650;
 bool lb_flag = false;
 bool rb_flag = false;
-bool fix_flag = true;
+bool fix_flag = false;
 bool move_check = false;
 bool correct_mouse = false;
 bool first_view = false;
 bool item_ui = false;
 int block_type = 1;
+bool start_scene_flag = true;
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -100,15 +103,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     move_check = true;
     bool click_check = false;
 
-    bool start_scene_flag = true;
-    if (start_scene_flag)
-        fix_flag = false;
-
 
 	FmodSound::init();
 	FmodSound::playBGM();
     while (msg.message != WM_QUIT)
     {
+        FmodSound::playNextBGM();
         if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&msg);
@@ -231,7 +231,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    // 항상 화면이 위에 뜨게함
    SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-   //SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); // test
    return TRUE;
 }
 
@@ -280,6 +279,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (item_ui)
                     item_ui = false;
                 else {
+                    if (start_scene_flag == false)
+                        p_terrain->saveGame();
                     FmodSound::release();
                     DestroyWindow(hWnd);
                 }

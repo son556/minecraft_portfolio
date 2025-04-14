@@ -343,6 +343,10 @@ private:
 		return this->light_map[idx];
 	}
 
+public:
+	void saveGame();
+	void loadGame();
+
 private:
 	MapUtils(MapUtils const&) = delete;
 	MapUtils& operator=(MapUtils const&) = delete;
@@ -359,6 +363,13 @@ public:
 	UINT height; // 창 세로 크기
 	vec3 directional_light_pos; // 태양 위치
 	vec3 light_dir;
+
+	/*
+	Index2 -> chunk pos
+	Index3 -> block idx
+	Index2.x -> 지금 추가하려는 블록 상태
+	Index2.y -> 현 블록위치의 최초 블록 상태
+	*/
 	map<Index2, map<Index3, Index2>> book; // 유저의 행동 결과를 저장
 
 private:

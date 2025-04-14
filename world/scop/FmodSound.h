@@ -16,6 +16,7 @@ public:
 	static void init();
 	static void playPutBlockSound(BlockType type);
 	static void playBGM();
+	static void playNextBGM();
 	static void playSelectedSound();
 	static void release();
 
@@ -27,11 +28,12 @@ private:
 
 private:
 	static FMOD::Channel* channel;
+	static FMOD::Channel* bgms_channel;
 	static FMOD::System* system;
 	static FMOD::Sound* put_sound;
 	static FMOD::Sound* break_glass;
 	static FMOD::Sound* break_leaf;
-	static FMOD::Sound* bgm_hal1;
+	static FMOD::Sound* bgms[4];
 	static FMOD::Sound* selected_sound;
 };
 

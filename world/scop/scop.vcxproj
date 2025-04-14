@@ -180,6 +180,7 @@
     <ClInclude Include="HullShader.h" />
     <ClInclude Include="InputLayouts.h" />
     <ClInclude Include="Inventory.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="LeftArm.h" />
     <ClInclude Include="LeftLeg.h" />
     <ClInclude Include="Letter.h" />
@@ -902,15 +903,18 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="book.json" />
     <None Include="cursor2.cur" />
     <None Include="resources\precision.cur" />
     <None Include="SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>
+    <Media Include="resources\fishing.mp3" />
     <Media Include="resources\hal1.mp3" />
     <Media Include="resources\Leaf_litter_break1.mp3" />
     <Media Include="resources\minecraft-glass-break.mp3" />
     <Media Include="resources\m_click.mp3" />
+    <Media Include="resources\roblox.mp3" />
     <Media Include="resources\stone_effect.mp3" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

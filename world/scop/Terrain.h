@@ -17,6 +17,7 @@ public:
 	int16 getHeight(float x, float z) const;
 	void putBlock(vec3 const& ray_pos, vec3 const& ray_dir, int type);
 	void deleteBlock(vec3 const& ray_pos, vec3 const& ray_dir);
+	void saveGame();
 
 	/**
 	*  @brief 포함되는 world 좌표를 받아 block의 인덱스를 반환합니다.

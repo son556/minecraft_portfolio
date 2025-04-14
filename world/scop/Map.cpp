@@ -21,6 +21,7 @@ Map::Map(
 	this->c_fov = fov_chunk;
 	this->thread_cnt = thread_cnt;
 
+	this->m_info.loadGame();
 	this->t_system.createHeightMap();
 	this->l_system.createLightMap();
 	this->t_system.createTrees();
@@ -402,6 +403,7 @@ void Map::userPositionCheck(float x, float z)
 			this->resetChunk(c_idx);
 			this->t_system.fillChunk(c_idx, 
 				this->m_info.chunks[c_idx.y][c_idx.x]->chunk_pos);
+			this->t_system.fillWithUserPlacedBlocks(c_idx);
 			this->l_system.createLightMap(f_idxs, v_idxs);
 		}
 	}

@@ -1,7 +1,11 @@
 #include "pch.h"
 #include "MapUtils.h"
+#include "json.hpp"
+#include <fstream>
 
 #define STDZERO 0.00000001
+
+using json = nlohmann::json;
 
 MapUtils::MapUtils(
 	int size_w, int size_h, HWND hwnd,
@@ -234,6 +238,88 @@ map<Index3, Index2>const* const MapUtils::getUserPlacedBlocks(
 	if (it == this->book.end())
 		return nullptr;
 	return &(it->second);
+}
+
+
+void to_json(json& j, const Index2& idx) {
+	j = json{ {"x", idx.x}, {"y", idx.y}, {"flag", idx.flag} };
+}
+
+void to_json(json& j, const Index3& idx) {
+	j = json{ {"x", idx.x}, {"y", idx.y}, {"z", idx.z}, {"flag", idx.flag} };
+}
+
+void from_json(const json& j, Index2& idx) {
+	j.at("x").get_to(idx.x);
+	j.at("y").get_to(idx.y);
+	j.at("flag").get_to(idx.flag);
+}
+
+void from_json(const json& j, Index3& idx) {
+	j.at("x").get_to(idx.x);
+	j.at("y").get_to(idx.y);
+	j.at("z").get_to(idx.z);
+	j.at("flag").get_to(idx.flag);
+}
+
+void MapUtils::saveGame()
+{
+	map<Index2, map<Index3, Index2>>::iterator it;
+	map<Index3, Index2>::iterator iit;
+	json j_arr = json::array();
+	for (it = this->book.begin(); it != this->book.end(); it++) {
+		json out;
+		out["OuterKey"] = it->first;
+		json j_in_arr = json::array();
+		for (iit = it->second.begin(); iit != it->second.end(); iit++) {
+			json entry;
+			entry["InnerKey"] = iit->first;
+			entry["Value"] = iit->second;
+			j_in_arr.push_back(entry);
+		}
+		out["Map"] = j_in_arr;
+		j_arr.push_back(out);
+	}
+
+	ofstream o("book.json");
+	if (o.is_open()) {
+		o << j_arr.dump(4);
+		o.close();
+		cout << "게임이 저장되었습니다." << endl;
+	}
+	else {
+		o.close();
+		cout << "게임 저장 실패!!!" << endl;
+	}
+}
+
+void MapUtils::loadGame()
+{
+	ifstream i("book.json");
+	if (i.is_open() == false) {
+		cout << "파일을 불러오는데 실패했습니다." << endl;
+		return;
+	}
+
+	i.seekg(0, std::ios::end);
+	if (i.tellg() == 0)
+		return;
+	i.seekg(0, std::ios::beg);
+
+	json j;
+	i >> j;
+	i.close();
+
+	for (auto const& entry : j) {
+		Index2 chunk_pos = entry.at("OuterKey").get<Index2>();
+		map<Index3, Index2> inner_map;
+		for (auto const& inner_entry : entry.at("Map")) {
+			Index3 block_idx = inner_entry.at("InnerKey").get<Index3>();
+			Index2 block_type = inner_entry.at("Value").get<Index2>();
+			inner_map.insert({ block_idx, block_type });
+		}
+		this->book.insert({ chunk_pos, inner_map });
+	}
 }
 
 
