@@ -74,7 +74,6 @@ PS_OUTPUT main(PS_INPUT input)
     float m = texture_arr_s.Sample(sampler_linear, uvw).g;
     float ao = texture_arr_s.Sample(sampler_linear, uvw).w;
     output.rma = float4(r, m, ao, 1);
-    float h = texture_arr_n.Sample(sampler_linear, uvw).w;
     output.ssao_normal = float4(input.normal, 1);
     return output;
 }
