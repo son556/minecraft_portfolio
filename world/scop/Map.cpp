@@ -27,22 +27,6 @@ Map::Map(
 	this->t_system.createTrees();
 	this->terrainSetVerticesAndIndices();
 
-	//{ // test
-	//	clock_t start, finish;
-	//	start = clock();
-	//	this->t_system.createHeightMap();
-	//	finish = clock();
-	//	cout << "set height(ms)" << static_cast<double>(finish - start) << endl;
-	//	start = clock();
-	//	this->l_system.createLightMap();
-	//	finish = clock();
-	//	cout << "set light(ms): " << static_cast<double>(finish - start) << endl;
-	//	this->t_system.createTrees();
-	//	start = clock();
-	//	this->terrainSetVerticesAndIndices();
-	//	finish = clock();
-	//	cout << "set vi(ms): " << static_cast<double>(finish - start) << endl;
-	//}
 }
 
 

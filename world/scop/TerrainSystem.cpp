@@ -44,7 +44,6 @@ void TerrainSystem::createHeightMap()
 				vec3(c_pos.x + 0.5f, 0.5f, c_pos.y - 0.5f);
 			this->m_info->chunks[c_idx.y][c_idx.x]->chunk_pos = c_pos;
 			this->fillChunk(c_idx, c_pos);
-			this->fillWithUserPlacedBlocks(c_idx);
 		}
 	}
 }
@@ -52,6 +51,14 @@ void TerrainSystem::createHeightMap()
 void TerrainSystem::createTrees()
 {
 	this->s_tree.createTrees();
+	for (int i = 0; i < this->m_info->size_h; i++) {
+		for (int j = 0; j < this->m_info->size_w; j++) {
+			Index2 c_pos = this->m_info->s_pos + Index2(j * 16, -i * 16);
+			Index2 c_idx;
+			c_idx = this->m_info->getChunkIndex(c_pos.x, c_pos.y);
+			this->fillWithUserPlacedBlocks(c_idx);
+		}
+	}
 }
 
 void TerrainSystem::createTrees(vector<Index2>& chunks, int dir)
