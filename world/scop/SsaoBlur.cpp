@@ -13,10 +13,7 @@
 
 struct SsaoBlurBuffer
 {
-	float texel_width;
-	float texel_height;
-	float width;
-	float height;
+	vec4 texOffsetWH;
 	int wh_flag;
 	vec3 dummy;
 	Mat proj;
@@ -116,10 +113,7 @@ void SsaoBlur::render(int wh_flag, CamType type, float num)
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	SsaoBlurBuffer sb;
-	sb.texel_width = num / (this->width);
-	sb.texel_height = num / (this->height);
-	sb.width = this->width;
-	sb.height = this->height;
+	sb.texOffsetWH = vec4(num / (this->width), num / (this->height), 0, 0);
 	sb.wh_flag = wh_flag;
 	sb.proj = cam->getMVP(type).proj.Transpose();
 	sb.view = cam->getMVP(type).view.Transpose();

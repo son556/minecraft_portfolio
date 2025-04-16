@@ -4,10 +4,8 @@ Texture2D ssao_map : register(t2);
 
 cbuffer cbPerFrame : register(b0)
 {
-    float gTexelWidth; // 입력 texture의  1.0f / 너비
-    float gTexelHeight; // 입력 texture의 1.0f / 높이
-    float gWidth; // 화면의 1.0f / 너비
-    float gHeight; // 화면의 1.0f / 높이
+    // 입력 texture의  1.0f / 너비, 입력 texture의 1.0f / 높이
+    float4 gTexelWHOffset;
     int wh_flag; // 0 가로, 1이 세로
     float3 dummy;
     matrix proj; // 투영행렬
@@ -56,17 +54,10 @@ struct PS_INPUT
 float4 main(PS_INPUT input) : SV_TARGET
 {
     float2 texOffset;
-    float2 offset;
     if (wh_flag == 0)
-    {
-        texOffset = float2(gTexelWidth, 0.0f);
-        offset = float2(gWidth, 0.0f);
-    }
+        texOffset = float2(gTexelWHOffset.x, 0.0f);
     else
-    {
-        texOffset = float2(0.0f, gTexelHeight);
-        offset = float2(0.0f, gHeight);
-    }
+        texOffset = float2(0.0f, gTexelWHOffset.y);
     float4 color = gWeights[5] * ssao_map.Sample(sample_image,
         input.uv);
     float total_weight = gWeights[5];
@@ -82,14 +73,13 @@ float4 main(PS_INPUT input) : SV_TARGET
         if (i == 0)
             continue;
         float2 tex = input.uv + i * texOffset;
-        // 해상도가 달라서(ssao_map vs norma_map and depth_map)
-        float2 nd_tex = input.uv + i * offset;
+        
         float3 neighbor_normal =
-            normal_map.Sample(sample_normal_depth, nd_tex).xyz;
+            normal_map.Sample(sample_normal_depth, tex).xyz;
         neighbor_normal = mul(neighbor_normal, (float3x3) view);
         
         float neighbor_depth =
-            depth_map.Sample(sample_normal_depth, nd_tex).r;
+            depth_map.Sample(sample_normal_depth, tex).r;
         neighbor_depth = NdcDepthToViewDepth(neighbor_depth);
         
         if (dot(neighbor_normal, center_normal) >= 0.8 &&
