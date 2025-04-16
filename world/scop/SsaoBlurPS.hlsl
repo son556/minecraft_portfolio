@@ -77,8 +77,6 @@ float4 main(PS_INPUT input) : SV_TARGET
         input.uv).r;
     center_depth = NdcDepthToViewDepth(center_depth);
     
-    if (gTexelHeight == 0 || gTexelWidth == 0)
-        return float4(1, 0, 0, 1);
     for (int i = -gBlurRadius; i <= gBlurRadius; i++)
     {
         if (i == 0)

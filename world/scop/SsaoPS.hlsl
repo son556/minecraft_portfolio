@@ -48,8 +48,10 @@ float occlusionFunction(float dist_z)
     float occlusion = 0.0f;
     if (dist_z > g_surface_epsilon)
     {
-        float fade_length = g_occlusion_fade_end - g_occlusion_fade_start;
-        occlusion = saturate((g_occlusion_fade_end - dist_z) / fade_length);
+        float fade_length = 
+            g_occlusion_fade_end - g_occlusion_fade_start;
+        occlusion = 
+            saturate((g_occlusion_fade_end - dist_z) / fade_length);
     }
     return occlusion;
 }
