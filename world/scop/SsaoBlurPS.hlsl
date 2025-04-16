@@ -82,13 +82,16 @@ float4 main(PS_INPUT input) : SV_TARGET
         if (i == 0)
             continue;
         float2 tex = input.uv + i * texOffset;
+        // 해상도가 달라서(ssao_map vs norma_map and depth_map)
         float2 nd_tex = input.uv + i * offset;
         float3 neighbor_normal =
             normal_map.Sample(sample_normal_depth, nd_tex).xyz;
         neighbor_normal = mul(neighbor_normal, (float3x3) view);
+        
         float neighbor_depth =
             depth_map.Sample(sample_normal_depth, nd_tex).r;
         neighbor_depth = NdcDepthToViewDepth(neighbor_depth);
+        
         if (dot(neighbor_normal, center_normal) >= 0.8 &&
             abs(neighbor_depth - center_depth) <= 0.2f)
         {

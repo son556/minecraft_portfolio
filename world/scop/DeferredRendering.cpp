@@ -75,7 +75,7 @@ void DeferredRendering::Render()
 	r_opt.shadow = true;
 	r_opt.cave_shadow = true;
 	r_opt.reflection_flag = false;
-	r_opt.ssao_blur_cnt = 8;
+	r_opt.ssao_blur_cnt = 3;
 	this->opacity_render.render(r_opt, CamType::NORMAL);
 
 	if (under_water)

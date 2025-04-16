@@ -39,7 +39,6 @@ private:
 private:
 	UINT width;
 	UINT height;
-	D3D11_VIEWPORT view_port = { 0, };
 	shared_ptr<DeferredBuffer> d_buffer_width;
 	shared_ptr<DeferredBuffer> d_buffer_height;
 	shared_ptr<RasterizerState> rasterizer_state;

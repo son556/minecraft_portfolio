@@ -102,12 +102,6 @@ SsaoBlur::SsaoBlur(UINT width, UINT height)
 		width,
 		height
 	);
-	this->view_port.TopLeftX = 0.0f;
-	this->view_port.TopLeftY = 0.0f;
-	this->view_port.Width = width;
-	this->view_port.Height = height;
-	this->view_port.MinDepth = 0.f;
-	this->view_port.MaxDepth = 1.f;
 	SsaoBlurBuffer sb;
 	this->cbuffer = make_shared<ConstantBuffer>(
 		device,
@@ -119,7 +113,6 @@ SsaoBlur::SsaoBlur(UINT width, UINT height)
 void SsaoBlur::render(int wh_flag, CamType type, float num)
 {
 	this->setPipe();
-	d_graphic->setViewPort(this->view_port);
 	ComPtr<ID3D11DeviceContext> context = d_graphic->getContext();
 	ComPtr<ID3D11Device> device = d_graphic->getDevice();
 	SsaoBlurBuffer sb;

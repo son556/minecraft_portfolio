@@ -122,7 +122,7 @@ void OpacityRender::ssaoBlur(int cnt, CamType type)
 		this->geo_render.getDepthSRV().GetAddressOf());
 	context->PSSetShaderResources(2, 1,
 		this->ssao_render.getSRV().GetAddressOf());
-	this->ssao_blur.render(0, type, 1.0f);
+	this->ssao_blur.render(0, type, cnt);
 
 	//// ssao blur height start
 	d_graphic->renderBegin(
@@ -133,31 +133,7 @@ void OpacityRender::ssaoBlur(int cnt, CamType type)
 		this->geo_render.getDepthSRV().GetAddressOf());
 	context->PSSetShaderResources(2, 1,
 		this->ssao_blur.getWidthSRV().GetAddressOf());
-	this->ssao_blur.render(1, type, 1.0f);
-
-	for (int i = 1; i < cnt; i++) {
-		// ssao blur width start
-		d_graphic->renderBegin(
-			this->ssao_blur.getWidthDBuffer().get());
-		context->PSSetShaderResources(0, 1,
-			this->geo_render.getSRV(RTVIndex::w_normal).GetAddressOf());
-		context->PSSetShaderResources(1, 1,
-			this->geo_render.getDepthSRV().GetAddressOf());
-		context->PSSetShaderResources(2, 1,
-			this->ssao_blur.getHeightSRV().GetAddressOf());
-		this->ssao_blur.render(0, type, 1.0f);
-
-		// ssao blur height start
-		d_graphic->renderBegin(
-			this->ssao_blur.getHeightDBuffer().get());
-		context->PSSetShaderResources(0, 1,
-			this->geo_render.getSRV(RTVIndex::w_normal).GetAddressOf());
-		context->PSSetShaderResources(1, 1,
-			this->geo_render.getDepthSRV().GetAddressOf());
-		context->PSSetShaderResources(2, 1,
-			this->ssao_blur.getWidthSRV().GetAddressOf());
-		this->ssao_blur.render(1, type, 1.0f);
-	}
+	this->ssao_blur.render(1, type, cnt);
 }
 
 void OpacityRender::setPBRResources()
